@@ -87,14 +87,14 @@ async function createIndexYaml(relativeFolderPath) {
   }
 }
 
-(async () => {
-  try {
-    const relativeFolderPath = "../../ONDC-NTS-Specifications/api/cp0";
-    const structure = await getFileStructureRelative(relativeFolderPath);
-    console.log("File structure:", structure);
-  } catch (err) {
-    console.error("Error testing getFileStructureRelative:", err);
-  }
-})();
+// (async () => {
+//   try {
+//     const relativeFolderPath = "../../ONDC-NTS-Specifications/api/cp0";
+//     const structure = await getFileStructureRelative(relativeFolderPath);
+//     console.log("File structure:", structure);
+//   } catch (err) {
+//     console.error("Error testing getFileStructureRelative:", err);
+//   }
+// })();
 
 module.exports = { createIndexYaml };

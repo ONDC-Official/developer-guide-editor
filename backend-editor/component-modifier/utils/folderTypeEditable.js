@@ -1,36 +1,39 @@
-const { Editable, createIndexYaml } = require("./Editable.js");
+const {
+  Editable,
+  createIndexYaml,
+  EditableRegistry,
+} = require("./Editable.js");
 
 class folderTypeEditable extends Editable {
-  constructor(path, id) {
-    super(id);
-    this.id = id;
-    this.longPath = path + "/index.yaml";
-    this.shortPath = `./${id}/index.yaml`;
+  constructor(path, name) {
+    super();
+    this.longPath = path;
+    this.yamlPathLong = path + "/index.yaml";
+    this.yamlPathShort = `./${name}/index.yaml`;
+    this.name = name;
+    this.chilrenEditables = [];
     createIndexYaml(path);
   }
-}
-exports.folderTypeEditable = folderTypeEditable;
-
-class ComponentsFolderTypeEditable extends folderTypeEditable {
-  constructor(path, id) {
-    super(path);
+  /**
+   * Adds a new editable to the childrenEditables array.
+   *
+   * @param {Object} new_editable - The new editable object to add.
+   * @param {string} new_editable.ID - The unique identifier for the editable.
+   * @param {string} new_editable.name - The name of the editable.
+   */
+  add(new_editable) {
+    this.chilrenEditables.push(
+      EditableRegistry.create(
+        new_editable.ID,
+        this.longPath + `${new_editable.name}}/index.yaml`,
+        new_editable.name
+      )
+    );
   }
-  add(something) {
-    if (typeof something != folderTypeEditable) {
-      throw new Error("Components can only add FolderTypeEditable");
-    }
-    updateYamlRef(this.longPath, "examples", "./examples/index.yaml");
-  }
+  remove(Editable) {}
+  update(Editable) {}
 }
 
-const components = new ComponentsFolderTypeEditable(
-  "../../ONDC-NTS-Specifications/api",
-  "components"
-);
-
-// class AttributesFolderTypeEditable extends folderTypeEditable {
-//   constructor(path, id) {
-//     super(path);
-//   }
-//   add(something) {}
-// }
+module.exports = {
+  folderTypeEditable,
+};

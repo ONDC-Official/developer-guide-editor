@@ -1,10 +1,6 @@
-const { folderTypeEditable } = require("./folderTypeEditable.js");
-const { updateYamlRef } = require("./yamlEditor.js");
-
-const createIndexYaml = require("./fileUtils.js").createIndexYaml;
-exports.createIndexYaml = createIndexYaml;
 class Editable {
-  constructor(id) {
+  static REGISTER_ID = "EDITABLE";
+  constructor() {
     if (this.constructor == Editable) {
       throw new Error("Abstract classes can't be instantiated.");
     }
@@ -20,4 +16,24 @@ class Editable {
   }
 }
 
+class EditableRegistry {
+  static registry = {};
+
+  static register(cls) {
+    this.registry[cls.id] = cls;
+  }
+  static create(type, path, name) {
+    const cls = this.registry[type];
+    if (!cls) {
+      throw new Error(`No registered class with ID ${type}`);
+    }
+    return new cls(path, name);
+  }
+
+  static displayId() {
+    console.log(`Item ID: ${this.id}`);
+  }
+}
+
 exports.Editable = Editable;
+exports.EditableRegistry = EditableRegistry;
