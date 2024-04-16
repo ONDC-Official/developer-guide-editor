@@ -82,6 +82,8 @@ function listDetailedPaths(yamlString) {
   }
 }
 
+console.log();
+
 function convertDetailedPathsToYAML(detailedPaths) {
   // Function to safely access nested properties
   function setPath(obj, path, value) {
@@ -108,5 +110,7 @@ function convertDetailedPathsToYAML(detailedPaths) {
   // Convert the reconstructed object to YAML
   return yaml.dump(reconstructedObj);
 }
+
+// console.log(listDetailedPaths(f))
 
 module.exports = { getSheets, sheetsToYAML };

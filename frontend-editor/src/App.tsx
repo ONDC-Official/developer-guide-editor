@@ -1,28 +1,26 @@
 import "./App.css";
+import DisplayTable from "./components/attribute-table";
 import {
   FileStructureSidebar,
-  FileSystemItem,
-  DirectoryItem,
-  FileItem,
+  // FileSystemItem,
+  // DirectoryItem,
+  // FileItem,
 } from "./components/file-structure";
 import { OndcTitle } from "./components/title";
-import files from "./files.json";
+// import files from "./files.json";
 
 function App() {
-  const formattedData: FileSystemItem[] = files.struct.map((item) => {
-    if (item.type === "directory") {
-      return item as DirectoryItem;
-    }
-    return {
-      ...item,
-      type: "file",
-    };
-  });
-
   return (
     <>
       <OndcTitle />
-      <FileStructureSidebar data={formattedData} />
+      <div className="flex w-full h-full overflow-hidden">
+        <div className="w-64 h-fit">
+          <FileStructureSidebar />
+        </div>
+        <div className="flex-1 overflow-auto mt-5 py-4 px-4">
+          <DisplayTable />
+        </div>
+      </div>
     </>
   );
 }

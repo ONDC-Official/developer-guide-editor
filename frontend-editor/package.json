@@ -10,8 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@table-library/react-table-library": "^4.1.7",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-modal": "^3.16.1",
+    "react-table": "^7.8.0"
   },
   "devDependencies": {
     "@types/node": "^20.12.7",

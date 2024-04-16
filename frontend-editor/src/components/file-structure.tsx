@@ -1,94 +1,73 @@
-import React from "react";
-import { DownArrowIcon, RightArrowIcon } from "./icons";
+import React, { useState } from "react";
 
-interface BaseItem {
-  name: string;
-  path: string;
-}
+const d = ["Attributes", "enums", "flows"]; // Sample data
 
-export interface FileItem extends BaseItem {
-  type: "file";
-}
+const tabClass = (isActive: boolean) => `
+    block w-full py-2.5 text-sm font-medium leading-5 text-center cursor-pointer
+    transform transition duration-150 ease-in-out
+    ${
+      isActive
+        ? "bg-blue-500 text-white shadow-lg scale-110" // More contrast for active tab
+        : "text-black hover:bg-blue-100 hover:text-blue-800 scale-100" // Improved hover state
+    }
+    active:bg-blue-300 shadow-blue-400
+  `;
 
-export interface DirectoryItem extends BaseItem {
-  type: "directory";
-  children: FileSystemItem[];
-}
+export const FileStructureSidebar = ({
+  initialData = d,
+  initialActiveTab = d[0],
+}) => {
+  const [data, setData] = useState(initialData);
+  const [activeTab, setActiveTab] = useState(initialActiveTab || data[0]);
 
-export type FileSystemItem = FileItem | DirectoryItem;
+  const handleTabClick = (item: any) => {
+    setActiveTab(item);
+  };
 
-// FileIcon and FolderIcon can be any icons from a library or custom SVGs
-const FileIcon: React.FC = ({ className: cn }: any) => (
-  <span className={cn}>📄</span>
-);
-const FolderIcon: React.FC = ({ className: cn }: any) => (
-  <span className={cn}>📁</span>
-);
-
-// Recursive component to display each item (file or folder)
-const FileTreeItem: React.FC<{ item: FileSystemItem }> = ({ item }) => {
-  const [isOpen, setIsOpen] = React.useState(false);
-
-  const toggle = () => setIsOpen(!isOpen);
-  console.log(item.name, item.type);
-  if (item.type === "directory") {
-    return (
-      <div>
-        <div
-          className="flex items-center space-x-2 px-5 py-2 cursor-pointer hover:bg-gray-100"
-          onClick={toggle}
-        >
-          {isOpen ? (
-            <DownArrowIcon className="w-5 h-5 text-gray-500" />
-          ) : (
-            <RightArrowIcon className="w-5 h-5 text-gray-500" />
-          )}
-          <FolderIcon />
-          <span className="flex-grow text-gray-700">{item.name}</span>
-        </div>
-        {isOpen && (
-          <div className="pl-5">
-            {item.children.map((child) => (
-              <FileTreeItem key={child.path} item={child} />
-            ))}
-          </div>
-        )}
-      </div>
-    );
-  } else {
-    return (
-      <div className="flex items-center space-x-2 px-5 py-2 hover:bg-gray-100">
-        <FileIcon />
-        <span className="flex-grow text-gray-700">{item.name}</span>
-      </div>
-    );
-  }
-};
-
-// Main component to display the sidebar with the file structure
-export const FileStructureSidebar: React.FC<{
-  data: FileSystemItem[];
-}> = ({ data }) => {
+  const addNewTab = () => {
+    const newTabName = `Tab ${data.length + 1}`; // Naming new tabs sequentially
+    setData([...data, newTabName]); // Adding a new tab to the array
+    setActiveTab(newTabName); // Optionally set the new tab as active
+  };
   return (
-    <div className="flex h-screen">
+    <div className="flex h-full">
       <div className="mt-3 w-64 h-full overflow-y-auto shadow-lg">
-        <h1
-          className="font-bold text-center text-transparent bg-clip-text flex-grow"
-          style={{
-            fontSize: "1.3rem",
-            backgroundImage: "linear-gradient(to right, #007CF0, #00DFD8)",
-          }}
-        >
-          FILE STRUCTURE
-        </h1>
         <ul className="mt-2">
-          {data.map((item) => (
-            <li key={item.path} className="px-2 py-2">
-              <FileTreeItem item={item} />
+          {data.map((item, index) => (
+            <li key={item + index} className="px-2 py-2">
+              <button
+                key={item} // Replace `item` with your specific key or identifier
+                onClick={() => handleTabClick(item)} // Ensure you have defined `setActiveTab`
+                className={tabClass(activeTab === item)} // Adjust `activeTab` check as per your state management
+              >
+                {/* <h2 className="font-bold text-center text-transparent bg-clip-text"> */}
+                {item.toUpperCase()}
+                {/* </h2> */}
+              </button>
             </li>
           ))}
         </ul>
+        <button
+          className="mt-4 w-full bg-blue-500 text-white py-2 text-base font-medium text-center rounded transition duration-150 ease-in-out hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 active:bg-blue-800"
+          onClick={addNewTab}
+        >
+          ADD GUIDE
+        </button>
       </div>
     </div>
   );
 };
+
+export default FileStructureSidebar;
+
+{
+  /* <h1
+className="font-bold text-center text-transparent bg-clip-text flex-grow"
+style={{
+  fontSize: "1.3rem",
+  backgroundImage: "linear-gradient(to right, #007CF0, #00DFD8)",
+}}
+>
+AVAILABLE GUIDES
+</h1> */
+}
