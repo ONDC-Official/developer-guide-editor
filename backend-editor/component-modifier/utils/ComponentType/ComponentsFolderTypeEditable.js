@@ -16,6 +16,9 @@ class ComponentsType extends folderTypeEditable {
     super.add(new_editable);
     updateYamlRef(this.yamlPathLong, new_editable.name, new_editable.shortPath);
   }
+  getData() {
+    return this.chilrenEditables.map((editable) => editable.name);
+  }
 }
 const components = new ComponentsType(
   "../../ONDC-NTS-Specifications/api",

@@ -1,0 +1,234 @@
+message:
+  issue:
+    id:
+      required: mandatory
+      type: String
+      owner: BAP
+      usage: 7ed3b150-95c6-11ee-9475-039cd8109d56
+      description: >-
+        Network issue identifier is an unique number assigned to any complaint
+        by the interfacing application at the source.
+    category:
+      required: mandatory
+      type: String
+      owner: BAP
+      usage: ITEM
+      description: Identifies what is the category of this issue
+    sub_catagory:
+      required: mandatory
+      type: String
+      owner: BAP
+      usage: ITEM01
+      description: Identifies what is the sub-category of this issue
+    complainant_info:
+      person:
+        name:
+          required: mandatory
+          type: String
+          owner: BAP
+          usage: Rishabh
+          description: >-
+            Describes the name of a person in format:
+            ./{given_name}/{honorific_prefix}/{first_name}/{middle_name}/{last_name}/{honorific_suffix}
+      contact:
+        phone:
+          required: mandatory
+          type: String
+          owner: BAP
+          usage: 87999347636
+          description: Describes the contact
+        email:
+          required: mandatory
+          type: String
+          owner: BAP
+          usage: risha.singla@gmail.com
+          description: Describes the email
+    order_details:
+      id:
+        required: Optional
+        type: String
+        owner: BAP
+        usage: wtewetydug
+        description: >-
+          the value of this field will be the combination of
+          context.transaction_id and order.id.
+      state:
+        required: Optional
+        type: String
+        owner: BAP
+        usage: Completed
+        description: Describes the state
+      items:
+        id:
+          required: Optional
+          type: String
+          owner: BAP
+          usage: 1123456677
+          description: >-
+            the value of this field will be the combination of
+            context.transaction_id and order.id.
+        quantity:
+          required: Optional
+          type: String
+          owner: BAP
+          usage: 6
+          description: describes the quantity of the ordere
+      fulfillments:
+        id:
+          required: Optional
+          type: String
+          owner: BAP
+          usage: eufhruefhe12344
+          description: "describes the fulfillment states id "
+        "":
+          state:
+            required: Optional
+            type: String
+            owner: BAP
+            usage: Delevered
+            description: "describes the fulfillment states "
+      provider_id:
+        required: mandatory
+        type: String
+        owner: BAP
+        usage: MR8mcezPPQEA-r8EhP6UN9
+        description: describes the provider id
+    descriptor:
+      short_desc:
+        required: mandatory
+        type: String
+        owner: BAP
+        usage: Item quality
+        description: Short description about issue
+      long_desc:
+        required: mandatory
+        type: String
+        owner: BAP
+        usage: Item quality is not good
+        description: Long description about issue
+      additional_desc:
+        url:
+          required: mandatory
+          type: String
+          owner: BAP
+          usage: false
+          description: Additional description of url
+        content_type:
+          required: mandatory
+          type: String
+          owner: BAP
+          usage: fhdjfhndj
+          description: Additional description of content type
+    description:
+      image:
+        required: mandatory
+        type: String
+        owner: BAP
+        usage: >-
+          "https://storage.googleapis.com/adya_upload_pdf/image/file-df7ea687-448d-464d-bf1f-4a23707beadf.png"
+        description: Image description
+    source:
+      network_participant_id:
+        required: mandatory
+        type: String
+        owner: BAP
+        usage: buyer-app-preprod-v2.ondc.org
+        description: describes about participant id
+      type:
+        required: mandatory
+        type: String
+        owner: BAP
+        usage: Consumer
+        description: "describes about source type "
+    expected_response_time:
+      duration:
+        required: mandatory
+        type: String
+        owner: BAP
+        usage: PT2H
+        description: "\t\nDescribes time in its various forms. It can be a single point in time; duration; or a structured timetable of operations"
+    expected_resolution_time:
+      duration:
+        required: mandatory
+        type: String
+        owner: BAP
+        usage: P2D
+        description: "\t\nDescribes time in its various forms. It can be a single point in time; duration; or a structured timetable of operations"
+    status:
+      required: mandatory
+      type: String
+      owner: BAP
+      usage: OPEN
+      description: describe issue status
+    issue_type:
+      required: mandatory
+      type: String
+      owner: BAP
+      usage: false
+      description: descibe issue type
+    issue_action:
+      complainant_actions:
+        complainant_action:
+          required: mandatory
+          type: String
+          owner: BAP
+          usage: false
+          description: >-
+            Describes the action taken by the complainant who has raised the
+            issue. the value should be populated when the complainant has
+            taken any of the below actions to anotate the action taken. the
+            actions can be,action
+        short_desc:
+          required: mandatory
+          type: String
+          owner: BAP
+          usage: false
+          description: >-
+            details of the remarks when the issue status is changed, can be
+            captured when the complainant triggers an action
+        updated_at:
+          required: mandatory
+          type: String
+          owner: BAP
+          usage: "2023-12-19T05:39:05.893Z"
+          description: Short description about issue
+        updated_by:
+          org:
+            name:
+              required: mandatory
+              type: String
+              owner: BAP
+              usage: buyer-app-preprod-v2.ondc.org::ONDC:RET10"
+              description: Describes an organization
+          contact:
+            phone:
+              required: mandatory
+              type: String
+              owner: BAP
+              usage: 9963548006
+              description: Describes a phone no
+            email:
+              required: mandatory
+              type: String
+              owner: BAP
+              usage: buyer@ondc.org
+              description: Describe the email
+          person:
+            name:
+              required: mandatory
+              type: String
+              owner: BAP
+              usage: Buyer Admin
+              description: "Describe the person name "
+    created_at:
+      required: mandatory
+      type: String
+      owner: BAP
+      usage: "2023-12-19T05:39:05.893Z"
+      description: timestamp for the creation of the issue
+    " updated_at":
+      required: mandatory
+      type: String
+      owner: BAP
+      usage: "2023-12-19T05:39:05.893Z"
+      description: timestamp for the capturing the time an issue was last updated

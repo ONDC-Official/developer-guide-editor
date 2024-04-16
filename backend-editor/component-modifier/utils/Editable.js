@@ -1,9 +1,14 @@
 class Editable {
   static REGISTER_ID = "EDITABLE";
-  constructor() {
+  constructor(path, name) {
     if (this.constructor == Editable) {
       throw new Error("Abstract classes can't be instantiated.");
     }
+    this.longPath = path;
+    this.yamlPathLong = path + "/index.yaml";
+    this.yamlPathShort = `./${name}/index.yaml`;
+    this.name = name;
+    createIndexYaml(path);
   }
   async add(something) {
     throw new Error("Method 'add()' must be implemented.");
@@ -13,6 +18,9 @@ class Editable {
   }
   async update(something) {
     throw new Error("Method 'update()' must be implemented.");
+  }
+  async getData() {
+    throw new Error("Method 'getData()' must be implemented.");
   }
 }
 

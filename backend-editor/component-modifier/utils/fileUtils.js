@@ -87,6 +87,18 @@ async function createIndexYaml(relativeFolderPath) {
   }
 }
 
+async function readYamlFile(relativeFilePath) {
+  const filePath = path.join(__dirname, relativeFilePath);
+  try {
+    const fileData = await fs_p.readFile(filePath, "utf8");
+    const yamlData = yaml.safeLoad(fileData);
+    return yamlData;
+  } catch (err) {
+    console.error("Error reading YAML file:", err);
+    throw err; // Rethrow the error for caller to handle if needed
+  }
+}
+
 // (async () => {
 //   try {
 //     const relativeFolderPath = "../../ONDC-NTS-Specifications/api/cp0";
@@ -97,4 +109,4 @@ async function createIndexYaml(relativeFolderPath) {
 //   }
 // })();
 
-module.exports = { createIndexYaml };
+module.exports = { createIndexYaml, readYamlFile };

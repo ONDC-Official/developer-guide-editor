@@ -6,13 +6,8 @@ const {
 
 class folderTypeEditable extends Editable {
   constructor(path, name) {
-    super();
-    this.longPath = path;
-    this.yamlPathLong = path + "/index.yaml";
-    this.yamlPathShort = `./${name}/index.yaml`;
-    this.name = name;
+    super(path, name);
     this.chilrenEditables = [];
-    createIndexYaml(path);
   }
   /**
    * Adds a new editable to the childrenEditables array.
