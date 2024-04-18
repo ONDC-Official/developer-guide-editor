@@ -27,6 +27,15 @@ async function createIndexYaml(relativeFolderPath) {
   }
 }
 
+async function deleteFile(filePath) {
+  try {
+    await fs_p.unlink(filePath);
+    console.log("File deleted successfully!");
+  } catch (err) {
+    console.error("Error deleting file:", err);
+  }
+}
+
 async function readYamlFile(filePath) {
   try {
     const fileData = await fs_p.readFile(filePath, "utf8");
@@ -90,4 +99,4 @@ console.log(__dirname);
 //   }
 // })();
 
-module.exports = { createIndexYaml, readYamlFile, copyDir };
+module.exports = { createIndexYaml, readYamlFile, copyDir, deleteFile };

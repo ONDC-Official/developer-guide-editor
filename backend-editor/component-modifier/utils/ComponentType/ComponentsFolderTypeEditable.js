@@ -25,6 +25,10 @@ class ComponentsType extends folderTypeEditable {
     if (this.chilrenEditables.length === 0) return [];
     return this.chilrenEditables.map((editable) => editable.name);
   }
+  async remove(deleteTarget) {
+    await super.remove(deleteTarget);
+    await updateYamlRefComponents(this.yamlPathLong, deleteTarget.name, true);
+  }
   async saveData(path) {
     await copyDir(this.longPath, path);
   }

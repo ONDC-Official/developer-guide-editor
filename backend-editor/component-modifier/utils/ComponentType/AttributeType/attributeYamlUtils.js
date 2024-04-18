@@ -35,7 +35,7 @@ function sheetsToYAML(sheets) {
   console.log(sheets);
   for (const key in sheets) {
     const element = sheets[key];
-    obj[key] = convertDetailedPathsToYAML(element);
+    obj[key] = convertDetailedPathsToNestedObjects(element);
   }
   console.log("test ", obj);
   return yaml.dump(obj);
@@ -99,7 +99,7 @@ function listDetailedPaths(yamlString) {
   }
 }
 
-function convertDetailedPathsToYAML(detailedPaths) {
+function convertDetailedPathsToNestedObjects(detailedPaths) {
   // Function to safely access nested properties
   function setPath(obj, path, value) {
     const keys = path.split(".");

@@ -19,6 +19,14 @@ class AttributesFolderTypeEditable extends folderTypeEditable {
     );
     updateYamlRefAttr(this.yamlPathLong, addedChild.name);
   }
+  async getData() {
+    if (this.chilrenEditables.length === 0) return [];
+    return this.chilrenEditables.map((editable) => editable.name);
+  }
+  async remove(deleteTarget) {
+    await super.remove(deleteTarget);
+    updateYamlRefAttr(this.yamlPathLong, deleteTarget.name, true);
+  }
 }
 
 module.exports = { AttributesFolderTypeEditable };

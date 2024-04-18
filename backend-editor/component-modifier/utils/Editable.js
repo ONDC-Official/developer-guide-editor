@@ -1,3 +1,5 @@
+const { deleteFile } = require("./fileUtils");
+
 createIndexYaml = require("./fileUtils").createIndexYaml;
 
 class Editable {
@@ -11,6 +13,9 @@ class Editable {
     this.yamlPathShort = `./${name}/index.yaml`;
     this.name = name;
     // this.initIndexYaml(path);
+  }
+  async destroy() {
+    await deleteFile(this.yamlPathLong);
   }
   async initIndexYaml(path) {
     this.yamlPathLong = await createIndexYaml(path);
