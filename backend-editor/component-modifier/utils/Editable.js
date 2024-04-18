@@ -1,15 +1,21 @@
+createIndexYaml = require("./fileUtils").createIndexYaml;
+
 class Editable {
   static REGISTER_ID = "EDITABLE";
   constructor(path, name) {
     if (this.constructor == Editable) {
       throw new Error("Abstract classes can't be instantiated.");
     }
+    console.log(path);
     this.longPath = path;
-    this.yamlPathLong = path + "/index.yaml";
     this.yamlPathShort = `./${name}/index.yaml`;
     this.name = name;
-    createIndexYaml(path);
+    // this.initIndexYaml(path);
   }
+  async initIndexYaml(path) {
+    this.yamlPathLong = await createIndexYaml(path);
+  }
+
   async add(something) {
     throw new Error("Method 'add()' must be implemented.");
   }
@@ -22,24 +28,28 @@ class Editable {
   async getData() {
     throw new Error("Method 'getData()' must be implemented.");
   }
+  async saveData(savePath) {
+    throw new Error("Method 'saveData()' must be implemented.");
+  }
+  getRegisterID() {
+    return this.constructor.REGISTER_ID;
+  }
 }
 
 class EditableRegistry {
   static registry = {};
 
   static register(cls) {
-    this.registry[cls.id] = cls;
+    this.registry[cls.REGISTER_ID] = cls;
   }
-  static create(type, path, name) {
+  static async create(type, path, name) {
     const cls = this.registry[type];
     if (!cls) {
       throw new Error(`No registered class with ID ${type}`);
     }
-    return new cls(path, name);
-  }
-
-  static displayId() {
-    console.log(`Item ID: ${this.id}`);
+    var object = new cls(path, name);
+    await object.initIndexYaml(path);
+    return object;
   }
 }
 

@@ -9,6 +9,7 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      backdropFilter: { none: "none", blur: "blur(10px)" },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
@@ -31,5 +32,10 @@ const config: Config = {
     },
   },
   plugins: [tailwindcssAnimate],
+  variants: {
+    extend: {
+      backdropFilter: ["responsive", "hover", "focus"],
+    },
+  },
 };
 export default config;

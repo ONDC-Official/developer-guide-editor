@@ -1,5 +1,6 @@
 const {
   getSheets,
+  sheetsToYAML,
 } = require("./ComponentType/AttributeType/attributeYamlUtils.js");
 const { Editable } = require("./Editable.js");
 const { readYamlFile } = require("./fileUtils.js");
@@ -9,32 +10,50 @@ class FileTypeEditable extends Editable {
   constructor(path, name) {
     super(path, name);
   }
+
   /** get data easy to display in ui */
-  getData() {
-    return this.rawToReadable(this.getRawData());
+  async getData() {
+    return await this.rawToReadable(this.getRawData());
   }
   /** get raw data from yaml */
-  getRawData() {}
+  async getRawData() {}
 
-  rawToReadable(yamlData) {}
+  async rawToReadable(yamlData) {}
 
-  readableToRaw(readableData) {}
+  async readableToRaw(readableData) {}
 }
 
 class AttributeFile extends FileTypeEditable {
-  static REGISTER_ID = "ATTRIBUTE-FILE";
+  static REGISTER_ID = "ATTRIBUTE_FILE";
   constructor(path, name) {
     super(path, name);
   }
 
-  getRawData() {
-    this.raw_data = readYamlFile(this.longPath);
-    return this.raw_data;
+  /** performs addition in attribute index.yaml
+   *  @param {Object} additionObject - object to add
+   *  @param {string} additionObject.type - type of addition
+   */
+  async add(additionObject) {
+    if (additionObject.type === "sheet") {
+      await this.addSheet(additionObject);
+    } else if (additionObject.type === "attribute") {
+      await this.addAttribute(additionObject);
+    }
   }
-  rawToReadable(yamlData) {
-    return getSheets(yamlData);
+  async getData() {
+    console.log("hello");
+    return getSheets(await readYamlFile(this.yamlPathLong));
   }
-  getColumns() {
-    return ["Path", "Required", "Type", "Owner", "Usage", "Description"];
+  async addSheet(sheet) {
+    console.log(sheet);
+    const data = await this.getData();
+    data[sheet.name] = [];
+    sheetsToYAML(data);
+  }
+  async addAttribute(attribute) {
+    data = await this.getData();
+    // getsheet then addon sheet
   }
 }
+
+module.exports = { FileTypeEditable, AttributeFile };

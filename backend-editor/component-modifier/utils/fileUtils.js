@@ -1,76 +1,7 @@
 const fs = require("fs");
 const fs_p = require("fs").promises;
 const path = require("path");
-
-function displayFolderNames(relativeFolderPath, ignoreFolders = []) {
-  // Convert the relative path to an absolute path based on the current file location
-  const folderPath = path.join(__dirname, relativeFolderPath);
-
-  console.log("Resolved folder path:", folderPath);
-  fs.readdir(folderPath, { withFileTypes: true }, (err, entries) => {
-    if (err) {
-      console.error("Error reading folder:", err);
-      return;
-    }
-    const folderNames = [];
-    console.log("Folders in folder:");
-    entries.forEach((entry) => {
-      if (entry.isDirectory() && !ignoreFolders.includes(entry.name)) {
-        console.log(entry.name);
-        folderNames.push(entry.name);
-      }
-    });
-    return folderNames;
-  });
-}
-
-async function getFileStructure(
-  dirPath,
-  basePath = dirPath,
-  ignoreFolders = []
-) {
-  try {
-    const entries = await fs_p.readdir(dirPath, { withFileTypes: true });
-    const structure = (
-      await Promise.all(
-        entries.map(async (entry) => {
-          const entryPath = path.join(dirPath, entry.name);
-          const relativePath = path.relative(basePath, entryPath);
-          if (entry.isDirectory() && !ignoreFolders.includes(entry.name)) {
-            return {
-              type: "directory",
-              name: entry.name,
-              path: relativePath,
-              children: await getFileStructure(
-                entryPath,
-                basePath,
-                ignoreFolders
-              ),
-            };
-          } else if (!ignoreFolders.includes(entry.name)) {
-            return { type: "file", name: entry.name, path: relativePath };
-          }
-          // Implicitly return undefined for ignored folders or files
-        })
-      )
-    ).filter((item) => item !== undefined);
-    return structure;
-  } catch (err) {
-    console.error("Error reading directory:", err);
-    throw err; // Rethrow the error for caller to handle if needed
-  }
-}
-
-async function getFileStructureRelative(relativeFolderPath) {
-  const folderPath = path.join(__dirname, relativeFolderPath);
-  return getFileStructure(folderPath, __dirname, [
-    "node_modules",
-    "package-lock.json",
-    "package.json",
-    "app.js",
-    "build-attributes.js",
-  ]);
-}
+const yaml = require("js-yaml");
 
 async function createIndexYaml(relativeFolderPath) {
   const folderPath = path.join(__dirname, relativeFolderPath);
@@ -78,26 +9,76 @@ async function createIndexYaml(relativeFolderPath) {
   const indexYamlPath = path.join(folderPath, "index.yaml");
   const structure = "";
 
+  if (fs.existsSync(indexYamlPath)) {
+    console.log("index.yaml already exists!");
+    return indexYamlPath;
+  }
+
   try {
-    await fs_p.mkdir(folderPath, { recursive: true });
+    if (!fs.existsSync(folderPath)) {
+      console.log("Folder does not exist, creating it...");
+      await fs_p.mkdir(folderPath, { recursive: true });
+    }
     await fs_p.writeFile(indexYamlPath, structure, "utf8");
     console.log("index.yaml created successfully!");
+    return indexYamlPath;
   } catch (err) {
     console.error("Error creating index.yaml:", err);
   }
 }
 
-async function readYamlFile(relativeFilePath) {
-  const filePath = path.join(__dirname, relativeFilePath);
+async function readYamlFile(filePath) {
   try {
     const fileData = await fs_p.readFile(filePath, "utf8");
-    const yamlData = yaml.safeLoad(fileData);
-    return yamlData;
+    return fileData;
   } catch (err) {
     console.error("Error reading YAML file:", err);
     throw err; // Rethrow the error for caller to handle if needed
   }
 }
+
+async function copyDir(
+  src,
+  dest,
+  ignoreFiles = [
+    "node_modules",
+    ".git",
+    "package.json",
+    "package-lock.json",
+    "README.md",
+  ]
+) {
+  src = path.resolve(__dirname, src);
+  dest = path.resolve(__dirname, dest);
+  await fs_p.mkdir(dest, { recursive: true });
+  const files = await fs_p.readdir(src);
+  for (const file of files) {
+    if (ignoreFiles.includes(file)) {
+      console.log(`Ignoring file: ${file}`);
+      continue;
+    }
+    const srcPath = path.join(src, file);
+    const destPath = path.join(dest, file);
+    const stat = await fs_p.stat(srcPath);
+    if (stat.isDirectory()) {
+      await copyDir(srcPath, destPath);
+    } else {
+      await fs_p.copyFile(srcPath, destPath);
+    }
+  }
+  console.log("Folder copied successfully!");
+}
+
+// // Example usage:
+// const sourceFilePath = "../../ONDC-NTS-Specifications/api/cp0";
+// const destinationFilePath = "../history/copy";
+// copyDir(sourceFilePath, destinationFilePath);
+console.log(__dirname);
+
+// Example usage:
+// const sourceFilePath = "../../ONDC-NTS-Specifications/api/cp0/index.yaml";
+// const destinationFilePath = "../../ONDC-NTS-Specifications/api/cp1/index.yaml";
+// copyYamlFile(sourceFilePath, destinationFilePath);
 
 // (async () => {
 //   try {
@@ -109,4 +90,4 @@ async function readYamlFile(relativeFilePath) {
 //   }
 // })();
 
-module.exports = { createIndexYaml, readYamlFile };
+module.exports = { createIndexYaml, readYamlFile, copyDir };

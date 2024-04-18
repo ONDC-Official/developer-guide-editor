@@ -4,7 +4,7 @@ const path = require("path");
 
 function getSheets(yamlData) {
   let sheets = {};
-  const obj = yaml.load(yamlString);
+  const obj = yaml.load(yamlData);
   for (const key in obj) {
     if (obj.hasOwnProperty(key)) {
       const element = obj[key];

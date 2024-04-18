@@ -1,8 +1,16 @@
-const { EditableRegistry } = require("./Editable");
 const {
-  ComponentsFolderTypeEditable,
   AttributesFolderTypeEditable,
-} = require("./folderTypeEditable");
+} = require("./ComponentType/AttributeType/AttributesFolderTypeEditable");
+const {
+  ComponentsType,
+} = require("./ComponentType/ComponentsFolderTypeEditable");
+const { EditableRegistry } = require("./Editable");
+const { AttributeFile } = require("./FileTypeEditable");
 
-EditableRegistry.register(ComponentsFolderTypeEditable);
-EditableRegistry.register(AttributesFolderTypeEditable);
+function initRegistry() {
+  EditableRegistry.register(ComponentsType);
+  EditableRegistry.register(AttributesFolderTypeEditable);
+  EditableRegistry.register(AttributeFile);
+}
+
+module.exports = { initRegistry };

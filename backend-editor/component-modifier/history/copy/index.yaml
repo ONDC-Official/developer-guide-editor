@@ -1,0 +1,2 @@
+examples:
+  $ref: ./examples/index.yaml

@@ -16,17 +16,35 @@ class folderTypeEditable extends Editable {
    * @param {string} new_editable.ID - The unique identifier for the editable.
    * @param {string} new_editable.name - The name of the editable.
    */
-  add(new_editable) {
+  async add(new_editable) {
     this.chilrenEditables.push(
-      EditableRegistry.create(
+      await EditableRegistry.create(
         new_editable.ID,
-        this.longPath + `${new_editable.name}}/index.yaml`,
+        this.longPath + `/${new_editable.name}`,
         new_editable.name
       )
     );
   }
-  remove(Editable) {}
-  update(Editable) {}
+  async remove(Editable) {}
+  async update(Editable) {}
+  getTarget(id, name, first) {
+    const searchChildEditable = (editable) => {
+      console.log(editable.getRegisterID(), editable.name);
+      if (editable.getRegisterID() === id && editable.name === name) {
+        return editable;
+      }
+      for (const childEditable of editable.chilrenEditables) {
+        const target = searchChildEditable(childEditable);
+        if (target) {
+          return target;
+        }
+      }
+      console.log("No target found");
+      return null;
+    };
+
+    return searchChildEditable(first);
+  }
 }
 
 module.exports = {

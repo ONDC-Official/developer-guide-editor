@@ -1,7 +1,9 @@
+const { copyDir } = require("../fileUtils.js");
+const { folderTypeEditable } = require("../folderTypeEditable.js");
+const { updateYamlRefComponents } = require("../yamlUtils.js");
 const {
-  folderTypeEditable,
   AttributesFolderTypeEditable,
-} = require("../folderTypeEditable.js");
+} = require("./AttributeType/AttributesFolderTypeEditable.js");
 
 class ComponentsType extends folderTypeEditable {
   static REGISTER_ID = "COMPONENTS-FOLDER";
@@ -9,23 +11,23 @@ class ComponentsType extends folderTypeEditable {
     super(path, id);
     this.allowedList = [AttributesFolderTypeEditable.REGISTER_ID];
   }
-  add(new_editable) {
+  async add(new_editable) {
     if (!this.allowedList.includes(new_editable.ID)) {
       throw new Error("GIVEN TYPE IS NOT ALLOWED IN " + REGISTER_ID);
     }
-    super.add(new_editable);
-    updateYamlRef(this.yamlPathLong, new_editable.name, new_editable.shortPath);
+    await super.add(new_editable);
+    const addedChild = this.chilrenEditables.find(
+      (s) => s.name === new_editable.name
+    );
+    await updateYamlRefComponents(this.yamlPathLong, addedChild.name);
   }
-  getData() {
+  async getData() {
+    if (this.chilrenEditables.length === 0) return [];
     return this.chilrenEditables.map((editable) => editable.name);
   }
+  async saveData(path) {
+    await copyDir(this.longPath, path);
+  }
 }
-const components = new ComponentsType(
-  "../../ONDC-NTS-Specifications/api",
-  "components"
-);
 
-components.add({
-  ID: "COMPONENTS-FOLDER",
-  name: "cp0",
-});
+module.exports = { ComponentsType };

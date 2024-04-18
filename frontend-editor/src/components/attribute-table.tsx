@@ -285,7 +285,14 @@ const n = {
 const DisplayTable = ({ data = n.nodes }) => {
   return (
     <div className="mt-3 ml-3 max-w-full overflow-auto">
-      <HorizontalTabBar />
+      <div className="flex w-full">
+        <div className="flex-1">
+          <HorizontalTabBar items={["CREDIT", "RETAIL", "INSURANCE"]} />
+        </div>
+        <div className="flex-1">
+          <HorizontalTabBar items={["ISSUE", "ON_ISSUE"]} />
+        </div>
+      </div>
       <div style={{ overflowX: "auto" }}>
         {" "}
         {/* This div will handle horizontal scrolling if necessary */}
