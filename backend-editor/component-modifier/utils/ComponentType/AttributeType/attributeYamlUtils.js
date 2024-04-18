@@ -8,10 +8,27 @@ function getSheets(yamlData) {
   for (const key in obj) {
     if (obj.hasOwnProperty(key)) {
       const element = obj[key];
-      sheets[key] = listDetailedPaths(element);
+      const list = listDetailedPaths(element);
+      if (list.length > 0) {
+        sheets[key] = list;
+      } else {
+        sheets[key] = NaN;
+      }
     }
   }
   return sheets;
+}
+
+function addRow(sheet, row) {
+  const ob = {
+    path: row.path,
+    required: row.required ?? "Optional",
+    type: row.type ?? "String",
+    owner: row.owner ?? "BAP",
+    usage: row.usage ?? "General",
+    description: row.description,
+  };
+  sheet.push(ob);
 }
 
 function sheetsToYAML(sheets) {
@@ -82,9 +99,8 @@ function listDetailedPaths(yamlString) {
   }
 }
 
-console.log();
-
 function convertDetailedPathsToYAML(detailedPaths) {
+  if (!detailedPaths.length) return yaml.dump({});
   // Function to safely access nested properties
   function setPath(obj, path, value) {
     const keys = path.split(".");
@@ -113,4 +129,4 @@ function convertDetailedPathsToYAML(detailedPaths) {
 
 // console.log(listDetailedPaths(f))
 
-module.exports = { getSheets, sheetsToYAML };
+module.exports = { getSheets, addRow, sheetsToYAML };

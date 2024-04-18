@@ -1,9 +1,11 @@
 const {
   getSheets,
   sheetsToYAML,
+  addRow,
 } = require("./ComponentType/AttributeType/attributeYamlUtils.js");
 const { Editable } = require("./Editable.js");
 const { readYamlFile } = require("./fileUtils.js");
+const { overrideYaml } = require("./yamlUtils.js");
 
 class FileTypeEditable extends Editable {
   static REGISTER_ID = "FILE";
@@ -31,28 +33,32 @@ class AttributeFile extends FileTypeEditable {
 
   /** performs addition in attribute index.yaml
    *  @param {Object} additionObject - object to add
-   *  @param {string} additionObject.type - type of addition
+   *  @param {string} additionObject.sheet - target sheet
+   *
    */
   async add(additionObject) {
-    if (additionObject.type === "sheet") {
-      await this.addSheet(additionObject);
-    } else if (additionObject.type === "attribute") {
-      await this.addAttribute(additionObject);
+    const workSheet = additionObject.sheet;
+    const data = await this.getData();
+    if (!data[workSheet]) {
+      console.log("sheet not found");
+      await this.addSheet(workSheet, data);
+    } else {
+      console.log("sheet found");
+      await this.addAttribute(additionObject, data);
     }
   }
   async getData() {
-    console.log("hello");
     return getSheets(await readYamlFile(this.yamlPathLong));
   }
-  async addSheet(sheet) {
-    console.log(sheet);
-    const data = await this.getData();
-    data[sheet.name] = [];
-    sheetsToYAML(data);
+  async addSheet(sheet, data) {
+    data[sheet] = {};
+    const yml = sheetsToYAML(data);
+    overrideYaml(this.yamlPathLong, yml);
   }
-  async addAttribute(attribute) {
-    data = await this.getData();
-    // getsheet then addon sheet
+  async addAttribute(attribute, data) {
+    addRow(data[attribute.sheet], data);
+    const yml = sheetsToYAML(data);
+    overrideYaml(this.yamlPathLong, yml);
   }
 }
 

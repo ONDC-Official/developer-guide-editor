@@ -27,6 +27,20 @@ async function updateYamlRef(filePath, section, updateLike) {
   }
 }
 
+async function overrideYaml(filePath, data) {
+  try {
+    const stats = await fs.promises.stat(filePath);
+    if (!stats.isFile()) {
+      throw new Error(`The specified path (${filePath}) is not a file.`);
+    }
+    const newYaml = yaml.dump(data);
+    await fs.promises.writeFile(filePath, newYaml, "utf8");
+    console.log(`${filePath} has been updated successfully.`);
+  } catch (error) {
+    console.error("Error updating the YAML file:", error);
+  }
+}
+
 // (async () => {
 //   updateYamlRefComponents(
 //     path.join(__dirname, "../../ONDC-NTS-Specifications/api/cp0/index.yaml"),
@@ -35,4 +49,4 @@ async function updateYamlRef(filePath, section, updateLike) {
 //   // updateYamlRefAttr('./index.yaml', 'new_section');
 // })();
 
-module.exports = { updateYamlRefComponents, updateYamlRefAttr };
+module.exports = { updateYamlRefComponents, updateYamlRefAttr, overrideYaml };
