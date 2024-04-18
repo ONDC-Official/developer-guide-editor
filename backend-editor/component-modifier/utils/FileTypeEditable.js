@@ -51,12 +51,12 @@ class AttributeFile extends FileTypeEditable {
     return getSheets(await readYamlFile(this.yamlPathLong));
   }
   async addSheet(sheet, data) {
-    data[sheet] = {};
-    const yml = sheetsToYAML(data);
+    data[sheet] = [];
+    var yml = sheetsToYAML(data);
     overrideYaml(this.yamlPathLong, yml);
   }
   async addAttribute(attribute, data) {
-    addRow(data[attribute.sheet], data);
+    addRow(data[attribute.sheet], attribute);
     const yml = sheetsToYAML(data);
     overrideYaml(this.yamlPathLong, yml);
   }

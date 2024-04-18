@@ -33,8 +33,8 @@ async function overrideYaml(filePath, data) {
     if (!stats.isFile()) {
       throw new Error(`The specified path (${filePath}) is not a file.`);
     }
-    const newYaml = yaml.dump(data);
-    await fs.promises.writeFile(filePath, newYaml, "utf8");
+    // const newYaml = yaml.dump(data);
+    await fs.promises.writeFile(filePath, data, "utf8");
     console.log(`${filePath} has been updated successfully.`);
   } catch (error) {
     console.error("Error updating the YAML file:", error);

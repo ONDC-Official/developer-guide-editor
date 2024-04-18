@@ -1,25 +1,24 @@
 const fs = require("fs");
 const yaml = require("js-yaml");
 const path = require("path");
+const { readYamlFile } = require("../../fileUtils");
 
 function getSheets(yamlData) {
   let sheets = {};
   const obj = yaml.load(yamlData);
+
   for (const key in obj) {
     if (obj.hasOwnProperty(key)) {
       const element = obj[key];
-      const list = listDetailedPaths(element);
-      if (list.length > 0) {
-        sheets[key] = list;
-      } else {
-        sheets[key] = NaN;
-      }
+      const list = listDetailedPaths(yaml.dump(element));
+      sheets[key] = list;
     }
   }
   return sheets;
 }
 
 function addRow(sheet, row) {
+  console.log(row);
   const ob = {
     path: row.path,
     required: row.required ?? "Optional",
@@ -33,16 +32,17 @@ function addRow(sheet, row) {
 
 function sheetsToYAML(sheets) {
   let obj = {};
+  console.log(sheets);
   for (const key in sheets) {
-    if (sheets.hasOwnProperty(key)) {
-      const element = sheets[key];
-      obj[key] = convertDetailedPathsToYAML(element);
-    }
+    const element = sheets[key];
+    obj[key] = convertDetailedPathsToYAML(element);
   }
+  console.log("test ", obj);
   return yaml.dump(obj);
 }
 
 function listDetailedPaths(yamlString) {
+  // console.log(yamlString);
   try {
     // Parse the YAML string into a JavaScript object
     const obj = yaml.load(yamlString);
@@ -100,7 +100,6 @@ function listDetailedPaths(yamlString) {
 }
 
 function convertDetailedPathsToYAML(detailedPaths) {
-  if (!detailedPaths.length) return yaml.dump({});
   // Function to safely access nested properties
   function setPath(obj, path, value) {
     const keys = path.split(".");
@@ -124,9 +123,23 @@ function convertDetailedPathsToYAML(detailedPaths) {
   });
 
   // Convert the reconstructed object to YAML
-  return yaml.dump(reconstructedObj);
+  return reconstructedObj;
 }
 
-// console.log(listDetailedPaths(f))
+// (async () => {
+//   const d = await readYamlFile(
+//     path.resolve(
+//       __dirname,
+//       "../../../../ONDC-NTS-Specifications/api/cp0/ATTRIBUTES/CREDIT/index.yaml"
+//     )
+//   );
+//   // console.log(d);
+//   const li = listDetailedPaths(d);
+//   // console.log(li);
+//   // const data = convertDetailedPathsToYAML(li);
+//   const data = sheetsToYAML({ credit: li });
+//   console.log(data);
+//   // console.log();
+// })();
 
 module.exports = { getSheets, addRow, sheetsToYAML };
