@@ -66,7 +66,7 @@ app.get("/guide", async (req, res) => {
  * Add: object for relevant addition
  */
 app.post("/guide", async (req, res) => {
-  await req.target.add(req.body.Add);
+  await req.target.add(req.body.operation);
   res.status(200).send("Data Added!");
 });
 
@@ -75,7 +75,7 @@ app.post("/guide", async (req, res) => {
  * Update: object for relevant updation
  */
 app.put("/guide", async (req, res) => {
-  await req.target.update(req.body.Update);
+  await req.target.update(req.body.operation);
   res.status(200).send("Data Updated!");
 });
 
@@ -84,7 +84,7 @@ app.put("/guide", async (req, res) => {
  * Delete: object for relevant deletion
  */
 app.delete("/guide", async (req, res) => {
-  await req.target.remove(req.body.Delete);
+  await req.target.remove(req.body.operation);
   res.status(200).send("Data Deleted!");
 });
 
