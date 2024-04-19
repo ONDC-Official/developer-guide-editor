@@ -1,4 +1,4 @@
-const { deleteFile } = require("./fileUtils");
+const { deleteFolderSync } = require("./fileUtils");
 
 createIndexYaml = require("./fileUtils").createIndexYaml;
 
@@ -8,17 +8,16 @@ class Editable {
     if (this.constructor == Editable) {
       throw new Error("Abstract classes can't be instantiated.");
     }
-    console.log(path);
     this.longPath = path;
-    this.yamlPathShort = `./${name}/index.yaml`;
     this.name = name;
     // this.initIndexYaml(path);
   }
   async destroy() {
-    await deleteFile(this.yamlPathLong);
+    await deleteFolderSync(this.folderPath);
   }
   async initIndexYaml(path) {
-    this.yamlPathLong = await createIndexYaml(path);
+    [this.yamlPathLong, this.folderPath] = await createIndexYaml(path);
+    console.log("YAML Path:", this.yamlPathLong);
   }
 
   async add(something) {

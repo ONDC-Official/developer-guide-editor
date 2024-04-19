@@ -38,10 +38,19 @@ app.use(async (req, res, next) => {
  * targetID: string
  * targetName: string
  */
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
   if (req.body.targetID && req.body.targetName) {
     const comp = sessionInstances[req.body.sessionID];
-    const target = comp.getTarget(req.body.targetID, req.body.targetName, comp);
+    let target = null;
+    try {
+      target = await comp.getTarget(
+        req.body.targetID,
+        req.body.targetName,
+        comp
+      );
+    } catch {
+      res.status(404).send("Editable Not Found!");
+    }
     req.target = target;
   }
   next();

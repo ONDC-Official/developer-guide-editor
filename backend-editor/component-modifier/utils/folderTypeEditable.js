@@ -33,6 +33,7 @@ class folderTypeEditable extends Editable {
    * @param {string} deleteTarget.name - The name of the editable.
    */
   async remove(deleteTarget) {
+    console.log(deleteTarget);
     const target = this.chilrenEditables.find(
       (s) =>
         s.getRegisterID() === deleteTarget.ID && s.name === deleteTarget.name
@@ -41,6 +42,7 @@ class folderTypeEditable extends Editable {
     await target.destroy();
   }
   async update(Editable) {}
+
   getTarget(id, name, first) {
     const searchChildEditable = (editable) => {
       console.log(editable.getRegisterID(), editable.name);
@@ -54,7 +56,6 @@ class folderTypeEditable extends Editable {
         }
       }
       console.log("No target found");
-      return null;
     };
 
     return searchChildEditable(first);

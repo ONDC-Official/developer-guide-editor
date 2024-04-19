@@ -22,6 +22,7 @@ class ComponentsType extends folderTypeEditable {
     await updateYamlRefComponents(this.yamlPathLong, addedChild.name);
   }
   async getData() {
+    console.log("hello");
     if (this.chilrenEditables.length === 0) return [];
     return this.chilrenEditables.map((editable) => editable.name);
   }

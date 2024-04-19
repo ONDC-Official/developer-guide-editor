@@ -11,7 +11,7 @@ async function createIndexYaml(relativeFolderPath) {
 
   if (fs.existsSync(indexYamlPath)) {
     console.log("index.yaml already exists!");
-    return indexYamlPath;
+    return [indexYamlPath, folderPath];
   }
 
   try {
@@ -21,7 +21,7 @@ async function createIndexYaml(relativeFolderPath) {
     }
     await fs_p.writeFile(indexYamlPath, structure, "utf8");
     console.log("index.yaml created successfully!");
-    return indexYamlPath;
+    return [indexYamlPath, folderPath];
   } catch (err) {
     console.error("Error creating index.yaml:", err);
   }
@@ -35,7 +35,15 @@ async function deleteFile(filePath) {
     console.error("Error deleting file:", err);
   }
 }
-
+// Function to delete a folder synchronously at a given path
+function deleteFolderSync(folderPath) {
+  try {
+    fs.rmSync(folderPath, { recursive: true, force: true });
+    console.log("Folder successfully deleted");
+  } catch (error) {
+    console.error("Error deleting the folder:", error);
+  }
+}
 async function readYamlFile(filePath) {
   try {
     const fileData = await fs_p.readFile(filePath, "utf8");
@@ -99,4 +107,4 @@ console.log(__dirname);
 //   }
 // })();
 
-module.exports = { createIndexYaml, readYamlFile, copyDir, deleteFile };
+module.exports = { createIndexYaml, readYamlFile, copyDir, deleteFolderSync };
