@@ -1,12 +1,12 @@
-const express = require("express");
-const session = require("express-session");
-const { initRegistry } = require("../utils/RegisterList");
-const { EditableRegistry } = require("../utils/EditableRegistry");
+import express from "express";
+import session from "express-session";
+import { initRegistry } from "../utils/RegisterList";
+import { EditableRegistry } from "../utils/EditableRegistry";
 
 const sessionInstances = {};
 initRegistry();
 
-const app = express();
+export const app = express();
 app.use(express.json());
 
 app.use(
@@ -40,7 +40,7 @@ function checkQueryParams(req, res, next) {
 }
 app.use(checkQueryParams);
 
-app.use(async (req, res, next) => {
+app.use(async (req: any, res, next) => {
   if (!sessionInstances[req.sessionID]) {
     sessionInstances[req.sessionID] = await EditableRegistry.loadComponent(
       "../../ONDC-NTS-Specifications/api/cp0",
@@ -50,7 +50,7 @@ app.use(async (req, res, next) => {
   next();
 });
 
-app.use(async (req, res, next) => {
+app.use(async (req: any, res, next) => {
   const comp = sessionInstances[req.sessionID];
   let target = null;
   try {
@@ -63,7 +63,7 @@ app.use(async (req, res, next) => {
   }
 });
 
-app.get("/guide", async (req, res) => {
+app.get("/guide", async (req: any, res) => {
   console.log("test", req.editableID);
   try {
     const data = await req.target.getData();
@@ -74,7 +74,7 @@ app.get("/guide", async (req, res) => {
   }
 });
 
-app.post("/guide", async (req, res) => {
+app.post("/guide", async (req: any, res) => {
   try {
     await req.target.add(req.body);
     res.status(200).send("Data Added!");
@@ -84,12 +84,12 @@ app.post("/guide", async (req, res) => {
   }
 });
 
-app.put("/guide", async (req, res) => {
+app.put("/guide", async (req: any, res) => {
   await req.target.update(req.body);
   res.status(200).send("Data Updated!");
 });
 
-app.delete("/guide", async (req, res) => {
+app.delete("/guide", async (req: any, res) => {
   const comp = sessionInstances[req.sessionID];
   const parent = await comp.findParent(req.editableID, req.editableName, comp);
   console.log("PARENT IS ", parent);
@@ -104,5 +104,3 @@ app.delete("/guide", async (req, res) => {
   }
   res.status(200).send("Data Deleted!");
 });
-
-module.exports = app;

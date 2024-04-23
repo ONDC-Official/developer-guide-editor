@@ -1,22 +1,20 @@
-const {
+import {
   getSheets,
   sheetsToYAML,
   addRow,
-} = require("./ComponentType/AttributeType/attributeYamlUtils.js");
-const { Editable } = require("./Editable.js");
-const { readYamlFile } = require("./fileUtils.js");
-const { overrideYaml } = require("./yamlUtils.js");
+} from "./ComponentType/AttributeType/attributeYamlUtils";
+import { Editable } from "./Editable";
+import { readYamlFile } from "./fileUtils";
+import { overrideYaml } from "./yamlUtils";
 
-class FileTypeEditable extends Editable {
-  static REGISTER_ID = "FILE";
+export abstract class FileTypeEditable extends Editable {
   constructor(path, name) {
     super(path, name);
   }
-
   /** get data easy to display in ui */
-  async getData() {
-    return await this.rawToReadable(this.getRawData());
-  }
+  // async getData() {
+  //   // return await this.rawToReadable(this.getRawData());
+  // }
   /** get raw data from yaml */
   async getRawData() {}
 
@@ -25,7 +23,10 @@ class FileTypeEditable extends Editable {
   async readableToRaw(readableData) {}
 }
 
-class AttributeFile extends FileTypeEditable {
+export class AttributeFile extends FileTypeEditable {
+  getRegisterID(): string {
+    return AttributeFile.REGISTER_ID;
+  }
   static REGISTER_ID = "ATTRIBUTE_FILE";
   constructor(path, name) {
     super(path, name);
@@ -50,6 +51,12 @@ class AttributeFile extends FileTypeEditable {
   async getData() {
     return getSheets(await readYamlFile(this.yamlPathLong));
   }
+  async remove(something: any) {
+    throw new Error("Method not implemented.");
+  }
+  async update(something: any) {
+    throw new Error("Method not implemented.");
+  }
   async addSheet(sheet, data) {
     data[sheet] = [];
     var yml = sheetsToYAML(data);
@@ -61,5 +68,3 @@ class AttributeFile extends FileTypeEditable {
     overrideYaml(this.yamlPathLong, yml);
   }
 }
-
-module.exports = { FileTypeEditable, AttributeFile };

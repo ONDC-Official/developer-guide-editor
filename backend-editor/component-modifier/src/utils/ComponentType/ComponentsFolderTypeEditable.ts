@@ -1,11 +1,12 @@
-const { copyDir } = require("../fileUtils.js");
-const { folderTypeEditable } = require("../folderTypeEditable.js");
-const { updateYamlRefComponents } = require("../yamlUtils.js");
-const {
-  AttributesFolderTypeEditable,
-} = require("./AttributeType/AttributesFolderTypeEditable.js");
+import { copyDir } from "../fileUtils";
+import { folderTypeEditable } from "../folderTypeEditable";
+import { updateYamlRefComponents } from "../yamlUtils";
+import { AttributesFolderTypeEditable } from "./AttributeType/AttributesFolderTypeEditable";
 
-class ComponentsType extends folderTypeEditable {
+export class ComponentsType extends folderTypeEditable {
+  getRegisterID(): string {
+    return ComponentsType.REGISTER_ID;
+  }
   static REGISTER_ID = "COMPONENTS-FOLDER";
   constructor(path, id) {
     super(path, id);
@@ -13,7 +14,7 @@ class ComponentsType extends folderTypeEditable {
   }
   async add(new_editable) {
     if (!this.allowedList.includes(new_editable.ID)) {
-      throw new Error("GIVEN TYPE IS NOT ALLOWED IN " + REGISTER_ID);
+      throw new Error("GIVEN TYPE IS NOT ALLOWED IN " + this.getRegisterID());
     }
     await super.add(new_editable);
     const addedChild = this.chilrenEditables.find(

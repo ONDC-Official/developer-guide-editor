@@ -1,11 +1,11 @@
-const fs = require("fs");
-const yaml = require("js-yaml");
-const path = require("path");
-const { readYamlFile } = require("../../fileUtils");
+import fs from "fs";
+import yaml from "js-yaml";
+import path from "path";
+import { readYamlFile } from "../../fileUtils";
 
-function getSheets(yamlData) {
+export function getSheets(yamlData) {
   let sheets = {};
-  const obj = yaml.load(yamlData);
+  const obj: any = yaml.load(yamlData);
 
   for (const key in obj) {
     if (obj.hasOwnProperty(key)) {
@@ -17,7 +17,7 @@ function getSheets(yamlData) {
   return sheets;
 }
 
-function addRow(sheet, row) {
+export function addRow(sheet, row) {
   console.log(row);
   const ob = {
     path: row.path,
@@ -30,7 +30,7 @@ function addRow(sheet, row) {
   sheet.push(ob);
 }
 
-function sheetsToYAML(sheets) {
+export function sheetsToYAML(sheets) {
   let obj = {};
   console.log(sheets);
   for (const key in sheets) {
@@ -51,45 +51,9 @@ function listDetailedPaths(yamlString) {
     let detailedPaths = [];
 
     // Recursive function to explore each key and sub-key
-    function exploreObject(subObj, currentPath) {
-      for (const key in subObj) {
-        // Check if it's an own property and not inherited
-        if (subObj.hasOwnProperty(key)) {
-          // Construct the new path
-          const newPath = currentPath ? `${currentPath}.${key}` : key;
-
-          // If the value is an object and not null or an array, check for properties
-          if (
-            typeof subObj[key] === "object" &&
-            subObj[key] !== null &&
-            !Array.isArray(subObj[key])
-          ) {
-            // Check if the object at this path has the specific properties
-            if (
-              ["required", "type", "owner", "usage", "description"].every(
-                (prop) => subObj[key].hasOwnProperty(prop)
-              )
-            ) {
-              // Store the detailed information about the path and properties
-              detailedPaths.push({
-                path: newPath,
-                required: subObj[key].required,
-                type: subObj[key].type,
-                owner: subObj[key].owner,
-                usage: subObj[key].usage,
-                description: subObj[key].description,
-              });
-            }
-
-            // Recurse into the sub-object
-            exploreObject(subObj[key], newPath);
-          }
-        }
-      }
-    }
 
     // Start the recursive exploration
-    exploreObject(obj, "");
+    detailedPaths = exploreObject(obj, "", detailedPaths);
 
     // Return the array of detailed paths
     return detailedPaths;
@@ -98,7 +62,42 @@ function listDetailedPaths(yamlString) {
     return [];
   }
 }
+function exploreObject(subObj, currentPath, detailedPaths) {
+  for (const key in subObj) {
+    // Check if it's an own property and not inherited
+    if (subObj.hasOwnProperty(key)) {
+      // Construct the new path
+      const newPath = currentPath ? `${currentPath}.${key}` : key;
 
+      // If the value is an object and not null or an array, check for properties
+      if (
+        typeof subObj[key] === "object" &&
+        subObj[key] !== null &&
+        !Array.isArray(subObj[key])
+      ) {
+        // Check if the object at this path has the specific properties
+        if (
+          ["required", "type", "owner", "usage", "description"].every((prop) =>
+            subObj[key].hasOwnProperty(prop)
+          )
+        ) {
+          // Store the detailed information about the path and properties
+          detailedPaths.push({
+            path: newPath,
+            required: subObj[key].required,
+            type: subObj[key].type,
+            owner: subObj[key].owner,
+            usage: subObj[key].usage,
+            description: subObj[key].description,
+          });
+        }
+        // Recurse into the sub-object
+        detailedPaths = exploreObject(subObj[key], newPath, detailedPaths);
+      }
+    }
+  }
+  return detailedPaths;
+}
 function convertDetailedPathsToNestedObjects(detailedPaths) {
   // Function to safely access nested properties
   function setPath(obj, path, value) {
@@ -141,5 +140,3 @@ function convertDetailedPathsToNestedObjects(detailedPaths) {
 //   console.log(data);
 //   // console.log();
 // })();
-
-module.exports = { getSheets, addRow, sheetsToYAML };

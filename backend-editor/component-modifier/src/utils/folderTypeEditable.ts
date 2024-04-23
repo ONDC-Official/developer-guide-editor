@@ -1,7 +1,9 @@
-const { Editable } = require("./Editable.js");
-const { EditableRegistry } = require("./EditableRegistry.js");
+import { Editable } from "./Editable";
+import { EditableRegistry } from "./EditableRegistry";
 
-class folderTypeEditable extends Editable {
+export abstract class folderTypeEditable extends Editable {
+  chilrenEditables: Editable[];
+  allowedList: string[];
   constructor(path, name) {
     super(path, name);
     this.chilrenEditables = [];
@@ -43,7 +45,7 @@ class folderTypeEditable extends Editable {
   }
   async update(Editable) {}
 
-  findParent(id, name, first) {
+  findParent(id, name, first): Editable | string {
     const searchChildEditable = (editable) => {
       if (!("chilrenEditables" in editable)) {
         return null;
@@ -69,7 +71,7 @@ class folderTypeEditable extends Editable {
     return target;
   }
 
-  getTarget(id, name, first) {
+  getTarget(id, name, first): Editable {
     const searchChildEditable = (editable) => {
       console.log(editable.getRegisterID(), editable.name);
       if (editable.getRegisterID() === id && editable.name === name) {
@@ -103,7 +105,3 @@ class folderTypeEditable extends Editable {
     return target;
   }
 }
-
-module.exports = {
-  folderTypeEditable,
-};

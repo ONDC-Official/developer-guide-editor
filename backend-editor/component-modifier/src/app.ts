@@ -1,13 +1,13 @@
-var createError = require("http-errors");
-var express = require("express");
-var path = require("path");
-var cookieParser = require("cookie-parser");
-var logger = require("morgan");
-const cors = require("cors");
-var indexRouter = require("./routes/index");
+import createError from "http-errors";
+import express from "express";
+import path from "path";
+import cookieParser from "cookie-parser";
+import logger from "morgan";
+import cors from "cors";
+import { app as indexRouter } from "./routes/index";
 // var usersRouter = require('./routes/users');
 
-var app = express();
+const app = express();
 app.use(
   cors((req, callback) => {
     const corsOptions = {
@@ -56,5 +56,3 @@ const port = process.env.PORT || 1000;
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
-
-module.exports = app;

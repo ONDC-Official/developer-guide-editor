@@ -1,9 +1,10 @@
-fs_p = require("fs").promises;
+import fs_p from "fs/promises";
+import { Editable } from "./Editable";
 
-class EditableRegistry {
+export class EditableRegistry {
   static registry = {};
 
-  static register(cls) {
+  static register(cls: any) {
     this.registry[cls.REGISTER_ID] = cls;
   }
   static async create(type, path, name) {
@@ -35,11 +36,11 @@ class EditableRegistry {
             ID: "ATTRIBUTES_FOLDER",
             name: "attributes",
           });
-          const attributes = await fs_p.readdir((path = file.path), {
+          const attributes = await fs_p.readdir(file.path, {
             withFileTypes: true,
           });
-          const attr = comp.getTarget(ATTRIBUTES_FOLDER, "attributes", comp);
-          for (const attrFile in attributes) {
+          const attr = comp.getTarget("ATTRIBUTES_FOLDER", "attributes", comp);
+          for (const attrFile of attributes) {
             if (attrFile.isFile()) {
               attr.add({
                 ID: "ATTRIBUTE_FILE",
@@ -53,5 +54,3 @@ class EditableRegistry {
     return comp;
   }
 }
-
-module.exports = { EditableRegistry };

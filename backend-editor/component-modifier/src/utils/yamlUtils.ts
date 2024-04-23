@@ -1,8 +1,8 @@
-const fs = require("fs");
-const yaml = require("js-yaml");
-const path = require("path");
+import fs from "fs";
+import yaml from "js-yaml";
+import path from "path";
 
-async function updateYamlRefComponents(filePath, section, del = false) {
+export async function updateYamlRefComponents(filePath, section, del = false) {
   await updateYamlRef(
     filePath,
     section,
@@ -10,7 +10,7 @@ async function updateYamlRefComponents(filePath, section, del = false) {
     del
   );
 }
-async function updateYamlRefAttr(filePath, section, del = false) {
+export async function updateYamlRefAttr(filePath, section, del = false) {
   await updateYamlRef(
     filePath,
     section,
@@ -42,7 +42,7 @@ async function updateYamlRef(filePath, section, updateLike, del = false) {
   }
 }
 
-async function overrideYaml(filePath, yamlData) {
+export async function overrideYaml(filePath, yamlData) {
   try {
     const stats = await fs.promises.stat(filePath);
     if (!stats.isFile()) {
@@ -64,5 +64,3 @@ async function overrideYaml(filePath, yamlData) {
 //   );
 //   // updateYamlRefAttr('./index.yaml', 'new_section');
 // })();
-
-module.exports = { updateYamlRefComponents, updateYamlRefAttr, overrideYaml };

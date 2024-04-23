@@ -1,9 +1,12 @@
-const fs = require("fs");
+import fs from "fs";
 const fs_p = require("fs").promises;
-const path = require("path");
-const yaml = require("js-yaml");
+import path from "path";
+import yaml from "js-yaml";
 
-async function createIndexYaml(relativeFolderPath, removeContent = true) {
+export async function createIndexYaml(
+  relativeFolderPath,
+  removeContent = true
+) {
   const folderPath = path.join(__dirname, relativeFolderPath);
   console.log("Resolved folder path:", folderPath);
   const indexYamlPath = path.join(folderPath, "index.yaml");
@@ -29,7 +32,7 @@ async function createIndexYaml(relativeFolderPath, removeContent = true) {
   }
 }
 
-async function deleteFile(filePath) {
+export async function deleteFile(filePath) {
   try {
     await fs_p.unlink(filePath);
     console.log("File deleted successfully!");
@@ -38,7 +41,7 @@ async function deleteFile(filePath) {
   }
 }
 // Function to delete a folder synchronously at a given path
-function deleteFolderSync(folderPath) {
+export function deleteFolderSync(folderPath) {
   try {
     fs.rmSync(folderPath, { recursive: true, force: true });
     console.log("Folder successfully deleted");
@@ -46,7 +49,7 @@ function deleteFolderSync(folderPath) {
     console.error("Error deleting the folder:", error);
   }
 }
-async function readYamlFile(filePath) {
+export async function readYamlFile(filePath) {
   try {
     const fileData = await fs_p.readFile(filePath, "utf8");
     return fileData;
@@ -56,7 +59,7 @@ async function readYamlFile(filePath) {
   }
 }
 
-async function copyDir(
+export async function copyDir(
   src,
   dest,
   ignoreFiles = [
@@ -108,5 +111,3 @@ console.log(__dirname);
 //     console.error("Error testing getFileStructureRelative:", err);
 //   }
 // })();
-
-module.exports = { createIndexYaml, readYamlFile, copyDir, deleteFolderSync };
