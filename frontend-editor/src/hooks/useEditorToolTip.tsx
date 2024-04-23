@@ -1,28 +1,36 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import "tippy.js/animations/perspective-subtle.css";
 import EditorToolTip from "../components/ui/editor-tool-tip";
-interface TooltipProps {
+import { Editable } from "@/components/file-structure";
+interface TippyProps {
   content: JSX.Element;
   hideOnClick: boolean;
   visible: boolean;
   interactive: boolean;
-  onContextMenu: (event: React.MouseEvent) => void;
   onClickOutside: () => void;
   placement: any;
   popperOptions: any;
   getReferenceClientRect: any;
-  followCursor: boolean;
   animation: any;
-  onMouseEnter: any;
-  onMouseLeave: any;
-  hover: boolean;
-  data: any;
 }
-export default function useEditorToolTip() {
+
+interface TooltipProps {
+  data: any;
+  setButtonStates: any;
+  onContextMenu: (event: React.MouseEvent) => void;
+  followCursor: boolean;
+  onMouseOver: any;
+  onMouseOut: any;
+  hover: boolean;
+  tippyProps?: TippyProps;
+}
+
+export default function useEditorToolTip(buttonStates = [true, true, true]) {
   const [visible, setVisible] = useState(false);
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [hover, setHover] = useState(false);
-  const data = useRef("NAN");
+  const data = useRef<Editable>({ name: "", registerID: "" });
+
   const handleContextMenu = (event: any) => {
     event.preventDefault(); // Prevent the default context menu
     event.stopPropagation(); // Prevent the event from bubbling up
@@ -44,7 +52,6 @@ export default function useEditorToolTip() {
   }, []);
 
   const handleClickOutside = () => {
-    console.log("click outside");
     setVisible(false); // Hide the tooltip on outside click
   };
 
@@ -59,43 +66,53 @@ export default function useEditorToolTip() {
     y: cursorPos.y,
     toJSON: () => null,
   });
+
   return {
     data: data,
-    content: <EditorToolTip data={data.current} />,
-    visible: visible,
-    interactive: true,
     onContextMenu: handleContextMenu,
-    onClickOutside: handleClickOutside,
-    placement: "right-start",
-    animation: "perspective-subtle",
     followCursor: true,
-    popperOptions: {
-      strategy: "fixed", // Ensures the tooltip is placed based on the fixed position of the cursor
-      modifiers: [
-        {
-          name: "offset",
-          options: {
-            offset: [0, 10], // Adjust offset from the cursor as needed
-          },
-        },
-        {
-          name: "computeStyles",
-          options: {
-            adaptive: false, // Prevents shifting the tooltip when the cursor moves
-            gpuAcceleration: false, // Avoids using transform for positioning (important for precise placement)
-          },
-        },
-      ],
-    },
-    getReferenceClientRect: onPlace,
-    onMouseEnter: (e: any) => {
+    onMouseOver: (e: any) => {
       e.stopPropagation();
       setHover(true);
     },
-    onMouseLeave: (e: any) => {
+    onMouseOut: (e: any) => {
       e.stopPropagation();
       setHover(false);
     },
     hover: hover,
+    tippyProps: {
+      content: (
+        <EditorToolTip
+          data={data.current}
+          showEdit={buttonStates[0]}
+          showAdd={buttonStates[1]}
+          showDelete={buttonStates[2]}
+        />
+      ),
+      visible: visible,
+      interactive: true,
+      onClickOutside: handleClickOutside,
+      placement: "right-start",
+      animation: "perspective-subtle",
+      popperOptions: {
+        strategy: "fixed", // Ensures the tooltip is placed based on the fixed position of the cursor
+        modifiers: [
+          {
+            name: "offset",
+            options: {
+              offset: [0, 10], // Adjust offset from the cursor as needed
+            },
+          },
+          {
+            name: "computeStyles",
+            options: {
+              adaptive: false, // Prevents shifting the tooltip when the cursor moves
+              gpuAcceleration: false, // Avoids using transform for positioning (important for precise placement)
+            },
+          },
+        ],
+      },
+      getReferenceClientRect: onPlace,
+    },
   } as TooltipProps;
 }

@@ -1,8 +1,5 @@
-const {
-  Editable,
-  createIndexYaml,
-  EditableRegistry,
-} = require("./Editable.js");
+const { Editable } = require("./Editable.js");
+const { EditableRegistry } = require("./EditableRegistry.js");
 
 class folderTypeEditable extends Editable {
   constructor(path, name) {
@@ -17,6 +14,10 @@ class folderTypeEditable extends Editable {
    * @param {string} newEditable.name - The name of the editable.
    */
   async add(newEditable) {
+    console.log(this.chilrenEditables.map((s) => s.name));
+    if (this.chilrenEditables.map((s) => s.name).includes(newEditable.name)) {
+      throw new Error("Editable Already Exists!");
+    }
     this.chilrenEditables.push(
       await EditableRegistry.create(
         newEditable.ID,
@@ -27,21 +28,46 @@ class folderTypeEditable extends Editable {
   }
   /**
    * Adds a new editable to the childrenEditables array.
-   *
    * @param {Object} deleteTarget - The new editable object to delete.
-   * @param {string} deleteTarget.ID - The unique identifier for the editable.
-   * @param {string} deleteTarget.name - The name of the editable.
    */
   async remove(deleteTarget) {
-    console.log(deleteTarget);
+    console.log("DELETING", deleteTarget);
     const target = this.chilrenEditables.find(
       (s) =>
-        s.getRegisterID() === deleteTarget.ID && s.name === deleteTarget.name
+        s.getRegisterID() === deleteTarget.getRegisterID() &&
+        s.name === deleteTarget.name
     );
     this.chilrenEditables = this.chilrenEditables.filter((s) => s !== target);
+    console.log(target);
     await target.destroy();
   }
   async update(Editable) {}
+
+  findParent(id, name, first) {
+    const searchChildEditable = (editable) => {
+      if (!("chilrenEditables" in editable)) {
+        return null;
+      }
+      for (const childEditable of editable.chilrenEditables) {
+        if (
+          childEditable.getRegisterID() === id &&
+          childEditable.name === name
+        ) {
+          return editable;
+        }
+        const target = searchChildEditable(childEditable);
+        if (target) {
+          return target;
+        }
+      }
+      return null;
+    };
+    if (first.getRegisterID() === id && first.name === name) {
+      return "-1";
+    }
+    const target = searchChildEditable(first);
+    return target;
+  }
 
   getTarget(id, name, first) {
     const searchChildEditable = (editable) => {
@@ -49,16 +75,32 @@ class folderTypeEditable extends Editable {
       if (editable.getRegisterID() === id && editable.name === name) {
         return editable;
       }
+      if (!("chilrenEditables" in editable)) {
+        return null;
+      }
+      console.log(editable);
       for (const childEditable of editable.chilrenEditables) {
+        console.log(
+          "ITERATING: ",
+          childEditable.getRegisterID(),
+          childEditable.name
+        );
         const target = searchChildEditable(childEditable);
         if (target) {
+          console.log("FOUND!");
           return target;
         }
       }
-      console.log("No target found");
+      console.log("ITERATION FAILED!");
+      return null;
     };
 
-    return searchChildEditable(first);
+    const target = searchChildEditable(first);
+    if (!target) {
+      console.log("SEARCH FAILED!");
+      throw new Error("Editable Not Found!");
+    }
+    return target;
   }
 }
 

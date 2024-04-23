@@ -1,6 +1,15 @@
 // import { useEffect, useState } from "react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import HorizontalTabBar from "./horizontal-tab";
+import {
+  AttributeFileID,
+  AttributeFolderID,
+  sessionID,
+} from "../pages/home-page";
+import { getData } from "../utils/requestUtils";
+import { Editable } from "./file-structure";
+import useEditorToolTip from "../hooks/useEditorToolTip";
+import Tippy from "@tippyjs/react";
 const n = {
   nodes: [
     {
@@ -282,53 +291,149 @@ const n = {
   ],
 };
 
-const DisplayTable = ({ data = n.nodes }) => {
+const AttributesTable = () => {
+  const [activeFile, setActiveFile] = useState("");
+  const [activeTable, setActiveTable] = useState("");
+  const [files, setFiles] = useState<string[]>([]);
+  const [fileData, setFileData] = useState({}); // Data for the selected file
+
+  const tabRef = React.useRef(0);
+  const data = n.nodes;
+  useEffect(() => {
+    const fetchData = GetFiles(setFiles, setActiveFile, tabRef, getTableData);
+    fetchData();
+  }, []);
+  useEffect(() => {
+    (async () => {
+      await getTableData(activeFile);
+    })();
+  }, [activeFile]);
+  let tableNames: string[] = [];
+  async function getTableData(fileName: string) {
+    // Fetch data for the selected table
+    const tData = await getData({
+      sessionID: sessionID,
+      editableID: AttributeFileID,
+      editableName: fileName,
+    });
+    setFileData(tData);
+  }
+  function getTableNames() {
+    const tableNames = [];
+    for (let key in fileData) {
+      tableNames.push(key);
+    }
+    console.log("tableNames", tableNames);
+    return tableNames;
+  }
   return (
-    <div className="mt-3 ml-3 max-w-full overflow-auto">
+    <div className="mt-3 ml-3 max-w-full">
       <div className="flex w-full">
         <div className="flex-1">
-          <HorizontalTabBar items={["CREDIT", "RETAIL", "INSURANCE"]} />
+          <HorizontalTabBar
+            items={files}
+            editable={{ registerID: AttributeFileID, name: activeFile }}
+            setSelectedItem={(item: string) => {
+              setActiveFile(item);
+              tabRef.current = files.indexOf(item);
+            }}
+            selectedItem={activeFile}
+            onOpen={GetFiles(setFiles, setActiveFile, tabRef, getTableData)}
+          />
         </div>
         <div className="flex-1">
-          <HorizontalTabBar items={["ISSUE", "ON_ISSUE"]} />
+          <HorizontalTabBar
+            items={getTableNames()}
+            editable={{ registerID: AttributeFileID, name: activeFile }}
+            setSelectedItem={setActiveTable}
+            selectedItem={activeTable}
+            onOpen={() => {}}
+          />
         </div>
       </div>
       <div style={{ overflowX: "auto" }}>
         {" "}
         {/* This div will handle horizontal scrolling if necessary */}
-        <table className="w-full mt-2 border-collapse table-auto">
-          <thead>
-            <tr>
-              {data.length > 0 &&
-                Object.keys(data[0]).map((key, index) => (
-                  <th
-                    key={index}
-                    className="px-4 py-2 text-left bg-gray-100 border-b-2 border-gray-200"
-                    style={{ minWidth: "120px", maxWidth: "200px" }} // Controlling column width
-                  >
-                    {key.toUpperCase()}
-                  </th>
-                ))}
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((row, index) => (
-              <tr key={index}>
-                {Object.values(row).map((value, idx) => (
-                  <td
-                    key={idx}
-                    className="px-4 py-2 text-left border-b border-gray-200 align-top break-words"
-                    style={{ maxWidth: "200px" }} // Prevents cell from expanding too much
-                  >
-                    {value}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <DataTable
+          activeFile={activeFile}
+          activeTable={activeTable}
+          fileData={fileData}
+        />
       </div>
     </div>
   );
 };
-export default DisplayTable;
+export default AttributesTable;
+
+function DataTable({
+  activeFile,
+  activeTable,
+  fileData,
+}: {
+  activeFile: string;
+  activeTable: string;
+  fileData: any;
+}) {
+  const data = fileData[activeTable] || [];
+  const headTooltip = useEditorToolTip([false, true, true]);
+  headTooltip.data.current = {
+    name: activeFile,
+    registerID: AttributeFileID,
+  } as Editable;
+  return (
+    <table className="w-full mt-2 border-collapse table-auto">
+      <thead
+        onContextMenu={headTooltip.onContextMenu}
+        onMouseOver={headTooltip.onMouseOver}
+        onMouseOut={headTooltip.onMouseOut}
+      >
+        <Tippy {...headTooltip.tippyProps}>
+          <tr className="hover:bg-blue-200">
+            {data.length > 0 &&
+              Object.keys(data[0]).map((key, index) => (
+                <th
+                  key={index}
+                  className="px-4 py-2 text-left border-b-2 border-gray-200 "
+                  style={{ minWidth: "120px", maxWidth: "200px" }} // Controlling column width
+                >
+                  {key.toUpperCase()}
+                </th>
+              ))}
+          </tr>
+        </Tippy>
+      </thead>
+      <tbody>
+        {data.map((row: any, index: any) => (
+          <tr key={index}>
+            {Object.values(row).map((value: any, idx) => (
+              <td
+                key={idx}
+                className="px-4 py-2 text-left border-b border-gray-200 align-top break-words"
+                style={{ maxWidth: "200px" }} // Prevents cell from expanding too much
+              >
+                {value}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+function GetFiles(
+  setFiles: React.Dispatch<React.SetStateAction<string[]>>,
+  setActiveFile: React.Dispatch<React.SetStateAction<string>>,
+  tabRef: React.MutableRefObject<number>,
+  getTableData: any
+) {
+  return async () => {
+    const files = await getData({
+      sessionID: sessionID,
+      editableID: AttributeFolderID,
+      editableName: "attributes",
+    });
+    setFiles(files);
+    setActiveFile(files[tabRef.current]);
+  };
+}

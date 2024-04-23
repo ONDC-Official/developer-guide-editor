@@ -4,7 +4,7 @@ const {
 const {
   ComponentsType,
 } = require("./ComponentType/ComponentsFolderTypeEditable");
-const { EditableRegistry } = require("./Editable");
+const { EditableRegistry } = require("./EditableRegistry");
 const { AttributeFile } = require("./FileTypeEditable");
 
 function initRegistry() {
@@ -13,4 +13,8 @@ function initRegistry() {
   EditableRegistry.register(AttributeFile);
 }
 
-module.exports = { initRegistry };
+const FixedNames = {
+  ATTRIBUTES_FOLDER: "attributes",
+};
+
+module.exports = { initRegistry, FixedNames };

@@ -22,9 +22,14 @@ class ComponentsType extends folderTypeEditable {
     await updateYamlRefComponents(this.yamlPathLong, addedChild.name);
   }
   async getData() {
-    console.log("hello");
     if (this.chilrenEditables.length === 0) return [];
-    return this.chilrenEditables.map((editable) => editable.name);
+    const data = this.chilrenEditables.map((editable) => {
+      return {
+        name: editable.name,
+        registerID: editable.getRegisterID(),
+      };
+    });
+    return data;
   }
   async remove(deleteTarget) {
     await super.remove(deleteTarget);
@@ -33,6 +38,7 @@ class ComponentsType extends folderTypeEditable {
   async saveData(path) {
     await copyDir(this.longPath, path);
   }
+  async loadData() {}
 }
 
 module.exports = { ComponentsType };

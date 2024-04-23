@@ -1,13 +1,22 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect } from "react";
+import { Editable } from "../file-structure";
+import Dropdown from "../horizontal-tab";
+import { FormFactory } from "./FormFactory";
 
-export default function EditModal({ isOpen, setIsOpen, item }: any) {
-  const [isInvalid, setIsInvalid] = useState(false);
-  const [postError, setPostError] = useState(false);
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
-  };
+interface EditModalProps {
+  isOpen: any;
+  setIsOpen: any;
+  item: Editable;
+  editState: boolean;
+}
 
+export default function EditModal({
+  isOpen,
+  setIsOpen,
+  item,
+  editState,
+}: EditModalProps) {
   async function handleSave() {
     closeModal();
   }
@@ -15,11 +24,11 @@ export default function EditModal({ isOpen, setIsOpen, item }: any) {
   function closeModal() {
     setIsOpen(false);
   }
-
+  // const form = FormFactory(item);
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={closeModal}>
+        <Dialog as="div" className=" relative z-20" onClose={closeModal}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -29,11 +38,21 @@ export default function EditModal({ isOpen, setIsOpen, item }: any) {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-black/25" />
+            <div
+              className="fixed inset-0 bg-black/25 "
+              onMouseOver={(e) => {
+                e.stopPropagation();
+              }}
+            />
           </Transition.Child>
 
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
+          <div
+            className="fixed inset-0 overflow-y-auto "
+            onContextMenu={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            <div className="flex min-h-full items-center justify-center p-4 text-left">
               <Transition.Child
                 as={Fragment}
                 enter="ease-out duration-300"
@@ -43,37 +62,17 @@ export default function EditModal({ isOpen, setIsOpen, item }: any) {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className="w-full max-w-screen-sm transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                   <Dialog.Title
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900"
                   >
-                    {item ? "Edit Domain" : "Add Domain"}
+                    {editState
+                      ? `Edit ${item.registerID}`
+                      : `Add In ${item.registerID}`}
                   </Dialog.Title>
                   <div className="mt-2"></div>
-                  {/* <div className="mt-1">
-                    {isInvalid ? "INVALID INPUT DATA" : "DATA VALID"}
-                  </div> */}
-                  <div className="mt-4">
-                    <button
-                      type="button"
-                      className={`inline-flex justify-center rounded-md px-4 py-2 text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
-                        isInvalid
-                          ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                          : "border border-transparent bg-blue-100 text-blue-900 hover:bg-blue-200"
-                      }`}
-                      onClick={handleSave}
-                    >
-                      Save
-                    </button>
-                  </div>
-                  {postError ? (
-                    <label className="block mt-2 text-sm font-medium text-red-700">
-                      Error occurred while posting domain!
-                    </label>
-                  ) : (
-                    ""
-                  )}
+                  <FormFactory data={item} setIsOpen={setIsOpen} />
                 </Dialog.Panel>
               </Transition.Child>
             </div>

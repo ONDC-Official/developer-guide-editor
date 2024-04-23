@@ -1,28 +1,23 @@
 import "./App.css";
-import React from "react";
-import DisplayTable from "./components/attribute-table";
-import {
-  FileStructureSidebar,
-  // FileSystemItem,
-  // DirectoryItem,
-  // FileItem,
-} from "./components/file-structure";
+import React, { useEffect } from "react";
 import { OndcTitle } from "./components/title";
 import TestButton from "./components/ui/tooltip-text";
+import { getData } from "./utils/requestUtils";
+import GitLogin from "./pages/login-page";
+import { HomePage } from "./pages/home-page";
+import { DataContext } from "./context/dataContext";
 // import files from "./files.json";
 
 function App() {
+  const [loggedIn, setLoggedIn] = React.useState(false);
   return (
     <>
       <OndcTitle />
-      <div className="flex w-full h-full overflow-hidden">
-        <div className="w-64 h-fit">
-          <FileStructureSidebar />
-        </div>
-        <div className="flex-1 overflow-auto mt-5 py-4 px-4">
-          <DisplayTable />
-        </div>
-      </div>
+      {loggedIn ? (
+        <HomePage />
+      ) : (
+        <GitLogin loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+      )}
     </>
   );
 }

@@ -1,17 +1,19 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useEffect, useState } from "react";
+import { Editable } from "../file-structure";
+import { deleteData } from "../../utils/requestUtils";
 
 interface ModalProps {
   isOpen: any;
   setIsOpen: any;
-  item: any;
+  editable: Editable;
   onConfirm: any;
 }
 
 export default function DeleteModal({
   isOpen,
   setIsOpen,
-  item: message,
+  editable,
   onConfirm: onConfirm,
 }: ModalProps) {
   function closeModal() {
@@ -20,13 +22,19 @@ export default function DeleteModal({
 
   function handleSave() {
     onConfirm();
-    closeModal();
+    deleteData({
+      sessionID: "test",
+      editableID: editable.registerID,
+      editableName: editable.name,
+    }).then((res) => {
+      closeModal();
+    });
   }
 
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={closeModal}>
+        <Dialog as="div" className="relative z-100" onClose={closeModal}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -57,7 +65,7 @@ export default function DeleteModal({
                   >
                     Confirm
                   </Dialog.Title>
-                  <div>{message}</div>
+                  <div>{`Are you sure you want to delete ${editable.registerID}?`}</div>
                   <div className="mt-4 flex justify-end">
                     <button
                       type="button"

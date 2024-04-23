@@ -3,7 +3,7 @@ const { folderTypeEditable } = require("../../folderTypeEditable.js");
 const { updateYamlRefAttr } = require("../../yamlUtils.js");
 
 class AttributesFolderTypeEditable extends folderTypeEditable {
-  static REGISTER_ID = "ATTRIBUTES-FOLDER";
+  static REGISTER_ID = "ATTRIBUTE_FOLDER";
   constructor(path, id) {
     console.log(path);
     super(path, id);
@@ -11,7 +11,10 @@ class AttributesFolderTypeEditable extends folderTypeEditable {
   }
   async add(new_editable) {
     if (!this.allowedChildren.includes(new_editable.ID)) {
-      throw new Error("Attributes only allow ATTRIBUTE-FILE children.");
+      console.log(new_editable);
+      throw new Error(
+        `Attributes only allow ${AttributeFile.REGISTER_ID} as children.`
+      );
     }
     await super.add(new_editable);
     const addedChild = this.chilrenEditables.find(
@@ -21,6 +24,7 @@ class AttributesFolderTypeEditable extends folderTypeEditable {
   }
   async getData() {
     if (this.chilrenEditables.length === 0) return [];
+    console.log(this.chilrenEditables);
     return this.chilrenEditables.map((editable) => editable.name);
   }
   async remove(deleteTarget) {

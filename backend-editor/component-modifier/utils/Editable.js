@@ -4,19 +4,23 @@ createIndexYaml = require("./fileUtils").createIndexYaml;
 
 class Editable {
   static REGISTER_ID = "EDITABLE";
+
   constructor(path, name) {
     if (this.constructor == Editable) {
       throw new Error("Abstract classes can't be instantiated.");
     }
     this.longPath = path;
     this.name = name;
-    // this.initIndexYaml(path);
   }
   async destroy() {
+    console.log("Destroying", this.constructor.REGISTER_ID, this.folderPath);
     await deleteFolderSync(this.folderPath);
   }
-  async initIndexYaml(path) {
-    [this.yamlPathLong, this.folderPath] = await createIndexYaml(path);
+  async initIndexYaml(path, removeContent = true) {
+    [this.yamlPathLong, this.folderPath] = await createIndexYaml(
+      path,
+      removeContent
+    );
     console.log("YAML Path:", this.yamlPathLong);
   }
 
@@ -38,24 +42,9 @@ class Editable {
   getRegisterID() {
     return this.constructor.REGISTER_ID;
   }
-}
-
-class EditableRegistry {
-  static registry = {};
-
-  static register(cls) {
-    this.registry[cls.REGISTER_ID] = cls;
-  }
-  static async create(type, path, name) {
-    const cls = this.registry[type];
-    if (!cls) {
-      throw new Error(`No registered class with ID ${type}`);
-    }
-    var object = new cls(path, name);
-    await object.initIndexYaml(path);
-    return object;
+  async loadData() {
+    throw new Error("Method 'loadData()' must be implemented.");
   }
 }
 
 exports.Editable = Editable;
-exports.EditableRegistry = EditableRegistry;

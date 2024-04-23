@@ -3,11 +3,25 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
-
+const cors = require("cors");
 var indexRouter = require("./routes/index");
 // var usersRouter = require('./routes/users');
 
 var app = express();
+app.use(
+  cors((req, callback) => {
+    const corsOptions = {
+      methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS", // Allow these HTTP methods
+      credentials: true, // Allow cookies to be sent with the request
+      allowedHeaders: "Content-Type, Authorization, X-Requested-With", // Allow only these headers
+      corsOptions: {
+        origin: "*",
+      },
+    };
+
+    callback(null, corsOptions); // callback expects two parameters: error and options
+  })
+);
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));

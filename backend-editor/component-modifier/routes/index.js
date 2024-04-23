@@ -1,7 +1,7 @@
 const express = require("express");
 const session = require("express-session");
-const { initRegistry } = require("../utils/EditableRegister");
-const EditableRegistry = require("../utils/Editable").EditableRegistry;
+const { initRegistry } = require("../utils/RegisterList");
+const { EditableRegistry } = require("../utils/EditableRegistry");
 
 const sessionInstances = {};
 initRegistry();
@@ -18,73 +18,90 @@ app.use(
   })
 );
 
-app.use(async (req, res, next) => {
-  if (!sessionInstances[req.body.sessionID]) {
-    console.log("Session ID:", req.body.sessionID);
+function checkQueryParams(req, res, next) {
+  const { editableID, editableName, sessionID } = req.query;
 
-    sessionInstances[req.body.sessionID] = await EditableRegistry.create(
-      "COMPONENTS-FOLDER",
+  // Check if both query parameters are present
+  if (!editableID || !editableName || !sessionID) {
+    // If any parameter is missing, send an error response
+    console.log("Missing required query parameters");
+    res.status(400).json({
+      error:
+        "Missing required query parameters. Please include all editableID, editableName,sessionID.",
+      errorMessage:
+        "Missing required query parameters. Please include all editableID, editableName,sessionID.",
+    });
+    return; // Prevent further execution
+  }
+  req.editableID = editableID;
+  req.editableName = editableName;
+  req.sessionID = sessionID;
+  next();
+}
+app.use(checkQueryParams);
+
+app.use(async (req, res, next) => {
+  if (!sessionInstances[req.sessionID]) {
+    sessionInstances[req.sessionID] = await EditableRegistry.loadComponent(
       "../../ONDC-NTS-Specifications/api/cp0",
       "cp0"
     );
-    console.log(sessionInstances);
   }
   next();
 });
 
-/**
- * body needs to have the following fields:
- * sessionID: string
- * targetID: string
- * targetName: string
- */
 app.use(async (req, res, next) => {
-  if (req.body.targetID && req.body.targetName) {
-    const comp = sessionInstances[req.body.sessionID];
-    let target = null;
-    try {
-      target = await comp.getTarget(
-        req.body.targetID,
-        req.body.targetName,
-        comp
-      );
-    } catch {
-      res.status(404).send("Editable Not Found!");
-    }
+  const comp = sessionInstances[req.sessionID];
+  let target = null;
+  try {
+    target = await comp.getTarget(req.editableID, req.editableName, comp);
+    console.log("target:", target);
     req.target = target;
+    next();
+  } catch {
+    res.status(404).send("Editable Not Found!");
   }
-  next();
 });
 
 app.get("/guide", async (req, res) => {
-  const data = await req.target.getData();
-  res.status(200).send(data);
+  console.log("test", req.editableID);
+  try {
+    const data = await req.target.getData();
+    res.status(200).send(data);
+  } catch (err) {
+    console.log(err);
+    res.status(404).send("Data Not Found!");
+  }
 });
 
-/**
- * body needs to have the following fields:
- * Add: object for relevant addition
- */
 app.post("/guide", async (req, res) => {
-  await req.target.add(req.body.operation);
-  res.status(200).send("Data Added!");
+  try {
+    await req.target.add(req.body);
+    res.status(200).send("Data Added!");
+  } catch (err) {
+    console.log(err);
+    res.status(400).send("Data Not Added!");
+  }
 });
 
-/**
- * body needs to have the following fields:
- * Update: object for relevant updation
- */
 app.put("/guide", async (req, res) => {
-  await req.target.update(req.body.operation);
+  await req.target.update(req.body);
   res.status(200).send("Data Updated!");
 });
 
-/**
- * body needs to have the following fields:
- * Delete: object for relevant deletion
- */
 app.delete("/guide", async (req, res) => {
-  await req.target.remove(req.body.operation);
+  const comp = sessionInstances[req.sessionID];
+  const parent = await comp.findParent(req.editableID, req.editableName, comp);
+  console.log("PARENT IS ", parent);
+  if (parent == "-1") {
+    comp.destroy();
+    delete sessionInstances[req.sessionID];
+  } else if (parent != null) {
+    await parent.remove(req.target);
+  }
+  if (parent == null) {
+    res.status(404).send("Editable Not Found!");
+  }
   res.status(200).send("Data Deleted!");
 });
 

@@ -11,10 +11,14 @@ async function updateYamlRefComponents(filePath, section, del = false) {
   );
 }
 async function updateYamlRefAttr(filePath, section, del = false) {
-  await updateYamlRef(filePath, section, {
-    attribute_set: { $ref: `./${section}/index.yaml` },
-    delete: del,
-  });
+  await updateYamlRef(
+    filePath,
+    section,
+    {
+      attribute_set: { $ref: `./${section}/index.yaml` },
+    },
+    del
+  );
 }
 async function updateYamlRef(filePath, section, updateLike, del = false) {
   try {

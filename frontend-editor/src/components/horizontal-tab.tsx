@@ -1,52 +1,65 @@
 import React, { useState } from "react";
+import Tippy from "@tippyjs/react";
+import useEditorToolTip from "../hooks/useEditorToolTip";
+import { Editable } from "./file-structure";
 
-const HorizontalTapBar = ({ items }: any) => {
+const Dropdown = ({
+  items,
+  setSelectedItem,
+  selectedItem,
+  onOpen,
+  editable,
+}: {
+  items: string[];
+  setSelectedItem: (item: string) => void;
+  selectedItem: string;
+  onOpen: () => void;
+  editable: Editable;
+}) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
-
-  const toggleDropdown = () => setIsOpen(!isOpen);
-  const handleItemClick = (item: any) => {
-    setSelectedItem(item);
-    setIsOpen(false);
+  const tooltip = useEditorToolTip();
+  tooltip.data.current = editable;
+  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedItem(event.target.value);
   };
-  console.log(items);
+
+  const handleFocus = () => {
+    if (!isOpen) {
+      setIsOpen(true);
+      onOpen(); // Call onOpen the first time it is opened
+    }
+  };
+
+  const handleBlur = () => {
+    setIsOpen(false);
+    onOpen();
+  };
+
   return (
-    <div className="relative w-full">
-      <button
-        onClick={toggleDropdown}
-        className="bg-gray-200 text-gray-800 py-2 px-4 rounded inline-flex items-center w-10/12"
-      >
-        <span>{selectedItem || "Select an option"}</span>
-        <svg
-          className="fill-current h-4 w-4 ml-2"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 20 20"
+    <div
+      className="relative w-3/4"
+      onContextMenu={tooltip.onContextMenu}
+      onMouseOver={tooltip.onMouseOver}
+      onMouseOut={tooltip.onMouseOut}
+    >
+      <Tippy {...tooltip.tippyProps}>
+        <select
+          value={selectedItem}
+          onChange={handleChange}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          className="bg-gray-200 text-gray-800 py-2 px-4 rounded w-full cursor-pointer"
         >
-          {isOpen ? (
-            <path d="M14.707 10.293a1 1 0 01-1.414 0L10 6.101 6.707 9.293a1 1 0 11-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" />
-          ) : (
-            <path d="M5.293 9.293a1 1 0 011.414 0L10 13.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-          )}
-        </svg>
-      </button>
-      {isOpen && (
-        <ul className="absolute bg-gray-300 w-full mt-1 rounded z-10">
-          {items.map((item: any, index: number) => (
-            <li
-              key={index}
-              className="py-2 px-4 hover:bg-blue-500 hover:text-white cursor-pointer"
-              onClick={() => handleItemClick(item)}
-            >
+          {selectedItem ? null : <option value="">Select an option</option>}
+          {items.map((item, index) => (
+            <option key={index} value={item}>
               {item}
-            </li>
+            </option>
           ))}
-        </ul>
-      )}
-      <button className="bg-blue-500 py-2 px-4 text-white rounded inline-flex items-center ml-2">
-        Add
-      </button>
+        </select>
+      </Tippy>
     </div>
   );
 };
 
-export default HorizontalTapBar;
+export default Dropdown;

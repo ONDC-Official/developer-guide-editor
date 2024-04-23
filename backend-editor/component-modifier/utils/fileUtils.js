@@ -3,17 +3,19 @@ const fs_p = require("fs").promises;
 const path = require("path");
 const yaml = require("js-yaml");
 
-async function createIndexYaml(relativeFolderPath) {
+async function createIndexYaml(relativeFolderPath, removeContent = true) {
   const folderPath = path.join(__dirname, relativeFolderPath);
   console.log("Resolved folder path:", folderPath);
   const indexYamlPath = path.join(folderPath, "index.yaml");
   const structure = "";
 
-  if (fs.existsSync(indexYamlPath)) {
-    console.log("index.yaml already exists!");
+  if (fs.existsSync(indexYamlPath) && removeContent) {
+    console.log("index.yaml already exists, deleting it...");
+    fs.unlinkSync(indexYamlPath);
+  } else if (fs.existsSync(indexYamlPath)) {
+    console.log("index.yaml already exists, not deleting it...");
     return [indexYamlPath, folderPath];
   }
-
   try {
     if (!fs.existsSync(folderPath)) {
       console.log("Folder does not exist, creating it...");
