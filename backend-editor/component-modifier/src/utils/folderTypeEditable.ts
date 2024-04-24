@@ -10,12 +10,11 @@ export abstract class folderTypeEditable extends Editable {
   }
   /**
    * Adds a new editable to the childrenEditables array.
-   *
    * @param {Object} newEditable - The new editable object to add.
    * @param {string} newEditable.ID - The unique identifier for the editable.
    * @param {string} newEditable.name - The name of the editable.
    */
-  async add(newEditable) {
+  async add(newEditable: { ID: string; name: string }) {
     console.log(this.chilrenEditables.map((s) => s.name));
     if (this.chilrenEditables.map((s) => s.name).includes(newEditable.name)) {
       throw new Error("Editable Already Exists!");

@@ -8,6 +8,7 @@ const d = [""]; // Sample data
 export interface Editable {
   name: string;
   registerID: string;
+  path: string;
   query?: any;
 }
 
@@ -18,19 +19,19 @@ interface ComponentsStructureProps {
 export const ComponentsStructure = ({
   components,
 }: ComponentsStructureProps) => {
-  // const [data, setData] = useState(components.map((c) => c.name));
-  // const [activeTab, setActiveTab] = useState(data[0]);
   const dataContext = useContext(DataContext);
   const handleTabClick = (item: Editable) => {
     dataContext.setActiveEditable(item);
   };
-
+  console.log(components);
   const tooltip = useEditorToolTip();
   tooltip.data.current = {
     name: CompFolderName,
     registerID: CompFolderID,
+    path: "cpo",
   } as Editable;
 
+  if (!components) return <></>;
   return (
     <div
       className={`flex flex-col h-screen w-64 hover:bg-blue-100 fixed left-0 z-50 top-20`}
@@ -70,9 +71,9 @@ function Tab({ item, index, activeTab, handleTabClick }: any) {
           <button
             key={item.name + item.registerID}
             onClick={() => handleTabClick(item)}
-            className={tabClass(activeTab.name === item.name)}
+            className={tabClass(activeTab?.name === item.name)}
           >
-            {thisItem.name.toUpperCase()}
+            {thisItem?.name.toUpperCase()}
           </button>
         </li>
       </Tippy>

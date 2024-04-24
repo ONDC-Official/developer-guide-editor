@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import logger from "morgan";
 import cors from "cors";
 import { app as indexRouter } from "./routes/index";
+import { app as pathRouter } from "./routes/users";
 // var usersRouter = require('./routes/users');
 
 const app = express();
@@ -33,7 +34,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/", indexRouter);
+app.use("/direct", indexRouter);
+app.use("/tree", pathRouter);
 // app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler

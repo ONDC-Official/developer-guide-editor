@@ -1,5 +1,8 @@
 import fs_p from "fs/promises";
-import { Editable } from "./Editable";
+
+import { ComponentsType } from "./ComponentType/ComponentsFolderTypeEditable";
+import { Dirent } from "fs";
+import { initRegistry } from "./RegisterList";
 
 export class EditableRegistry {
   static registry = {};
@@ -21,28 +24,30 @@ export class EditableRegistry {
     return object;
   }
   static async loadComponent(Componentpath, name) {
-    const comp = await EditableRegistry.create(
+    const comp: ComponentsType = await EditableRegistry.create(
       "COMPONENTS-FOLDER",
       Componentpath,
       name
     );
+
     console.log("Loading Component:", comp.folderPath);
-    const files = await fs_p.readdir(comp.folderPath, { withFileTypes: true });
-    for (const file of files) {
-      console.log(file.name);
+    const compFiles = await fs_p.readdir(comp.folderPath, {
+      withFileTypes: true,
+    });
+    for (const file of compFiles) {
       if (file.isDirectory()) {
         if (file.name === "attributes") {
-          comp.add({
-            ID: "ATTRIBUTES_FOLDER",
-            name: "attributes",
+          await comp.add({
+            ID: "ATTRIBUTE_FOLDER",
           });
-          const attributes = await fs_p.readdir(file.path, {
+
+          const attr = comp.getTarget("ATTRIBUTE_FOLDER", "attributes", comp);
+          const attrFiles = await fs_p.readdir(attr.folderPath, {
             withFileTypes: true,
           });
-          const attr = comp.getTarget("ATTRIBUTES_FOLDER", "attributes", comp);
-          for (const attrFile of attributes) {
-            if (attrFile.isFile()) {
-              attr.add({
+          for (const attrFile of attrFiles) {
+            if (attrFile.isDirectory()) {
+              await attr.add({
                 ID: "ATTRIBUTE_FILE",
                 name: attrFile.name,
               });
@@ -54,3 +59,13 @@ export class EditableRegistry {
     return comp;
   }
 }
+
+// (async () => {
+//   initRegistry();
+//   console.log(
+//     await EditableRegistry.loadComponent(
+//       "../../../ONDC-NTS-Specifications/api/cpo",
+//       "cp0"
+//     )
+//   );
+// })();

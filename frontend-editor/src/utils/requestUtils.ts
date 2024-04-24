@@ -1,11 +1,13 @@
 import axios from "axios";
 
-const baseURL = "http://localhost:1000/guide";
+const baseURL = "http://localhost:1000/tree/guide";
 
-export async function getData(params: any) {
-  console.log("body", params);
+export async function getData(path: string) {
+  console.log("path", path);
   try {
-    const response = await axios.get(baseURL, { params: params });
+    console.log(path);
+    const url = `${baseURL}/${path}`;
+    const response = await axios.get(url);
     return response.data;
   } catch (error: any) {
     console.log("error", error);
@@ -19,9 +21,10 @@ export async function getData(params: any) {
   }
 }
 
-export async function postData(params: any, data: any) {
+export async function postData(path: string, data: any) {
   try {
-    const response = await axios.post(baseURL, data, { params: params });
+    const url = `${baseURL}/${path}`;
+    const response = await axios.post(url, data);
     return response.data;
   } catch (error: any) {
     console.log("error", error);
@@ -35,9 +38,10 @@ export async function postData(params: any, data: any) {
   }
 }
 
-export async function deleteData(params: any) {
+export async function deleteData(path: string) {
   try {
-    const response = await axios.delete(baseURL, { params: params });
+    const url = `${baseURL}/${path}`;
+    const response = await axios.delete(url);
     return response.data;
   } catch (error: any) {
     console.log("error", error);

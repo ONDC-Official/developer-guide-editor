@@ -1,7 +1,8 @@
 import {
   getSheets,
   sheetsToYAML,
-  addRow,
+  addRows,
+  deleteRows,
 } from "./ComponentType/AttributeType/attributeYamlUtils";
 import { Editable } from "./Editable";
 import { readYamlFile } from "./fileUtils";
@@ -11,16 +12,20 @@ export abstract class FileTypeEditable extends Editable {
   constructor(path, name) {
     super(path, name);
   }
-  /** get data easy to display in ui */
-  // async getData() {
-  //   // return await this.rawToReadable(this.getRawData());
-  // }
-  /** get raw data from yaml */
-  async getRawData() {}
+}
 
-  async rawToReadable(yamlData) {}
+export interface AttributeRow {
+  path: string;
+  required?: string;
+  type?: string;
+  owner?: string;
+  usage?: string;
+  description: string;
+}
 
-  async readableToRaw(readableData) {}
+export interface AttributeOperation {
+  sheetName: string;
+  attributes?: AttributeRow[];
 }
 
 export class AttributeFile extends FileTypeEditable {
@@ -32,38 +37,59 @@ export class AttributeFile extends FileTypeEditable {
     super(path, name);
   }
 
-  /** performs addition in attribute index.yaml
-   *  @param {Object} additionObject - object to add
-   *  @param {string} additionObject.sheet - target sheet
-   *
-   */
-  async add(additionObject) {
-    const workSheet = additionObject.sheet;
+  async add(additionObject: AttributeOperation) {
+    console.log(additionObject);
+    const workSheet = additionObject.sheetName;
     const data = await this.getData();
-    if (!data[workSheet]) {
-      console.log("sheet not found");
-      await this.addSheet(workSheet, data);
+    if (!data[workSheet] || !additionObject.attributes) {
+      await this.addSheet(additionObject.sheetName, data);
+    } else if (!data[workSheet] && additionObject.attributes) {
+      throw new Error("Sheet not found, please add sheet first");
     } else {
-      console.log("sheet found");
       await this.addAttribute(additionObject, data);
     }
   }
+
   async getData() {
     return getSheets(await readYamlFile(this.yamlPathLong));
   }
-  async remove(something: any) {
-    throw new Error("Method not implemented.");
+  async remove(deletionObject: AttributeOperation) {
+    const workSheet = deletionObject.sheetName;
+    const data = await this.getData();
+    if (!data[workSheet]) {
+      throw new Error("Sheet not found");
+    }
+    if (!deletionObject.attributes) {
+      await this.removeSheet(deletionObject.sheetName, data);
+      return;
+    }
+    await this.removeAttributes(deletionObject, data);
   }
   async update(something: any) {
     throw new Error("Method not implemented.");
   }
   async addSheet(sheet, data) {
+    console.log(sheet, data);
     data[sheet] = [];
     var yml = sheetsToYAML(data);
     overrideYaml(this.yamlPathLong, yml);
   }
-  async addAttribute(attribute, data) {
-    addRow(data[attribute.sheet], attribute);
+  async removeSheet(workSheet: string, data: {}) {
+    delete data[workSheet];
+    const yml = sheetsToYAML(data);
+    overrideYaml(this.yamlPathLong, yml);
+  }
+  async addAttribute(attribute: AttributeOperation, data) {
+    data = addRows(data, attribute.sheetName, attribute.attributes);
+    const yml = sheetsToYAML(data);
+    overrideYaml(this.yamlPathLong, yml);
+  }
+  async removeAttributes(deletionObject: AttributeOperation, data: {}) {
+    data = deleteRows(
+      data,
+      deletionObject.sheetName,
+      deletionObject.attributes
+    );
     const yml = sheetsToYAML(data);
     overrideYaml(this.yamlPathLong, yml);
   }

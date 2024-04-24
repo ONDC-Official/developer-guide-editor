@@ -1,3 +1,4 @@
+import { error } from "console";
 import { copyDir } from "../fileUtils";
 import { folderTypeEditable } from "../folderTypeEditable";
 import { updateYamlRefComponents } from "../yamlUtils";
@@ -12,13 +13,17 @@ export class ComponentsType extends folderTypeEditable {
     super(path, id);
     this.allowedList = [AttributesFolderTypeEditable.REGISTER_ID];
   }
-  async add(new_editable) {
+  async add(new_editable: { ID: string }) {
     if (!this.allowedList.includes(new_editable.ID)) {
       throw new Error("GIVEN TYPE IS NOT ALLOWED IN " + this.getRegisterID());
     }
-    await super.add(new_editable);
+    const completeData = {
+      ID: new_editable.ID,
+      name: this.GetForcedName(new_editable.ID),
+    };
+    await super.add(completeData);
     const addedChild = this.chilrenEditables.find(
-      (s) => s.name === new_editable.name
+      (s) => s.name === completeData.name
     );
     await updateYamlRefComponents(this.yamlPathLong, addedChild.name);
   }
@@ -28,8 +33,10 @@ export class ComponentsType extends folderTypeEditable {
       return {
         name: editable.name,
         registerID: editable.getRegisterID(),
+        path: `${this.name}/${editable.name}`,
       };
     });
+    console.log(data);
     return data;
   }
   async remove(deleteTarget) {
@@ -40,6 +47,13 @@ export class ComponentsType extends folderTypeEditable {
     await copyDir(this.longPath, path);
   }
   async loadData() {}
+
+  GetForcedName(ID: string): string {
+    if (ID === AttributesFolderTypeEditable.REGISTER_ID) {
+      return "attributes";
+    }
+    return "UNKNOWN";
+  }
 }
 
 module.exports = { ComponentsType };

@@ -22,11 +22,7 @@ export default function DeleteModal({
 
   function handleSave() {
     onConfirm();
-    deleteData({
-      sessionID: "test",
-      editableID: editable.registerID,
-      editableName: editable.name,
-    }).then((res) => {
+    deleteData(editable.path).then((res) => {
       closeModal();
     });
   }

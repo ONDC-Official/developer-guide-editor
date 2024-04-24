@@ -1,11 +1,7 @@
 // import { useEffect, useState } from "react";
 import React, { useEffect, useState } from "react";
 import HorizontalTabBar from "./horizontal-tab";
-import {
-  AttributeFileID,
-  AttributeFolderID,
-  sessionID,
-} from "../pages/home-page";
+import { AttributeFileID, AttributeFolderID } from "../pages/home-page";
 import { getData } from "../utils/requestUtils";
 import { Editable } from "./file-structure";
 import useEditorToolTip from "../hooks/useEditorToolTip";
@@ -291,7 +287,7 @@ const n = {
   ],
 };
 
-const AttributesTable = () => {
+const AttributesTable = ({ path }: { path: string }) => {
   const [activeFile, setActiveFile] = useState("");
   const [activeTable, setActiveTable] = useState("");
   const [files, setFiles] = useState<string[]>([]);
@@ -300,7 +296,7 @@ const AttributesTable = () => {
   const tabRef = React.useRef(0);
   const data = n.nodes;
   useEffect(() => {
-    const fetchData = GetFiles(setFiles, setActiveFile, tabRef, getTableData);
+    const fetchData = GetFiles(setFiles, setActiveFile, tabRef, path);
     fetchData();
   }, []);
   useEffect(() => {
@@ -311,11 +307,7 @@ const AttributesTable = () => {
   let tableNames: string[] = [];
   async function getTableData(fileName: string) {
     // Fetch data for the selected table
-    const tData = await getData({
-      sessionID: sessionID,
-      editableID: AttributeFileID,
-      editableName: fileName,
-    });
+    const tData = await getData(`cpo/attributes/${fileName}`);
     setFileData(tData);
   }
   function getTableNames() {
@@ -332,19 +324,28 @@ const AttributesTable = () => {
         <div className="flex-1">
           <HorizontalTabBar
             items={files}
-            editable={{ registerID: AttributeFileID, name: activeFile }}
+            editable={{
+              registerID: AttributeFileID,
+              name: activeFile,
+              path: `cpo/attributes/${activeFile}`,
+            }}
             setSelectedItem={(item: string) => {
               setActiveFile(item);
               tabRef.current = files.indexOf(item);
             }}
             selectedItem={activeFile}
-            onOpen={GetFiles(setFiles, setActiveFile, tabRef, getTableData)}
+            onOpen={GetFiles(setFiles, setActiveFile, tabRef, path)}
           />
         </div>
         <div className="flex-1">
           <HorizontalTabBar
             items={getTableNames()}
-            editable={{ registerID: AttributeFileID, name: activeFile }}
+            editable={{
+              registerID: AttributeFileID,
+              name: activeFile,
+              path: `${path}/${activeFile}`,
+              query: { type: "addRow", sheet: activeTable },
+            }}
             setSelectedItem={setActiveTable}
             selectedItem={activeTable}
             onOpen={() => {}}
@@ -379,7 +380,10 @@ function DataTable({
   headTooltip.data.current = {
     name: activeFile,
     registerID: AttributeFileID,
+    path: `cpo/attributes/${activeFile}`,
+    query: { type: "addRow", sheet: activeTable },
   } as Editable;
+
   return (
     <table className="w-full mt-2 border-collapse table-auto">
       <thead
@@ -404,20 +408,41 @@ function DataTable({
       </thead>
       <tbody>
         {data.map((row: any, index: any) => (
-          <tr key={index}>
-            {Object.values(row).map((value: any, idx) => (
-              <td
-                key={idx}
-                className="px-4 py-2 text-left border-b border-gray-200 align-top break-words"
-                style={{ maxWidth: "200px" }} // Prevents cell from expanding too much
-              >
-                {value}
-              </td>
-            ))}
-          </tr>
+          <TableRow index={index} row={row} sheetName={activeTable} />
         ))}
       </tbody>
     </table>
+  );
+}
+
+function TableRow({ index, row, SheetName }: any) {
+  // console.log("index", index);
+  // row = index.row;
+  const tooltip = useEditorToolTip([true, false, true]);
+  tooltip.data.current = {
+    name: SheetName,
+    registerID: "ATTRIBUTE_FILE",
+    path: `cpo/attributes/${SheetName}`,
+    query: { type: "addRow", sheet: SheetName, rowData: row },
+  } as Editable;
+  return (
+    <Tippy {...tooltip.tippyProps}>
+      <tr
+        key={index}
+        onContextMenu={tooltip.onContextMenu}
+        className=" hover:bg-blue-200"
+      >
+        {Object.values(row).map((value: any, idx) => (
+          <td
+            key={idx}
+            className="px-4 py-2 text-left border-b border-gray-200 align-top break-words"
+            style={{ maxWidth: "200px" }} // Prevents cell from expanding too much
+          >
+            {value}
+          </td>
+        ))}
+      </tr>
+    </Tippy>
   );
 }
 
@@ -425,14 +450,10 @@ function GetFiles(
   setFiles: React.Dispatch<React.SetStateAction<string[]>>,
   setActiveFile: React.Dispatch<React.SetStateAction<string>>,
   tabRef: React.MutableRefObject<number>,
-  getTableData: any
+  path: string
 ) {
   return async () => {
-    const files = await getData({
-      sessionID: sessionID,
-      editableID: AttributeFolderID,
-      editableName: "attributes",
-    });
+    const files = await getData(path);
     setFiles(files);
     setActiveFile(files[tabRef.current]);
   };

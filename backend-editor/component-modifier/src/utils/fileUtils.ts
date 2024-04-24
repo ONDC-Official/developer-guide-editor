@@ -22,7 +22,7 @@ export async function createIndexYaml(
   try {
     if (!fs.existsSync(folderPath)) {
       console.log("Folder does not exist, creating it...");
-      await fs_p.mkdir(folderPath, { recursive: true });
+      await fs_p.mkdir(folderPath, { recursive: true, mode: 0o700 });
     }
     await fs_p.writeFile(indexYamlPath, structure, "utf8");
     console.log("index.yaml created successfully!");

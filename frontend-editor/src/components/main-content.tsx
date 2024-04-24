@@ -8,10 +8,12 @@ export function MainContent({
 }: {
   acitiveEditable: Editable;
 }) {
-  console.log(acitiveEditable);
+  // console.log(acitiveEditable);
   return (
     <>
-      {acitiveEditable.registerID === AttributeFolderID && <AttributesTable />}
+      {acitiveEditable?.registerID === AttributeFolderID && (
+        <AttributesTable path={acitiveEditable.path} />
+      )}
     </>
   );
 }

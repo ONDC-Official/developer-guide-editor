@@ -2,6 +2,7 @@ import fs from "fs";
 import yaml from "js-yaml";
 import path from "path";
 import { readYamlFile } from "../../fileUtils";
+import { AttributeRow } from "../../FileTypeEditable";
 
 export function getSheets(yamlData) {
   let sheets = {};
@@ -17,17 +18,47 @@ export function getSheets(yamlData) {
   return sheets;
 }
 
-export function addRow(sheet, row) {
-  console.log(row);
-  const ob = {
-    path: row.path,
-    required: row.required ?? "Optional",
-    type: row.type ?? "String",
-    owner: row.owner ?? "BAP",
-    usage: row.usage ?? "General",
-    description: row.description,
-  };
-  sheet.push(ob);
+export function addRows(data, sheetName: string, rows: AttributeRow[]) {
+  const sheet = data[sheetName] ?? [];
+  for (const row of rows) {
+    const ob = {
+      path: row.path,
+      required: row.required ?? "Optional",
+      type: row.type ?? "String",
+      owner: row.owner ?? "BAP",
+      usage: row.usage ?? "General",
+      description: row.description,
+    };
+    sheet.push(ob);
+  }
+  return data;
+}
+
+/**
+ * Removes rows from a specified sheet based on matching attributes.
+ *
+ * @param data The entire workbook data as an object where each key is a sheet name.
+ * @param sheetName The name of the sheet to modify.
+ * @param rows The rows to be removed, each containing attributes to match against.
+ * @returns Updated workbook data with the rows removed from the specified sheet.
+ */
+export function deleteRows(
+  data: Record<string, any[]>,
+  sheetName: string,
+  rows: AttributeRow[]
+): Record<string, any[]> {
+  // Extract the rows to remove from the input
+  const rowsToRemove = rows;
+  // Access the data of the specific sheet
+  const originalSheetData = data[sheetName];
+  // Filter out rows that match any of the paths in rowsToRemove
+  const filteredSheetData = originalSheetData.filter(
+    (sheetRow) =>
+      !rowsToRemove.some((rowToRemove) => sheetRow.path === rowToRemove.path)
+  );
+  // Update the original data structure with the filtered data
+  data[sheetName] = filteredSheetData;
+  return data;
 }
 
 export function sheetsToYAML(sheets) {
