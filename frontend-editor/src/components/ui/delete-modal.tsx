@@ -1,7 +1,8 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import { Editable } from "../file-structure";
 import { deleteData } from "../../utils/requestUtils";
+import { DataContext } from "../../context/dataContext";
 
 interface ModalProps {
   isOpen: any;
@@ -20,11 +21,16 @@ export default function DeleteModal({
     setIsOpen(false);
   }
 
-  function handleSave() {
-    onConfirm();
-    deleteData(editable.path).then((res) => {
-      closeModal();
-    });
+  const dataContext = useContext(DataContext);
+  async function handleSave() {
+    let query = {};
+    if (editable.query.deleteParams) {
+      query = editable.query.deleteParams;
+    }
+    console.log("Deleting", editable.path, query);
+    await deleteData(editable.path, query);
+    await editable.query.Parent?.query.getData();
+    closeModal();
   }
 
   return (

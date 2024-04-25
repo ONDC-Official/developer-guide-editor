@@ -38,10 +38,10 @@ export async function postData(path: string, data: any) {
   }
 }
 
-export async function deleteData(path: string) {
+export async function deleteData(path: string, query = {}) {
   try {
     const url = `${baseURL}/${path}`;
-    const response = await axios.delete(url);
+    const response = await axios.delete(url, { params: query });
     return response.data;
   } catch (error: any) {
     console.log("error", error);

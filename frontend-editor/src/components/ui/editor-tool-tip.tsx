@@ -11,16 +11,24 @@ export default function EditorToolTip({
   showAdd = true,
   showDelete = true,
   showEdit = true,
+  setButtonStates,
 }: {
-  data: Editable;
+  data: Editable | null;
   showEdit?: boolean;
   showAdd?: boolean;
   showDelete?: boolean;
+  setButtonStates: () => void;
 }) {
   const [delModalState, setDelModalState] = useState(false);
   const [editModalState, setEditModalState] = useState(false);
   const editState = useRef(false);
-
+  if (!data) {
+    return (
+      <div className="p-2 max-w-xs rounded-lg shadow-lg bg-white/30 backdrop-blur-lg text-white text-sm font-semibold text-center border border-white/20">
+        404! Not Found
+      </div>
+    );
+  }
   return (
     <>
       <div className="p-2 max-w-xs rounded-lg shadow-lg bg-white/30 backdrop-blur-lg text-white text-sm font-semibold text-center border border-white/20">
@@ -31,6 +39,7 @@ export default function EditorToolTip({
               onClick={() => {
                 editState.current = true;
                 setEditModalState(true);
+                setButtonStates();
               }}
               className=" bg-blue-400 hover:bg-blue-700 text-white font-bold py-1 px-2 focus:outline-none focus:shadow-outline"
               type="button"
@@ -43,6 +52,7 @@ export default function EditorToolTip({
               onClick={() => {
                 editState.current = false;
                 setEditModalState(true);
+                setButtonStates();
               }}
               className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 focus:outline-none focus:shadow-outline"
               type="button"
@@ -56,6 +66,7 @@ export default function EditorToolTip({
               type="button"
               onClick={() => {
                 setDelModalState(true);
+                setButtonStates();
               }}
             >
               <RiDeleteBin6Fill className=" size-6" />

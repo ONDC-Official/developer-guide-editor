@@ -31,7 +31,7 @@ export abstract class folderTypeEditable extends Editable {
    * Adds a new editable to the childrenEditables array.
    * @param {Object} deleteTarget - The new editable object to delete.
    */
-  async remove(deleteTarget) {
+  async remove(deleteTarget: Editable) {
     console.log("DELETING", deleteTarget);
     const target = this.chilrenEditables.find(
       (s) =>

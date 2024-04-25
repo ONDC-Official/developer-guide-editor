@@ -12,7 +12,7 @@ export function MainContent({
   return (
     <>
       {acitiveEditable?.registerID === AttributeFolderID && (
-        <AttributesTable path={acitiveEditable.path} />
+        <AttributesTable attribute={acitiveEditable} />
       )}
     </>
   );

@@ -4,9 +4,12 @@ import { initRegistry } from "../utils/RegisterList";
 import { EditableRegistry } from "../utils/EditableRegistry";
 import { Editable } from "../utils/Editable";
 import { folderTypeEditable } from "../utils/folderTypeEditable";
-import { FileTypeEditable } from "../utils/FileTypeEditable";
+import { AttributeFile, FileTypeEditable } from "../utils/FileTypeEditable";
 
-const sessionInstances = {};
+interface EditableMap {
+  [key: string]: Editable;
+}
+const sessionInstances: EditableMap = {};
 initRegistry();
 
 export const app = express();
@@ -33,7 +36,7 @@ app.all("/guide/*", async (req: any, res, next) => {
     return;
   }
   const sessionID = pathSegments[0];
-  if (!sessionInstances[sessionID]) {
+  if (!sessionInstances[sessionID] && req.method !== "DELETE") {
     sessionInstances[sessionID] = await EditableRegistry.loadComponent(
       `../../../ONDC-NTS-Specifications/api/${sessionID}`,
       sessionID
@@ -42,18 +45,19 @@ app.all("/guide/*", async (req: any, res, next) => {
   next();
 });
 
+let parent: Editable = undefined;
 let target: Editable = undefined;
 
 app.all("/guide/*", async (req: any, res, next) => {
   const fullPath = req.params[0];
   const pathSegments: string[] = fullPath.split("/");
   target = sessionInstances[pathSegments[0]];
-  // comp/attribute/credit
   console.log(pathSegments);
   for (const item of pathSegments.slice(1)) {
     if (target instanceof folderTypeEditable) {
       const sub = target.chilrenEditables.find((child) => child.name === item);
       if (sub) {
+        parent = target;
         target = sub;
       } else {
         res.status(404).json({
@@ -70,7 +74,6 @@ app.all("/guide/*", async (req: any, res, next) => {
       return;
     }
   }
-  console.log(target);
   next();
 });
 
@@ -92,6 +95,34 @@ app.post("/guide/*", async (req: any, res, next) => {
     return res.status(200).send("DATA ADDED");
   } catch (e) {
     console.log("CATCH");
+    res.status(500).json({
+      error: "Internal Server Error",
+      errorMessage: e.message,
+    });
+  }
+});
+
+app.delete("/guide/*", async (req: any, res, next) => {
+  try {
+    const { sheetName, attributes } = req.query;
+    console.log(req.query);
+    if (target instanceof AttributeFile && sheetName) {
+      const body = { ...req.query };
+      await target.remove(body);
+      console.log("INSIDE IF");
+      res.status(200).send("DATA DELETED");
+      return;
+    }
+    const comp = sessionInstances[req.params[0].split("/")[0]];
+    if (comp === target) {
+      comp.destroy();
+      delete sessionInstances[req.params[0].split("/")[0]];
+    } else {
+      await parent.remove(target);
+    }
+    res.status(200).send("DATA DELETED");
+  } catch (e) {
+    console.log(e);
     res.status(500).json({
       error: "Internal Server Error",
       errorMessage: e.message,

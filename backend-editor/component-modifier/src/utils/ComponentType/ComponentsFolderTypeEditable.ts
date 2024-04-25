@@ -3,6 +3,7 @@ import { copyDir } from "../fileUtils";
 import { folderTypeEditable } from "../folderTypeEditable";
 import { updateYamlRefComponents } from "../yamlUtils";
 import { AttributesFolderTypeEditable } from "./AttributeType/AttributesFolderTypeEditable";
+import { Editable } from "../Editable";
 
 export class ComponentsType extends folderTypeEditable {
   getRegisterID(): string {
@@ -39,7 +40,7 @@ export class ComponentsType extends folderTypeEditable {
     console.log(data);
     return data;
   }
-  async remove(deleteTarget) {
+  async remove(deleteTarget: Editable) {
     await super.remove(deleteTarget);
     await updateYamlRefComponents(this.yamlPathLong, deleteTarget.name, true);
   }

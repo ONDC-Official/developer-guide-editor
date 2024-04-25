@@ -2,7 +2,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useEffect } from "react";
 import { Editable } from "../file-structure";
 import Dropdown from "../horizontal-tab";
-import { FormFactory } from "./FormFactory";
+import FormFactory from "../forms/form-factory";
 
 interface EditModalProps {
   isOpen: any;

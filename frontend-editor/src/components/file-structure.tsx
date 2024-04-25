@@ -1,15 +1,23 @@
 import Tippy from "@tippyjs/react";
 import useEditorToolTip from "../hooks/useEditorToolTip";
 import React, { useContext, useState } from "react";
-import { CompFolderID, CompFolderName } from "../pages/home-page";
+import { CompFolderID } from "../pages/home-page";
 import { DataContext } from "../context/dataContext";
 const d = [""]; // Sample data
+
+export interface EditableQuery {
+  getData: () => Promise<any>;
+  Parent: Editable | null;
+  addParams?: Record<string, any>;
+  deleteParams?: Record<string, any>;
+  updateParams?: Record<string, any>;
+}
 
 export interface Editable {
   name: string;
   registerID: string;
   path: string;
-  query?: any;
+  query: EditableQuery;
 }
 
 interface ComponentsStructureProps {
@@ -23,12 +31,12 @@ export const ComponentsStructure = ({
   const handleTabClick = (item: Editable) => {
     dataContext.setActiveEditable(item);
   };
-  console.log(components);
-  const tooltip = useEditorToolTip();
+  const tooltip = useEditorToolTip([false, true, true]);
   tooltip.data.current = {
-    name: CompFolderName,
+    name: dataContext.activePath,
     registerID: CompFolderID,
-    path: "cpo",
+    path: dataContext.activePath,
+    query: { getData: () => dataContext.FetchData() },
   } as Editable;
 
   if (!components) return <></>;
@@ -57,15 +65,11 @@ export const ComponentsStructure = ({
 };
 
 function Tab({ item, index, activeTab, handleTabClick }: any) {
-  const tooltip = useEditorToolTip();
+  const tooltip = useEditorToolTip([false, true, true]);
   const thisItem = item as Editable;
   tooltip.data.current = thisItem;
   return (
-    <div
-      onContextMenu={tooltip.onContextMenu}
-      onMouseOver={tooltip.onMouseOver}
-      onMouseOut={tooltip.onMouseOut}
-    >
+    <div onContextMenu={tooltip.onContextMenu} className=" hover:bg-blue-500">
       <Tippy {...tooltip.tippyProps}>
         <li key={thisItem.name + index} className="px-2 py-2">
           <button

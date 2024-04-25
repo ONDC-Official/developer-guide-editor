@@ -65,6 +65,7 @@ export class AttributeFile extends FileTypeEditable {
     }
     await this.removeAttributes(deletionObject, data);
   }
+
   async update(something: any) {
     throw new Error("Method not implemented.");
   }

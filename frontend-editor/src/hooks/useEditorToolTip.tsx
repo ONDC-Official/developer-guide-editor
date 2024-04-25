@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import "tippy.js/animations/perspective-subtle.css";
 import EditorToolTip from "../components/ui/editor-tool-tip";
 import { Editable } from "@/components/file-structure";
@@ -15,8 +15,8 @@ interface TippyProps {
 }
 
 interface TooltipProps {
-  data: any;
-  setButtonStates: any;
+  data: React.MutableRefObject<Editable>;
+  setButtonStates: VoidFunction;
   onContextMenu: (event: React.MouseEvent) => void;
   followCursor: boolean;
   onMouseOver: any;
@@ -29,7 +29,7 @@ export default function useEditorToolTip(buttonStates = [true, true, true]) {
   const [visible, setVisible] = useState(false);
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [hover, setHover] = useState(false);
-  const data = useRef<Editable>({ name: "", registerID: "" });
+  const data = useRef<Editable>(null);
 
   const handleContextMenu = (event: any) => {
     event.preventDefault(); // Prevent the default context menu
@@ -87,6 +87,7 @@ export default function useEditorToolTip(buttonStates = [true, true, true]) {
           showEdit={buttonStates[0]}
           showAdd={buttonStates[1]}
           showDelete={buttonStates[2]}
+          setButtonStates={() => setVisible(false)}
         />
       ),
       visible: visible,
