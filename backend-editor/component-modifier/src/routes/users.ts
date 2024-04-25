@@ -107,11 +107,14 @@ app.post("/guide/*", async (req, res, next) => {
 
 app.patch("/guide/*", async (req, res, next) => {
   try {
+    console.log("updating");
     await target.update(req.body);
     return res.status(200).send("DATA UPDATED");
   } catch (e) {
     console.error(e);
+    console.log("ERROR");
     res.status(500).json({
+      error: "Internal Server Error",
       errorMessage: e.message,
     });
   }

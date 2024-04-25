@@ -1,4 +1,4 @@
-import { deleteFolderSync, createIndexYaml } from "./fileUtils";
+import { deleteFolderSync, createIndexYaml, renameFolder } from "./fileUtils";
 
 export abstract class Editable {
   static REGISTER_ID = "EDITABLE";
@@ -21,6 +21,13 @@ export abstract class Editable {
       removeContent
     );
     console.log("YAML Path:", this.yamlPathLong);
+  }
+  async renameFolder(newName) {
+    [this.yamlPathLong, this.folderPath] = await renameFolder(
+      this.folderPath,
+      newName
+    );
+    this.name = newName;
   }
 
   abstract add(something): Promise<any>;

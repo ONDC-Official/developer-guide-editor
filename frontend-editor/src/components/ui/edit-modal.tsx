@@ -70,7 +70,12 @@ export default function EditModal({
                     {editState ? `Edit ${item.name}` : `Add In ${item.name}`}
                   </Dialog.Title>
                   <div className="mt-2"></div>
-                  <FormFactory data={item} setIsOpen={setIsOpen} />
+
+                  <FormFactory
+                    data={item}
+                    setIsOpen={setIsOpen}
+                    editState={editState}
+                  />
                 </Dialog.Panel>
               </Transition.Child>
             </div>

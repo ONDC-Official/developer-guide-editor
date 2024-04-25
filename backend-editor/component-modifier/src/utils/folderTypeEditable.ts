@@ -1,5 +1,11 @@
+import { close } from "fs";
 import { Editable } from "./Editable";
 import { EditableRegistry } from "./EditableRegistry";
+
+export interface UpdateObj {
+  oldName: string;
+  newName: string;
+}
 
 export abstract class folderTypeEditable extends Editable {
   chilrenEditables: Editable[];
@@ -41,6 +47,16 @@ export abstract class folderTypeEditable extends Editable {
     this.chilrenEditables = this.chilrenEditables.filter((s) => s !== target);
     console.log(target);
     await target.destroy();
+  }
+
+  async update(update: UpdateObj) {
+    console.log("PATCHING", update);
+    const target = this.chilrenEditables.find((s) => s.name === update.oldName);
+    try {
+      target.renameFolder(update.newName);
+    } catch (e) {
+      throw new Error(e.message);
+    }
   }
 
   findParent(id, name, first): Editable | string {

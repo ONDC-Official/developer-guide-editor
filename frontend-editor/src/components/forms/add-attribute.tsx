@@ -1,39 +1,80 @@
 // AddInAttributes.js
-import React from "react";
+import React, { useEffect, useState } from "react";
 import GenericForm from "./generic-form";
 import FormSelect from "./form-select";
 import FormInput from "./form-input";
 import { Editable } from "../file-structure";
 import { FieldValues } from "react-hook-form";
-import { postData } from "../../utils/requestUtils";
+import { getData, patchData, postData } from "../../utils/requestUtils";
 
 const AddInAttributes = ({
   data,
   setIsOpen,
+  editState,
 }: {
   data: Editable;
   setIsOpen: any;
+  editState: boolean;
 }) => {
-  const onSubmit = async (formData: FieldValues) => {
+  const onPost = async (formData: FieldValues) => {
     console.log("Data submitted for attributes:", formData);
     await postData(data.path, formData);
     await data.query?.getData();
     setIsOpen(false);
   };
+  const onPatch = async (formData: FieldValues) => {
+    console.log("Data submitted for attributes:", formData);
+    await patchData(data.path, formData);
+    await data.query?.getData();
+    setIsOpen(false);
+  };
 
-  return (
-    <GenericForm
-      onSubmit={onSubmit}
-      className="w-full mx-auto my-4 p-4 border rounded-lg shadow-blue-500"
-    >
-      <FormSelect
-        name="ID"
-        label="Attribute Type"
-        options={["ATTRIBUTE_FILE"]}
-      />
-      <FormInput name="name" label="Attribute Name" strip={true} />
-    </GenericForm>
-  );
+  function AddForm() {
+    return (
+      <>
+        <GenericForm
+          onSubmit={onPost}
+          className="w-full mx-auto my-4 p-4 border rounded-lg shadow-blue-500"
+        >
+          <FormSelect
+            name="ID"
+            label="Attribute Type"
+            options={["ATTRIBUTE_FILE"]}
+          />
+          <FormInput name="name" label="Domain" strip={true} />
+        </GenericForm>
+      </>
+    );
+  }
+  function EditForm() {
+    const [option, setOptions] = useState([]);
+    useEffect(() => {
+      const fetchOptions = async () => {
+        const fetched = await getData(data.path);
+        setOptions(fetched);
+      };
+      fetchOptions();
+    }, []);
+    return (
+      <>
+        <GenericForm
+          onSubmit={onPatch}
+          className="w-full mx-auto my-4 p-4 border rounded-lg shadow-blue-500"
+        >
+          <FormSelect
+            name="oldName"
+            label="Select Damain to edit"
+            options={option.length ? option : ["Loading..."]}
+          />
+          <FormInput name="newName" label="new name" strip={true} />
+        </GenericForm>
+      </>
+    );
+  }
+  if (editState) {
+    return <EditForm />;
+  }
+  return <AddForm />;
 };
 
 export function AddSheet({

@@ -38,6 +38,23 @@ export async function postData(path: string, data: any) {
   }
 }
 
+export async function patchData(path: string, data: Record<string, any>) {
+  try {
+    const url = `${baseURL}/${path}`;
+    const response = await axios.patch(url, data);
+    return response.data;
+  } catch (error: any) {
+    console.log("error", error);
+    throw new Error(
+      error?.message ||
+        error.response.data ||
+        error.response.statusText ||
+        error.response.status ||
+        "Error Updating Data"
+    );
+  }
+}
+
 export async function deleteData(path: string, query = {}) {
   try {
     const url = `${baseURL}/${path}`;

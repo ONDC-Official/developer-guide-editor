@@ -11,16 +11,24 @@ import {
 const FormFactory = ({
   data,
   setIsOpen,
+  editState,
 }: {
   data: Editable;
   setIsOpen: any;
+  editState: boolean;
 }) => {
   const renderForm = () => {
     switch (data.registerID) {
       case CompFolderID:
         return <AddInComponent data={data} setIsOpen={setIsOpen} />;
       case AttributeFolderID:
-        return <AddInAttributes data={data} setIsOpen={setIsOpen} />;
+        return (
+          <AddInAttributes
+            data={data}
+            setIsOpen={setIsOpen}
+            editState={editState}
+          />
+        );
       case AttributeFileID:
         if (data.query.addParams?.type === "addRow") {
           return <AddRowForm data={data} setIsOpen={setIsOpen} />;

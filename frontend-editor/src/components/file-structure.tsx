@@ -63,7 +63,7 @@ export const ComponentsStructure = ({
 };
 
 function Tab({ item, index, activeTab, handleTabClick }: any) {
-  const tooltip = useEditorToolTip([false, true, true]);
+  const tooltip = useEditorToolTip([true, true, true]);
   const thisItem = item as Editable;
   tooltip.data.current = thisItem;
   return (

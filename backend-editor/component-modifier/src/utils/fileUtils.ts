@@ -2,6 +2,7 @@ import fs from "fs";
 const fs_p = require("fs").promises;
 import path from "path";
 import yaml from "js-yaml";
+import { error } from "console";
 
 export async function createIndexYaml(
   relativeFolderPath,
@@ -30,6 +31,26 @@ export async function createIndexYaml(
   } catch (err) {
     console.error("Error creating index.yaml:", err);
   }
+}
+export async function renameFolder(folderPath: string, newName: string) {
+  const parentDir = path.dirname(folderPath);
+  const newFolderPath = path.join(parentDir, newName);
+
+  try {
+    if (fs.existsSync(newFolderPath)) {
+      throw new Error("Folder with the new name already exists!");
+    }
+
+    fs.rename(folderPath, newFolderPath, (error) => {
+      if (error) {
+        console.error("Error renaming the folder:", error);
+      }
+      console.log(`Folder renamed successfully to ${newName}`);
+    });
+  } catch (e) {
+    throw e;
+  }
+  return [newFolderPath + "/index.yaml", newFolderPath];
 }
 
 export async function deleteFile(filePath) {

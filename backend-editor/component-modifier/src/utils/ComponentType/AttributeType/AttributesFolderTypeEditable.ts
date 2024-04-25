@@ -1,5 +1,5 @@
 import { AttributeFile } from "../../FileTypeEditable";
-import { folderTypeEditable } from "../../folderTypeEditable";
+import { folderTypeEditable, UpdateObj } from "../../folderTypeEditable";
 import { updateYamlRefAttr } from "../../yamlUtils";
 
 export class AttributesFolderTypeEditable extends folderTypeEditable {
@@ -26,7 +26,7 @@ export class AttributesFolderTypeEditable extends folderTypeEditable {
     const addedChild = this.chilrenEditables.find(
       (s) => s.name === new_editable.name
     );
-    updateYamlRefAttr(this.yamlPathLong, addedChild.name);
+    await updateYamlRefAttr(this.yamlPathLong, addedChild.name);
   }
 
   async getData() {
@@ -37,9 +37,12 @@ export class AttributesFolderTypeEditable extends folderTypeEditable {
 
   async remove(deleteTarget) {
     await super.remove(deleteTarget);
-    updateYamlRefAttr(this.yamlPathLong, deleteTarget.name, true);
+    await updateYamlRefAttr(this.yamlPathLong, deleteTarget.name, true);
   }
-  async update(Editable) {
-    throw new Error(`${this.getRegisterID()} does not support Patch!`);
+
+  async update(update: UpdateObj) {
+    await super.update(update);
+    await updateYamlRefAttr(this.yamlPathLong, update.oldName, true);
+    await updateYamlRefAttr(this.yamlPathLong, update.newName);
   }
 }
