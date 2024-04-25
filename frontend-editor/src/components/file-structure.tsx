@@ -21,25 +21,23 @@ export interface Editable {
 }
 
 interface ComponentsStructureProps {
-  components: Editable[];
+  componentParent: Editable;
+  componentsChildren: Editable[];
 }
 
 export const ComponentsStructure = ({
-  components,
+  componentParent,
+  componentsChildren,
 }: ComponentsStructureProps) => {
   const dataContext = useContext(DataContext);
   const handleTabClick = (item: Editable) => {
     dataContext.setActiveEditable(item);
   };
-  const tooltip = useEditorToolTip([false, true, true]);
-  tooltip.data.current = {
-    name: dataContext.activePath,
-    registerID: CompFolderID,
-    path: dataContext.activePath,
-    query: { getData: () => dataContext.FetchData() },
-  } as Editable;
 
-  if (!components) return <></>;
+  const tooltip = useEditorToolTip([false, true, true]);
+  tooltip.data.current = componentParent;
+
+  if (!componentsChildren) return <></>;
   return (
     <div
       className={`flex flex-col h-screen w-64 hover:bg-blue-100 fixed left-0 z-50 top-20`}
@@ -48,7 +46,7 @@ export const ComponentsStructure = ({
       <Tippy {...tooltip.tippyProps}>
         <div className="mt-3 w-64 h-full overflow-y-auto shadow-lg">
           <ul className="mt-2">
-            {components.map((item, index) => (
+            {componentsChildren.map((item, index) => (
               <Tab
                 key={item.name + index}
                 item={item}
@@ -69,7 +67,7 @@ function Tab({ item, index, activeTab, handleTabClick }: any) {
   const thisItem = item as Editable;
   tooltip.data.current = thisItem;
   return (
-    <div onContextMenu={tooltip.onContextMenu} className=" hover:bg-blue-500">
+    <div onContextMenu={tooltip.onContextMenu} className=" hover:bg-black">
       <Tippy {...tooltip.tippyProps}>
         <li key={thisItem.name + index} className="px-2 py-2">
           <button

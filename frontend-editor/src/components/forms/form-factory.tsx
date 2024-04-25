@@ -22,7 +22,7 @@ const FormFactory = ({
       case AttributeFolderID:
         return <AddInAttributes data={data} setIsOpen={setIsOpen} />;
       case AttributeFileID:
-        if (data.query?.type === "addRow") {
+        if (data.query.addParams?.type === "addRow") {
           return <AddRowForm data={data} setIsOpen={setIsOpen} />;
         } else {
           return <AddSheet data={data} setIsOpen={setIsOpen} />;

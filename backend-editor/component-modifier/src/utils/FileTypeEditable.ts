@@ -28,6 +28,11 @@ export interface AttributeOperation {
   attributes?: AttributeRow[];
 }
 
+export interface PatchAttributes {
+  type: "fileName" | "sheetName" | "rowData";
+  operation: AttributeOperation;
+}
+
 export class AttributeFile extends FileTypeEditable {
   getRegisterID(): string {
     return AttributeFile.REGISTER_ID;

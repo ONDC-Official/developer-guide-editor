@@ -19,7 +19,7 @@ export function HomePage() {
   const [loading, setLoading] = React.useState(false);
   const [components, setComponents] = React.useState([] as Editable[]);
   const [activePath, setActivePath] = React.useState("");
-  const [acitiveEditable, setActiveEditable] = React.useState({} as Editable);
+  const [acitiveEditable, setActiveEditable] = React.useState<Editable>();
 
   useEffect(() => {
     fetchData();
@@ -37,6 +37,15 @@ export function HomePage() {
   //     setLoading(false);
   //   });
   // }
+  const compEditable: Editable = {
+    name: activePath,
+    path: activePath,
+    registerID: CompFolderID,
+    query: {
+      getData: fetchData,
+      Parent: null,
+    },
+  };
 
   async function fetchData() {
     setLoading(true);
@@ -48,13 +57,14 @@ export function HomePage() {
         registerID: comp.registerID,
         path: comp.path,
         query: {
-          Parent: null,
-          getData: fetchData,
+          Parent: compEditable,
+          getData: async () => {},
         },
       };
       compsList.push(editable);
     }
     setComponents(compsList);
+    setActiveEditable(compsList[0]);
     setLoading(false);
   }
 
@@ -75,6 +85,7 @@ export function HomePage() {
         <ComponentView
           components={components}
           acitiveEditable={acitiveEditable}
+          parentComp={compEditable}
         />
       )}
       {loading && <FullPageLoader />}
@@ -85,14 +96,19 @@ export function HomePage() {
 function ComponentView({
   components,
   acitiveEditable,
+  parentComp,
 }: {
   components: Editable[];
-  acitiveEditable: Editable;
+  acitiveEditable: Editable | undefined;
+  parentComp: Editable;
 }) {
   return (
     <>
       <div className="flex w-full h-full overflow-hidden">
-        <ComponentsStructure components={components} />
+        <ComponentsStructure
+          componentsChildren={components}
+          componentParent={parentComp}
+        />
         <div className=" mt-20 ml-64 w-full">
           <MainContent acitiveEditable={acitiveEditable} />
         </div>

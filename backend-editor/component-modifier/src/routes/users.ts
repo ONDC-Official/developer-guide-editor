@@ -5,6 +5,7 @@ import { EditableRegistry } from "../utils/EditableRegistry";
 import { Editable } from "../utils/Editable";
 import { folderTypeEditable } from "../utils/folderTypeEditable";
 import { AttributeFile, FileTypeEditable } from "../utils/FileTypeEditable";
+import { error } from "console";
 
 interface EditableMap {
   [key: string]: Editable;
@@ -52,14 +53,15 @@ app.all("/guide/*", async (req: any, res, next) => {
   const fullPath = req.params[0];
   const pathSegments: string[] = fullPath.split("/");
   target = sessionInstances[pathSegments[0]];
-  console.log(pathSegments);
   for (const item of pathSegments.slice(1)) {
     if (target instanceof folderTypeEditable) {
+      console.log("children", target.chilrenEditables);
       const sub = target.chilrenEditables.find((child) => child.name === item);
       if (sub) {
         parent = target;
         target = sub;
       } else {
+        console.log("PATH DONT EXIST");
         res.status(404).json({
           error: "PATH DONT EXIST",
           errorMessage: "could not find path",
@@ -67,6 +69,7 @@ app.all("/guide/*", async (req: any, res, next) => {
         return;
       }
     } else if (target instanceof FileTypeEditable) {
+      console.log("PATH DONT EXIST", target);
       res.status(404).json({
         error: "PATH DONT EXIST",
         errorMessage: "could not find path",
@@ -77,7 +80,7 @@ app.all("/guide/*", async (req: any, res, next) => {
   next();
 });
 
-app.get("/guide/*", async (req: any, res, next) => {
+app.get("/guide/*", async (req, res, next) => {
   try {
     res.status(200).send(await target.getData());
   } catch (e) {
@@ -88,13 +91,13 @@ app.get("/guide/*", async (req: any, res, next) => {
   }
 });
 
-app.post("/guide/*", async (req: any, res, next) => {
+app.post("/guide/*", async (req, res, next) => {
   try {
     // console.log("POSTING");
     await target.add(req.body);
-    return res.status(200).send("DATA ADDED");
+    return res.status(201).send("DATA ADDED");
   } catch (e) {
-    console.log("CATCH");
+    console.error(e);
     res.status(500).json({
       error: "Internal Server Error",
       errorMessage: e.message,
@@ -102,12 +105,25 @@ app.post("/guide/*", async (req: any, res, next) => {
   }
 });
 
-app.delete("/guide/*", async (req: any, res, next) => {
+app.patch("/guide/*", async (req, res, next) => {
+  try {
+    await target.update(req.body);
+    return res.status(200).send("DATA UPDATED");
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({
+      errorMessage: e.message,
+    });
+  }
+});
+
+app.delete("/guide/*", async (req, res, next) => {
   try {
     const { sheetName, attributes } = req.query;
     console.log(req.query);
+    console.log(target);
     if (target instanceof AttributeFile && sheetName) {
-      const body = { ...req.query };
+      const body: any = { ...req.query };
       await target.remove(body);
       console.log("INSIDE IF");
       res.status(200).send("DATA DELETED");

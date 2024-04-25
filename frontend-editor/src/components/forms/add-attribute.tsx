@@ -31,7 +31,7 @@ const AddInAttributes = ({
         label="Attribute Type"
         options={["ATTRIBUTE_FILE"]}
       />
-      <FormInput name="name" label="Attribute Name" />
+      <FormInput name="name" label="Attribute Name" strip={true} />
     </GenericForm>
   );
 };
@@ -62,7 +62,7 @@ export function AddSheet({
       onSubmit={onSubmit}
       className="w-full mx-auto my-4 p-4 border rounded-lg shadow-blue-500"
     >
-      <FormInput name="sheet" label="Attribute Sheet Name" />
+      <FormInput name="sheet" label="Attribute Sheet Name" strip={true} />
     </GenericForm>
   );
 }
@@ -74,15 +74,15 @@ export const AddRowForm = ({
   data: Editable;
   setIsOpen: any;
 }) => {
-  const defaultValues = data.query.rowData || {};
-  if (!data.query.sheet) {
+  const defaultValues = data.query.addParams?.rowData || {};
+  if (!data.query.addParams?.sheet) {
     return <div>First ADD a SHEET</div>;
   }
   const onSubmit = async (formData: FieldValues) => {
     console.log("Data submitted for row:", formData);
     const path = data.path;
     const body = {
-      sheetName: data.query.sheet,
+      sheetName: data.query.addParams?.sheet,
       attributes: [formData],
     };
     console.log("POSTING", path, body);
@@ -97,13 +97,13 @@ export const AddRowForm = ({
       defaultValues={defaultValues}
       className="w-full mx-auto my-4 p-4 border rounded-lg shadow-blue-500"
     >
-      <FormInput name="path" label="Path" required={true} />
+      <FormInput name="path" label="Path" required={true} strip={true} />
       <FormSelect
         name="required"
         label="Required"
-        options={["true", "false"]}
+        options={["REQUIRED", "OPTIONAL"]}
       />
-      <FormInput name="type" label="Type" required={true} />
+      <FormInput name="type" label="Type" required={true} strip={true} />
       <FormInput name="owner" label="Owner" />
       <FormInput name="usage" label="Usage" />
       <FormInput name="description" label="Description" type="textarea" />

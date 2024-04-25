@@ -67,9 +67,7 @@ export default function EditModal({
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900"
                   >
-                    {editState
-                      ? `Edit ${item.registerID}`
-                      : `Add In ${item.registerID}`}
+                    {editState ? `Edit ${item.name}` : `Add In ${item.name}`}
                   </Dialog.Title>
                   <div className="mt-2"></div>
                   <FormFactory data={item} setIsOpen={setIsOpen} />

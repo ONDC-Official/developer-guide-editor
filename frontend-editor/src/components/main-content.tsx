@@ -6,9 +6,10 @@ import { AttributeFolderID } from "../pages/home-page";
 export function MainContent({
   acitiveEditable,
 }: {
-  acitiveEditable: Editable;
+  acitiveEditable: Editable | undefined;
 }) {
-  // console.log(acitiveEditable);
+  console.log("HELOOOOOOOOOOOOOOO", acitiveEditable);
+  if (!acitiveEditable) return <></>;
   return (
     <>
       {acitiveEditable?.registerID === AttributeFolderID && (

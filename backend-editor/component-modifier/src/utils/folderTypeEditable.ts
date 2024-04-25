@@ -42,7 +42,6 @@ export abstract class folderTypeEditable extends Editable {
     console.log(target);
     await target.destroy();
   }
-  async update(Editable) {}
 
   findParent(id, name, first): Editable | string {
     const searchChildEditable = (editable) => {

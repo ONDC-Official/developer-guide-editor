@@ -55,6 +55,9 @@ export class ComponentsType extends folderTypeEditable {
     }
     return "UNKNOWN";
   }
+  async update(Editable) {
+    throw new Error(`${this.getRegisterID()} does not support Patch!`);
+  }
 }
 
 module.exports = { ComponentsType };

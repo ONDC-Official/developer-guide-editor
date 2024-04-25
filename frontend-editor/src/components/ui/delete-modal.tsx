@@ -21,7 +21,6 @@ export default function DeleteModal({
     setIsOpen(false);
   }
 
-  const dataContext = useContext(DataContext);
   async function handleSave() {
     let query = {};
     if (editable.query.deleteParams) {
@@ -29,6 +28,8 @@ export default function DeleteModal({
     }
     console.log("Deleting", editable.path, query);
     await deleteData(editable.path, query);
+    console.log(editable.query.Parent);
+    console.log("GETTING", editable.query.Parent?.query.getData);
     await editable.query.Parent?.query.getData();
     closeModal();
   }

@@ -24,22 +24,39 @@ const AttributesTable = ({ attribute }: { attribute: Editable }) => {
   const [activeFile, setActiveFile] = useState("");
   const [activeTable, setActiveTable] = useState("");
   const [files, setFiles] = useState<string[]>([]);
-  const [fileData, setFileData] = useState({}); // Data for the selected file
-  console.log(activeFile, activeTable);
+  const [fileData, setFileData] = useState({});
   const tabRef = React.useRef(0);
+
+  attribute.query.getData = getAttributesData;
+
   useEffect(() => {
-    const fetchData = GetFiles(setFiles, setActiveFile, tabRef, attribute.path);
-    fetchData();
+    getAttributesData();
   }, []);
+
   useEffect(() => {
     (async () => {
       await getTableData(activeFile);
     })();
   }, [activeFile]);
+
+  async function getAttributesData() {
+    const files: string[] = await getFileNames();
+    getTableData(files[0]);
+    setActiveFile("");
+    setActiveTable("");
+  }
+
+  async function getFileNames() {
+    const files: string[] = await getData(attribute.path);
+    setFiles(files);
+    return files;
+  }
+
   async function getTableData(fileName: string) {
     const tData = await getData(`${attribute.path}/${fileName}`);
     setFileData(tData);
   }
+
   function getTableNames() {
     const tableNames = [];
     for (let key in fileData) {
@@ -47,6 +64,7 @@ const AttributesTable = ({ attribute }: { attribute: Editable }) => {
     }
     return tableNames;
   }
+
   const fileEditable: Editable = {
     name: activeFile,
     registerID: AttributeFileID,
@@ -57,6 +75,7 @@ const AttributesTable = ({ attribute }: { attribute: Editable }) => {
     ...fileEditable,
     query: { ...fileEditable.query, deleteParams: { sheetName: activeTable } },
   };
+
   return (
     <div className="mt-3 ml-3 max-w-full">
       <div className="flex w-full">
@@ -67,9 +86,11 @@ const AttributesTable = ({ attribute }: { attribute: Editable }) => {
             setSelectedItem={(item: string) => {
               setActiveFile(item);
               tabRef.current = files.indexOf(item);
+              getTableData(item);
+              setActiveTable("");
             }}
             selectedItem={activeFile}
-            onOpen={GetFiles(setFiles, setActiveFile, tabRef, attribute.path)}
+            onOpen={getFileNames}
           />
         </div>
         <div className="flex-1">
@@ -78,7 +99,7 @@ const AttributesTable = ({ attribute }: { attribute: Editable }) => {
             editable={tableEditable}
             setSelectedItem={setActiveTable}
             selectedItem={activeTable}
-            onOpen={() => {}}
+            onOpen={getTableNames}
           />
         </div>
       </div>
@@ -150,6 +171,7 @@ function DataTable({
             row={row}
             sheetName={activeTable}
             editable={editable}
+            key={index}
           />
         ))}
       </tbody>
@@ -189,7 +211,7 @@ function TableRow({
       >
         {Object.values(row).map((value: any, idx) => (
           <td
-            key={idx}
+            key={idx + value}
             className="px-4 py-2 text-left border-b border-gray-200 align-top break-words"
             style={{ maxWidth: "200px" }} // Prevents cell from expanding too much
           >
@@ -199,17 +221,4 @@ function TableRow({
       </tr>
     </Tippy>
   );
-}
-
-function GetFiles(
-  setFiles: React.Dispatch<React.SetStateAction<string[]>>,
-  setActiveFile: React.Dispatch<React.SetStateAction<string>>,
-  tabRef: React.MutableRefObject<number>,
-  path: string
-) {
-  return async () => {
-    const files = await getData(path);
-    setFiles(files);
-    setActiveFile(files[tabRef.current]);
-  };
 }

@@ -39,4 +39,7 @@ export class AttributesFolderTypeEditable extends folderTypeEditable {
     await super.remove(deleteTarget);
     updateYamlRefAttr(this.yamlPathLong, deleteTarget.name, true);
   }
+  async update(Editable) {
+    throw new Error(`${this.getRegisterID()} does not support Patch!`);
+  }
 }
