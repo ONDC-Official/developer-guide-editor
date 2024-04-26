@@ -75,7 +75,16 @@ export async function deleteData(path: string, query = {}) {
 export async function UndoData(path: string) {
   try {
     const url = `${baseURL}/${path}`;
-    const response = await axios.put(url);
+    const response = await axios.put(
+      url,
+      {},
+      {
+        // Empty object for the PATCH data
+        params: {
+          type: "undo",
+        },
+      }
+    );
     return response.data;
   } catch (e: any) {
     console.log("error", e);

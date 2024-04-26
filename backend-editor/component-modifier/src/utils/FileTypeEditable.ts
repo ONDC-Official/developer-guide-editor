@@ -1,8 +1,10 @@
+import path from "path";
 import {
   getSheets,
   sheetsToYAML,
   addRows,
   deleteRows,
+  updateRows,
 } from "./ComponentType/AttributeType/attributeYamlUtils";
 import { Editable } from "./Editable";
 import { readYamlFile } from "./fileUtils";
@@ -29,8 +31,13 @@ export interface AttributeOperation {
 }
 
 export interface PatchAttributes {
-  type: "fileName" | "sheetName" | "rowData";
-  operation: AttributeOperation;
+  type: "sheetName" | "rowData";
+  operation: {
+    oldName: string;
+    newName?: string;
+    oldRows?: AttributeRow[];
+    newRows?: AttributeRow[];
+  };
 }
 
 export class AttributeFile extends FileTypeEditable {
@@ -71,14 +78,34 @@ export class AttributeFile extends FileTypeEditable {
     await this.removeAttributes(deletionObject, data);
   }
 
-  async update(something: any) {
-    throw new Error("Method not implemented.");
+  async update(patch: PatchAttributes) {
+    console.log(patch);
+    if (patch.type === "sheetName") {
+      const data = await this.getData();
+      console.log("DATA", data[patch.operation.oldName]);
+      data[patch.operation.newName] = data[patch.operation.oldName];
+
+      delete data[patch.operation.oldName];
+      const yml = sheetsToYAML(data);
+      await overrideYaml(this.yamlPathLong, yml);
+      return;
+    } else {
+      const data = await this.getData();
+      await updateRows(
+        data,
+        patch.operation.oldName,
+        patch.operation.oldRows,
+        patch.operation.newRows
+      );
+      const yml = sheetsToYAML(data);
+      await overrideYaml(this.yamlPathLong, yml);
+    }
   }
   async addSheet(sheet, data) {
     console.log(sheet, data);
     data[sheet] = [];
     var yml = sheetsToYAML(data);
-    overrideYaml(this.yamlPathLong, yml);
+    await overrideYaml(this.yamlPathLong, yml);
   }
   async removeSheet(workSheet: string, data: {}) {
     delete data[workSheet];

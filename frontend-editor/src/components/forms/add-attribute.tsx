@@ -80,9 +80,11 @@ const AddInAttributes = ({
 export function AddSheet({
   data,
   setIsOpen,
+  editState,
 }: {
   data: Editable;
   setIsOpen: any;
+  editState: boolean;
 }) {
   if (!data.name) {
     return <div>First ADD a ATTRIBUTE_FILE</div>;
@@ -97,13 +99,37 @@ export function AddSheet({
     await data.query?.getData();
     setIsOpen(false);
   };
-
+  const onPatch = async (formData: FieldValues) => {
+    const body = {
+      type: "sheetName",
+      operation: formData,
+    };
+    console.log("patching", data.path, body);
+    await patchData(data.path, body);
+    await data.query?.getData();
+    setIsOpen(false);
+  };
+  if (editState) {
+    return (
+      <GenericForm
+        onSubmit={onPatch}
+        className="w-full mx-auto my-4 p-4 border rounded-lg shadow-blue-500"
+      >
+        <FormSelect
+          name="oldName"
+          label="Choose Api to re-name"
+          options={data.query.updateParams?.getTableNames() ?? [""]}
+        />
+        <FormInput name="newName" label="Enter New Name" />
+      </GenericForm>
+    );
+  }
   return (
     <GenericForm
       onSubmit={onSubmit}
       className="w-full mx-auto my-4 p-4 border rounded-lg shadow-blue-500"
     >
-      <FormInput name="sheet" label="Attribute Sheet Name" strip={true} />
+      <FormInput name="sheet" label="Attribute API Name" strip={true} />
     </GenericForm>
   );
 }
@@ -111,9 +137,11 @@ export function AddSheet({
 export const AddRowForm = ({
   data,
   setIsOpen,
+  editState,
 }: {
   data: Editable;
   setIsOpen: any;
+  editState: boolean;
 }) => {
   const defaultValues = data.query.addParams?.rowData || {};
   if (!data.query.addParams?.sheet) {
@@ -131,14 +159,36 @@ export const AddRowForm = ({
     await data.query?.getData();
     setIsOpen(false);
   };
+  const onPatch = async (formData: FieldValues) => {
+    console.log("Data submitted for row:", formData);
+    const path = data.path;
+    const body = {
+      type: "rowData",
+      operation: {
+        oldName: data.query.addParams?.sheet,
+        oldRows: [data.query.addParams?.rowData],
+        newRows: [formData],
+      },
+    };
+    console.log("PATCHING");
+    await patchData(path, body);
+    await data.query?.getData();
+    setIsOpen(false);
+  };
 
   return (
     <GenericForm
-      onSubmit={onSubmit}
+      onSubmit={editState ? onPatch : onSubmit}
       defaultValues={defaultValues}
       className="w-full mx-auto my-4 p-4 border rounded-lg shadow-blue-500"
     >
-      <FormInput name="path" label="Path" required={true} strip={true} />
+      <FormInput
+        name="path"
+        label="Path"
+        required={true}
+        strip={true}
+        disable={editState ? true : false}
+      />
       <FormSelect
         name="required"
         label="Required"

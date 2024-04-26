@@ -43,7 +43,7 @@ export function addRows(data, sheetName: string, rows: AttributeRow[]) {
  * @returns Updated workbook data with the rows removed from the specified sheet.
  */
 export function deleteRows(
-  data: Record<string, any[]>,
+  data: Record<string, AttributeRow[]>,
   sheetName: string,
   rows: AttributeRow[]
 ): Record<string, any[]> {
@@ -59,6 +59,48 @@ export function deleteRows(
   // Update the original data structure with the filtered data
   data[sheetName] = filteredSheetData;
   return data;
+}
+
+export function updateRows(
+  data: Record<string, AttributeRow[]>,
+  sheetName: string,
+  oldRows: AttributeRow[],
+  newRows: AttributeRow[]
+) {
+  // Check if the specified sheet exists in the data.
+  if (!data[sheetName]) {
+    console.error(`Sheet name "${sheetName}" does not exist.`);
+    return;
+  }
+
+  // Create a map of new rows keyed by 'path' for quick lookup.
+  const newRowMap = new Map<string, AttributeRow>();
+  for (const newRow of newRows) {
+    newRowMap.set(newRow.path, newRow);
+  }
+
+  // Prepare a set of paths from oldRows for quick lookup.
+  const oldRowPaths = new Set(oldRows.map((row) => row.path));
+
+  // Update rows in the specified sheet.
+  const updatedRows = data[sheetName].map((existingRow) => {
+    if (oldRowPaths.has(existingRow.path)) {
+      // Replace with the new row if it exists in the map; otherwise, keep the existing row.
+      return newRowMap.get(existingRow.path) || existingRow;
+    }
+    return existingRow; // Return existing rows that are not in oldRows.
+  });
+
+  // Filter out new rows that are actually new (not just updates).
+  const additionalNewRows = newRows.filter(
+    (row) =>
+      !data[sheetName].some((existingRow) => existingRow.path === row.path)
+  );
+
+  // Concatenate the additional new rows to the updated rows array.
+  data[sheetName] = updatedRows.concat(additionalNewRows);
+
+  console.log(`Rows updated successfully in sheet "${sheetName}".`);
 }
 
 export function sheetsToYAML(sheets) {

@@ -69,7 +69,11 @@ const AttributesTable = ({ attribute }: { attribute: Editable }) => {
     name: activeFile,
     registerID: AttributeFileID,
     path: `${attribute.path}/${activeFile}`,
-    query: { getData: () => getTableData(activeFile), Parent: attribute },
+    query: {
+      getData: () => getTableData(activeFile),
+      Parent: attribute,
+      updateParams: { getTableNames },
+    },
   };
   const tableEditable: Editable = {
     ...fileEditable,

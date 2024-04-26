@@ -1,5 +1,5 @@
 import { ComponentsType } from "./ComponentType/ComponentsFolderTypeEditable";
-import { copyDir } from "./fileUtils";
+import { copyDir, deleteFolderSync } from "./fileUtils";
 import path from "path";
 import fs from "fs/promises";
 
@@ -12,11 +12,13 @@ export class HistoryUtil {
     this.history = [];
     this.maxHistory = maxHistory;
     this.historyPath = path.resolve(__dirname, "../../history");
+
     this.initializeHistoryFolder();
   }
 
   async initializeHistoryFolder() {
     try {
+      await deleteFolderSync(this.historyPath);
       await fs.mkdir(this.historyPath, { recursive: true });
     } catch (error) {
       console.error("Failed to create history directory:", error);
@@ -55,10 +57,11 @@ export class HistoryUtil {
   async undoLastAction() {
     if (this.history.length === 0) {
       console.log("No history to undo");
-      return;
+      throw new Error("No history to undo");
     }
-    const lastHistory = this.history.pop();
+
     try {
+      const lastHistory = this.history.pop();
       return lastHistory;
     } catch (error) {
       console.error("Failed to get latest history:", error);

@@ -1,4 +1,5 @@
 import fs from "fs";
+import fse = require("fs-extra");
 const fs_p = require("fs").promises;
 import path from "path";
 import yaml from "js-yaml";
@@ -50,7 +51,6 @@ export async function renameFolder(folderPath: string, newName: string) {
     }
   }
 }
-
 export async function deleteFile(filePath) {
   try {
     await fs_p.unlink(filePath);
@@ -60,14 +60,25 @@ export async function deleteFile(filePath) {
   }
 }
 // Function to delete a folder synchronously at a given path
-export function deleteFolderSync(folderPath) {
+export async function deleteFolderSync(folderPath) {
   try {
-    fs.rmSync(folderPath, { recursive: true, force: true });
+    await fs.promises.rm(folderPath, { recursive: true, force: true });
     console.log("Folder successfully deleted");
   } catch (error) {
     console.error("Error deleting the folder:", error);
   }
 }
+export async function overwriteFolder(source: string, target: string) {
+  try {
+    await fse.ensureDir(target);
+    await fse.emptyDir(target);
+    await copyDir(source, target);
+    console.log("Folder overwritten successfully");
+  } catch (error) {
+    console.error("Error overwriting the folder:", error);
+  }
+}
+
 export async function readYamlFile(filePath) {
   try {
     const fileData = await fs_p.readFile(filePath, "utf8");
@@ -77,7 +88,6 @@ export async function readYamlFile(filePath) {
     throw err; // Rethrow the error for caller to handle if needed
   }
 }
-
 export async function copyDir(
   src,
   dest,

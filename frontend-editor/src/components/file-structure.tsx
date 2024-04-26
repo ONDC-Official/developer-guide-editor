@@ -51,7 +51,7 @@ export const ComponentsStructure = ({
                 key={item.name + index}
                 item={item}
                 index={index}
-                activeTab={dataContext.acitiveEditable}
+                activeTab={dataContext.activeEditable}
                 handleTabClick={handleTabClick}
               />
             ))}

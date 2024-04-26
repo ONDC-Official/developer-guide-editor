@@ -4,15 +4,15 @@ import { Editable } from "./file-structure";
 import { AttributeFolderID } from "../pages/home-page";
 
 export function MainContent({
-  acitiveEditable,
+  activeEditable,
 }: {
-  acitiveEditable: Editable | undefined;
+  activeEditable: Editable | undefined;
 }) {
-  if (!acitiveEditable) return <></>;
+  if (!activeEditable) return <></>;
   return (
     <>
-      {acitiveEditable?.registerID === AttributeFolderID && (
-        <AttributesTable attribute={acitiveEditable} />
+      {activeEditable?.registerID === AttributeFolderID && (
+        <AttributesTable attribute={activeEditable} />
       )}
     </>
   );

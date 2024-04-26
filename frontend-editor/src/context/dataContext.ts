@@ -6,7 +6,7 @@ interface DataContextProps {
   setActivePath: React.Dispatch<React.SetStateAction<string>>;
   loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-  acitiveEditable: Editable | undefined;
+  activeEditable: Editable | undefined;
   setActiveEditable: React.Dispatch<React.SetStateAction<Editable | undefined>>;
 }
 

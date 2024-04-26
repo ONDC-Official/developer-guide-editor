@@ -31,9 +31,17 @@ const FormFactory = ({
         );
       case AttributeFileID:
         if (data.query.addParams?.type === "addRow") {
-          return <AddRowForm data={data} setIsOpen={setIsOpen} />;
+          return (
+            <AddRowForm
+              data={data}
+              setIsOpen={setIsOpen}
+              editState={editState}
+            />
+          );
         } else {
-          return <AddSheet data={data} setIsOpen={setIsOpen} />;
+          return (
+            <AddSheet data={data} setIsOpen={setIsOpen} editState={editState} />
+          );
         }
       default:
         return <div>No form available for this type.</div>;

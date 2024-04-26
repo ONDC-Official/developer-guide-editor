@@ -6,7 +6,7 @@ import { Editable } from "../utils/Editable";
 import { folderTypeEditable } from "../utils/folderTypeEditable";
 import { AttributeFile, FileTypeEditable } from "../utils/FileTypeEditable";
 import { error } from "console";
-import { copyDir } from "../utils/fileUtils";
+import { copyDir, deleteFolderSync, overwriteFolder } from "../utils/fileUtils";
 import { HistoryUtil } from "../utils/histroyUtils";
 import { Session } from "inspector";
 import { ComponentsType } from "../utils/ComponentType/ComponentsFolderTypeEditable";
@@ -62,7 +62,7 @@ app.all("/guide/*", async (req: any, res, next) => {
   target = sessionInstances[pathSegments[0]];
   for (const item of pathSegments.slice(1)) {
     if (target instanceof folderTypeEditable) {
-      console.log("children", target.chilrenEditables);
+      // console.log("children", target.chilrenEditables);
       const sub = target.chilrenEditables.find((child) => child.name === item);
       if (sub) {
         parent = target;
@@ -114,15 +114,19 @@ app.post("/guide/*", async (req, res, next) => {
 
 app.put("/guide/*", async (req, res, next) => {
   try {
-    const query = { ...req.query };
+    // const query = { ...req.query };
     console.log("UNDOING");
     const source = await history.undoLastAction();
     const targetName = req.params[0].split("/")[0];
     console.log(targetName);
-    const target = sessionInstances[targetName];
-    await copyDir(source, target.folderPath);
+    const comp = sessionInstances[targetName];
+    const folderPath = comp.folderPath;
+    await comp.destroy();
+    await overwriteFolder(source, folderPath);
+    await deleteFolderSync(source);
+    console.log("COPY DONE");
     sessionInstances[targetName] = await EditableRegistry.loadComponent(
-      target.folderPath,
+      `../../../ONDC-NTS-Specifications/api/${targetName}`,
       targetName
     );
     res.status(200).send("DATA UNDONE");
@@ -140,11 +144,11 @@ app.patch("/guide/*", async (req, res, next) => {
   try {
     await history.addHistory(sessionInstances[currentSessionID]);
     console.log("updating");
+
     await target.update(req.body);
     return res.status(200).send("DATA UPDATED");
   } catch (e) {
     console.error(e);
-    console.log("ERROR");
     res.status(500).json({
       error: "Internal Server Error",
       errorMessage: e.message,

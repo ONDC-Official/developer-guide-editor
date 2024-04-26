@@ -20,7 +20,7 @@ export function HomePage() {
   const [components, setComponents] = React.useState([] as Editable[]);
   const activePath = React.useRef<string>("");
   const [pathState, setPathState] = useState<string>("");
-  const [acitiveEditable, setActiveEditable] = React.useState<Editable>();
+  const [activeEditable, setActiveEditable] = React.useState<Editable>();
 
   useEffect(() => {
     fetchData();
@@ -73,7 +73,7 @@ export function HomePage() {
       compsList.push(editable);
     }
     setComponents(compsList);
-    setActiveEditable(compsList[0]);
+    setActiveEditable(undefined);
     setLoading(false);
   }
 
@@ -84,7 +84,7 @@ export function HomePage() {
         setActivePath: setPathState,
         loading: loading,
         setLoading: setLoading,
-        acitiveEditable: acitiveEditable,
+        activeEditable: activeEditable,
         setActiveEditable: setActiveEditable,
       }}
     >
@@ -93,7 +93,7 @@ export function HomePage() {
       ) : (
         <ComponentView
           components={components}
-          acitiveEditable={acitiveEditable}
+          activeEditable={activeEditable}
           parentComp={compEditable}
         />
       )}
@@ -104,11 +104,11 @@ export function HomePage() {
 
 function ComponentView({
   components,
-  acitiveEditable,
+  activeEditable: activeEditable,
   parentComp,
 }: {
   components: Editable[];
-  acitiveEditable: Editable | undefined;
+  activeEditable: Editable | undefined;
   parentComp: Editable;
 }) {
   return (
@@ -119,7 +119,7 @@ function ComponentView({
           componentParent={parentComp}
         />
         <div className=" mt-20 ml-64 w-full">
-          <MainContent acitiveEditable={acitiveEditable} />
+          <MainContent activeEditable={activeEditable} />
         </div>
       </div>
     </>

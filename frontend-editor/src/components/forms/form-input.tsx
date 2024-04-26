@@ -8,6 +8,7 @@ const FormInput = ({
   errors,
   type = "text",
   strip = false,
+  disable = false,
 }: any) => {
   const handleChange = (e: any) => {
     let value = e.target.value;
@@ -25,6 +26,7 @@ const FormInput = ({
       </label>
       <input
         {...register(name, { required })}
+        disabled={disable}
         id={name}
         type={type}
         className="mt-2 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
