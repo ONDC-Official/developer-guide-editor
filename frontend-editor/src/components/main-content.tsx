@@ -8,7 +8,6 @@ export function MainContent({
 }: {
   acitiveEditable: Editable | undefined;
 }) {
-  console.log("HELOOOOOOOOOOOOOOO", acitiveEditable);
   if (!acitiveEditable) return <></>;
   return (
     <>

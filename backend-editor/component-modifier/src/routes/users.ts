@@ -6,11 +6,18 @@ import { Editable } from "../utils/Editable";
 import { folderTypeEditable } from "../utils/folderTypeEditable";
 import { AttributeFile, FileTypeEditable } from "../utils/FileTypeEditable";
 import { error } from "console";
+import { copyDir } from "../utils/fileUtils";
+import { HistoryUtil } from "../utils/histroyUtils";
+import { Session } from "inspector";
+import { ComponentsType } from "../utils/ComponentType/ComponentsFolderTypeEditable";
 
-interface EditableMap {
-  [key: string]: Editable;
+interface EditableMap<T> {
+  [key: string]: T;
 }
-const sessionInstances: EditableMap = {};
+const sessionInstances: EditableMap<ComponentsType> = {};
+let currentSessionID: string = "";
+const history = new HistoryUtil(5);
+
 initRegistry();
 
 export const app = express();
@@ -36,11 +43,11 @@ app.all("/guide/*", async (req: any, res, next) => {
     });
     return;
   }
-  const sessionID = pathSegments[0];
-  if (!sessionInstances[sessionID] && req.method !== "DELETE") {
-    sessionInstances[sessionID] = await EditableRegistry.loadComponent(
-      `../../../ONDC-NTS-Specifications/api/${sessionID}`,
-      sessionID
+  currentSessionID = pathSegments[0];
+  if (!sessionInstances[currentSessionID] && req.method !== "DELETE") {
+    sessionInstances[currentSessionID] = await EditableRegistry.loadComponent(
+      `../../../ONDC-NTS-Specifications/api/${currentSessionID}`,
+      currentSessionID
     );
   }
   next();
@@ -93,7 +100,7 @@ app.get("/guide/*", async (req, res, next) => {
 
 app.post("/guide/*", async (req, res, next) => {
   try {
-    // console.log("POSTING");
+    await history.addHistory(sessionInstances[currentSessionID]);
     await target.add(req.body);
     return res.status(201).send("DATA ADDED");
   } catch (e) {
@@ -105,8 +112,33 @@ app.post("/guide/*", async (req, res, next) => {
   }
 });
 
+app.put("/guide/*", async (req, res, next) => {
+  try {
+    const query = { ...req.query };
+    console.log("UNDOING");
+    const source = await history.undoLastAction();
+    const targetName = req.params[0].split("/")[0];
+    console.log(targetName);
+    const target = sessionInstances[targetName];
+    await copyDir(source, target.folderPath);
+    sessionInstances[targetName] = await EditableRegistry.loadComponent(
+      target.folderPath,
+      targetName
+    );
+    res.status(200).send("DATA UNDONE");
+  } catch (e) {
+    console.log("CAUGHT ERROR");
+    console.error(e);
+    res.status(500).json({
+      error: "Internal Server Error",
+      errorMessage: e.message,
+    });
+  }
+});
+
 app.patch("/guide/*", async (req, res, next) => {
   try {
+    await history.addHistory(sessionInstances[currentSessionID]);
     console.log("updating");
     await target.update(req.body);
     return res.status(200).send("DATA UPDATED");
@@ -122,6 +154,7 @@ app.patch("/guide/*", async (req, res, next) => {
 
 app.delete("/guide/*", async (req, res, next) => {
   try {
+    await history.addHistory(sessionInstances[currentSessionID]);
     const { sheetName, attributes } = req.query;
     console.log(req.query);
     console.log(target);

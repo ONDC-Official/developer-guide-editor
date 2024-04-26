@@ -71,3 +71,20 @@ export async function deleteData(path: string, query = {}) {
     );
   }
 }
+
+export async function UndoData(path: string) {
+  try {
+    const url = `${baseURL}/${path}`;
+    const response = await axios.put(url);
+    return response.data;
+  } catch (e: any) {
+    console.log("error", e);
+    throw new Error(
+      e?.message ||
+        e.response.data ||
+        e.response.statusText ||
+        e.response.status ||
+        "Error Undoing Data"
+    );
+  }
+}

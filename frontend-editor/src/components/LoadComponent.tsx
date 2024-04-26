@@ -12,6 +12,7 @@ function LoadComponent() {
   } = useForm();
 
   const onSubmit = (data: any) => {
+    dataContext.activePath.current = data.componentName;
     dataContext.setActivePath(data.componentName);
   };
 

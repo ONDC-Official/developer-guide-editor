@@ -53,7 +53,7 @@ export abstract class folderTypeEditable extends Editable {
     console.log("PATCHING", update);
     const target = this.chilrenEditables.find((s) => s.name === update.oldName);
     try {
-      target.renameFolder(update.newName);
+      await target.renameFolder(update.newName);
     } catch (e) {
       throw new Error(e.message);
     }

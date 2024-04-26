@@ -37,20 +37,18 @@ export async function renameFolder(folderPath: string, newName: string) {
   const newFolderPath = path.join(parentDir, newName);
 
   try {
-    if (fs.existsSync(newFolderPath)) {
-      throw new Error("Folder with the new name already exists!");
-    }
-
-    fs.rename(folderPath, newFolderPath, (error) => {
-      if (error) {
-        console.error("Error renaming the folder:", error);
-      }
-      console.log(`Folder renamed successfully to ${newName}`);
-    });
+    await fs.promises.access(newFolderPath);
+    throw new Error("Folder with the new name already exists!");
   } catch (e) {
-    throw e;
+    if (e.code === "ENOENT") {
+      // Folder does not exist, proceed with renaming
+      await fs.promises.rename(folderPath, newFolderPath);
+      console.log(`Folder renamed successfully to ${newName}`);
+      return [newFolderPath + "/index.yaml", newFolderPath];
+    } else {
+      throw e;
+    }
   }
-  return [newFolderPath + "/index.yaml", newFolderPath];
 }
 
 export async function deleteFile(filePath) {

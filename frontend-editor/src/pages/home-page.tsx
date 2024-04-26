@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ComponentsStructure, Editable } from "../components/file-structure";
-import { getData } from "../utils/requestUtils";
+import { UndoData, getData } from "../utils/requestUtils";
 import FullPageLoader from "../components/loader";
 import { MainContent } from "../components/main-content";
 import { DataContext } from "../context/dataContext";
@@ -18,28 +18,37 @@ export const AttributeFileID = "ATTRIBUTE_FILE";
 export function HomePage() {
   const [loading, setLoading] = React.useState(false);
   const [components, setComponents] = React.useState([] as Editable[]);
-  const [activePath, setActivePath] = React.useState("");
+  const activePath = React.useRef<string>("");
+  const [pathState, setPathState] = useState<string>("");
   const [acitiveEditable, setActiveEditable] = React.useState<Editable>();
 
   useEffect(() => {
     fetchData();
-  }, [activePath]);
+  }, [pathState]);
 
-  // function FetchData(path = activePath) {
-  //   if (activePath === "") return;
-  //   setLoading(true);
-  //   const fetchData = async () => {
-  //     const comp = await getData(path);
-  //     return comp;
-  //   };
-  //   fetchData().then((comp) => {
-  //     setComponents(comp);
-  //     setLoading(false);
-  //   });
-  // }
+  useEffect(() => {
+    const handleKeyDown = async (event: any) => {
+      if (event.ctrlKey && event.key === "z") {
+        event.preventDefault(); // Prevent the browser's default undo behavior
+        console.log("Ctrl + Z pressed");
+        try {
+          console.log(activePath);
+          await UndoData(activePath.current);
+          await fetchData();
+        } catch (error) {
+          console.error("Error making PATCH request:", error);
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
   const compEditable: Editable = {
-    name: activePath,
-    path: activePath,
+    name: activePath.current,
+    path: activePath.current,
     registerID: CompFolderID,
     query: {
       getData: fetchData,
@@ -49,7 +58,7 @@ export function HomePage() {
 
   async function fetchData() {
     setLoading(true);
-    let getComp: FetchedComponents[] = await getData(activePath);
+    let getComp: FetchedComponents[] = await getData(activePath.current);
     let compsList: Editable[] = [];
     for (let comp of getComp) {
       const editable: Editable = {
@@ -72,14 +81,14 @@ export function HomePage() {
     <DataContext.Provider
       value={{
         activePath: activePath,
-        setActivePath: setActivePath,
+        setActivePath: setPathState,
         loading: loading,
         setLoading: setLoading,
         acitiveEditable: acitiveEditable,
         setActiveEditable: setActiveEditable,
       }}
     >
-      {activePath === "" ? (
+      {activePath.current === "" ? (
         <LoadComponent />
       ) : (
         <ComponentView
