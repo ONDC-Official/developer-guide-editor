@@ -14,6 +14,7 @@ interface FetchedComponents {
 export const CompFolderID = "COMPONENTS-FOLDER";
 export const AttributeFolderID = "ATTRIBUTE_FOLDER";
 export const AttributeFileID = "ATTRIBUTE_FILE";
+export const EnumFileID = "ENUM_FILE";
 
 export function HomePage() {
   const [loading, setLoading] = React.useState(false);

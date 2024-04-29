@@ -4,7 +4,7 @@ import FormInput from "./form-input";
 import FormSelect from "./form-select";
 import { Editable } from "../file-structure";
 import { FieldValues } from "react-hook-form";
-import { AttributeFolderID } from "../../pages/home-page";
+import { AttributeFolderID, EnumFileID } from "../../pages/home-page";
 import { postData } from "../../utils/requestUtils";
 
 const AddInComponent = ({
@@ -26,7 +26,11 @@ const AddInComponent = ({
       onSubmit={onSubmit}
       className="w-full mx-auto my-4 p-4 border rounded-lg shadow-blue-500"
     >
-      <FormSelect name="ID" label="Select Type" options={[AttributeFolderID]} />
+      <FormSelect
+        name="ID"
+        label="Select Type"
+        options={[AttributeFolderID, EnumFileID]}
+      />
     </GenericForm>
   );
 };

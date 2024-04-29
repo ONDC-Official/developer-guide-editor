@@ -194,8 +194,13 @@ export const AddRowForm = ({
         label="Required"
         options={["REQUIRED", "OPTIONAL"]}
       />
-      <FormInput name="type" label="Type" required={true} strip={true} />
-      <FormInput name="owner" label="Owner" />
+      <FormSelect
+        name="type"
+        label="Type"
+        required={true}
+        options={["NUMERIC", "TEXT", "OBJECT", "BOOLEAN"]}
+      />
+      <FormSelect name="owner" label="Owner" options={["BAP", "BPP"]} />
       <FormInput name="usage" label="Usage" />
       <FormInput name="description" label="Description" type="textarea" />
     </GenericForm>

@@ -2,7 +2,7 @@ import fs from "fs";
 import yaml from "js-yaml";
 import path from "path";
 import { readYamlFile } from "../../fileUtils";
-import { AttributeRow } from "../../FileTypeEditable";
+import { AttributeRow } from "./AttributeRow";
 
 export function getSheets(yamlData) {
   let sheets = {};

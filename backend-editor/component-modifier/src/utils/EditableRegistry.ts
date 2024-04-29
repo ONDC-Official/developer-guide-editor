@@ -40,7 +40,6 @@ export class EditableRegistry {
           await comp.add({
             ID: "ATTRIBUTE_FOLDER",
           });
-
           const attr = comp.getTarget("ATTRIBUTE_FOLDER", "attributes", comp);
           const attrFiles = await fs_p.readdir(attr.folderPath, {
             withFileTypes: true,
@@ -53,6 +52,9 @@ export class EditableRegistry {
               });
             }
           }
+        }
+        if (file.name === "enums") {
+          await comp.add({ ID: "ENUM_FILE" });
         }
       }
     }

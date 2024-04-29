@@ -4,6 +4,7 @@ import { folderTypeEditable } from "../folderTypeEditable";
 import { updateYamlRefComponents } from "../yamlUtils";
 import { AttributesFolderTypeEditable } from "./AttributeType/AttributesFolderTypeEditable";
 import { Editable } from "../Editable";
+import { EnumFileType } from "./enumType/enumFileType";
 
 export class ComponentsType extends folderTypeEditable {
   getRegisterID(): string {
@@ -12,7 +13,10 @@ export class ComponentsType extends folderTypeEditable {
   static REGISTER_ID = "COMPONENTS-FOLDER";
   constructor(path, id) {
     super(path, id);
-    this.allowedList = [AttributesFolderTypeEditable.REGISTER_ID];
+    this.allowedList = [
+      AttributesFolderTypeEditable.REGISTER_ID,
+      EnumFileType.REGISTER_ID,
+    ];
   }
   async add(new_editable: { ID: string }) {
     if (!this.allowedList.includes(new_editable.ID)) {
@@ -52,6 +56,9 @@ export class ComponentsType extends folderTypeEditable {
   GetForcedName(ID: string): string {
     if (ID === AttributesFolderTypeEditable.REGISTER_ID) {
       return "attributes";
+    }
+    if (ID === EnumFileType.REGISTER_ID) {
+      return "enums";
     }
     return "UNKNOWN";
   }

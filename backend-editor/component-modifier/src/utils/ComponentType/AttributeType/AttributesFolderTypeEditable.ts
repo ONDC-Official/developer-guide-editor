@@ -1,4 +1,4 @@
-import { AttributeFile } from "../../FileTypeEditable";
+import { AttributeFile } from "./AttributeRow";
 import { folderTypeEditable, UpdateObj } from "../../folderTypeEditable";
 import { updateYamlRefAttr } from "../../yamlUtils";
 
