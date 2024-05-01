@@ -33,7 +33,7 @@ export abstract class Editable {
   abstract add(something): Promise<any>;
   abstract remove(something): Promise<any>;
   abstract update(something): Promise<any>;
-  abstract getData(): Promise<any>;
+  abstract getData(query: any): Promise<any>;
 
   async saveData(savePath) {
     throw new Error("Method 'saveData()' must be implemented.");

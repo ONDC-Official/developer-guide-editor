@@ -63,11 +63,11 @@ export const ComponentsStructure = ({
 };
 
 function Tab({ item, index, activeTab, handleTabClick }: any) {
-  const tooltip = useEditorToolTip([true, true, true]);
+  const tooltip = useEditorToolTip([false, true, true]);
   const thisItem = item as Editable;
   tooltip.data.current = thisItem;
   return (
-    <div onContextMenu={tooltip.onContextMenu} className=" hover:bg-black">
+    <div onContextMenu={tooltip.onContextMenu} className=" hover:bg-blue-300">
       <Tippy {...tooltip.tippyProps}>
         <li key={thisItem.name + index} className="px-2 py-2">
           <button
@@ -91,7 +91,7 @@ const tabClass = (isActive: boolean) => `
     ${
       isActive
         ? "bg-blue-500 text-white shadow-lg scale-110" // More contrast for active tab
-        : "text-black hover:bg-blue-100 hover:text-blue-800 scale-100" // Improved hover state
+        : "text-black hover:bg-blue-100 scale-100" // Improved hover state
     }
     active:bg-blue-300 shadow-blue-400
   `;

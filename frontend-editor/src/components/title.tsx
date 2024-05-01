@@ -6,7 +6,7 @@ export function OndcTitle({ children }: any) {
         alt="Logo"
         className="h-16 w-auto"
       />
-      <GradientText>DEV GUIDE EDITOR</GradientText>
+      <GradientText>DEVELOPER GUIDE EDITOR</GradientText>
       {children}
     </div>
   );

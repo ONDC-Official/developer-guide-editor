@@ -6,7 +6,9 @@ import {
   AttributeFileID,
   AttributeFolderID,
   CompFolderID,
+  EnumFileID,
 } from "../../pages/home-page";
+import { EnumApiForm, EnumForm } from "./enum-Form";
 
 const FormFactory = ({
   data,
@@ -43,6 +45,19 @@ const FormFactory = ({
             <AddSheet data={data} setIsOpen={setIsOpen} editState={editState} />
           );
         }
+      case EnumFileID:
+        if (data.query.addParams?.type === "enum") {
+          return (
+            <EnumForm data={data} setIsOpen={setIsOpen} editState={editState} />
+          );
+        }
+        return (
+          <EnumApiForm
+            data={data}
+            setIsOpen={setIsOpen}
+            editState={editState}
+          />
+        );
       default:
         return <div>No form available for this type.</div>;
     }

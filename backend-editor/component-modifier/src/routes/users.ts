@@ -90,7 +90,9 @@ app.all("/guide/*", async (req: any, res, next) => {
 
 app.get("/guide/*", async (req, res, next) => {
   try {
-    res.status(200).send(await target.getData());
+    let query = { ...req.query };
+    query = query ? query : {};
+    res.status(200).send(await target.getData(query));
   } catch (e) {
     res.status(500).json({
       error: "Internal Server Error",
@@ -160,13 +162,10 @@ app.patch("/guide/*", async (req, res, next) => {
 app.delete("/guide/*", async (req, res, next) => {
   try {
     await history.addHistory(sessionInstances[currentSessionID]);
-    const { sheetName, attributes } = req.query;
-    console.log(req.query);
-    console.log(target);
-    if (target instanceof AttributeFile && sheetName) {
+    console.log("query", req.query);
+    if (Object.keys(req.query).length > 0) {
       const body: any = { ...req.query };
       await target.remove(body);
-      console.log("INSIDE IF");
       res.status(200).send("DATA DELETED");
       return;
     }
@@ -175,7 +174,7 @@ app.delete("/guide/*", async (req, res, next) => {
       comp.destroy();
       delete sessionInstances[req.params[0].split("/")[0]];
     } else {
-      await parent.remove(target);
+      await parent.remove({ folderName: target.name });
     }
     res.status(200).send("DATA DELETED");
   } catch (e) {

@@ -29,15 +29,27 @@ export class AttributesFolderTypeEditable extends folderTypeEditable {
     await updateYamlRefAttr(this.yamlPathLong, addedChild.name);
   }
 
-  async getData() {
+  async getData(query) {
     if (this.chilrenEditables.length === 0) return [];
-    console.log(this.chilrenEditables);
+    if (query.type === "pathSet") {
+      const data = new Set();
+      for (const editable of this.chilrenEditables) {
+        const child_data = await editable.getData(query);
+        for (const key in child_data) {
+          child_data[key].forEach((element) => {
+            data.add(element.path);
+          });
+        }
+      }
+      // console.log(data);
+      return Array.from(data);
+    }
     return this.chilrenEditables.map((editable) => editable.name);
   }
 
-  async remove(deleteTarget) {
+  async remove(deleteTarget: { folderName: string }) {
     await super.remove(deleteTarget);
-    await updateYamlRefAttr(this.yamlPathLong, deleteTarget.name, true);
+    await updateYamlRefAttr(this.yamlPathLong, deleteTarget.folderName, true);
   }
 
   async update(update: UpdateObj) {

@@ -32,7 +32,7 @@ export class ComponentsType extends folderTypeEditable {
     );
     await updateYamlRefComponents(this.yamlPathLong, addedChild.name);
   }
-  async getData() {
+  async getData(query) {
     if (this.chilrenEditables.length === 0) return [];
     const data = this.chilrenEditables.map((editable) => {
       return {
@@ -44,9 +44,13 @@ export class ComponentsType extends folderTypeEditable {
     console.log(data);
     return data;
   }
-  async remove(deleteTarget: Editable) {
+  async remove(deleteTarget: { folderName: string }) {
     await super.remove(deleteTarget);
-    await updateYamlRefComponents(this.yamlPathLong, deleteTarget.name, true);
+    await updateYamlRefComponents(
+      this.yamlPathLong,
+      deleteTarget.folderName,
+      true
+    );
   }
   async saveData(path) {
     await copyDir(this.longPath, path);

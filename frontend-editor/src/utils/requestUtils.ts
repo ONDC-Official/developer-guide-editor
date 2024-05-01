@@ -2,12 +2,12 @@ import axios from "axios";
 
 const baseURL = "http://localhost:1000/tree/guide";
 
-export async function getData(path: string) {
+export async function getData(path: string, query = {}) {
   console.log("path", path);
   try {
     console.log(path);
     const url = `${baseURL}/${path}`;
-    const response = await axios.get(url);
+    const response = await axios.get(url, { params: query });
     return response.data;
   } catch (error: any) {
     console.log("error", error);
@@ -56,9 +56,12 @@ export async function patchData(path: string, data: Record<string, any>) {
 }
 
 export async function deleteData(path: string, query = {}) {
+  console.log("query", query);
   try {
     const url = `${baseURL}/${path}`;
-    const response = await axios.delete(url, { params: query });
+    const response = await axios.delete(url, {
+      params: query,
+    });
     return response.data;
   } catch (error: any) {
     console.log("error", error);

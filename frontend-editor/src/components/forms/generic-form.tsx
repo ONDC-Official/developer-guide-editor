@@ -17,14 +17,21 @@ const GenericForm = ({
     handleSubmit,
     formState: { errors },
   } = useForm({ defaultValues });
+  const handleFocus = (e: any) => {
+    e.stopPropagation();
+  };
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className={className}>
+    <form
+      onFocus={handleFocus}
+      onSubmit={handleSubmit(onSubmit)}
+      className={className}
+    >
       {React.Children.map(children, (child) => {
         return React.cloneElement(child, { register, errors });
       })}
       <button
         type="submit"
-        className="mt-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold shadow-md transition duration-300 ease-in-out transform hover:-translate-y-1"
       >
         Submit
       </button>

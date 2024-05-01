@@ -12,6 +12,7 @@ import { convertToYamlWithRefs } from "../../Yaml Converter/yamlRefConvert";
 //   }
 //   return obj;
 // }
+
 export interface enumInfo {
   code: string;
   description: string;
@@ -23,8 +24,51 @@ export interface enumObject {
   enums: enumInfo[];
 }
 
-export const listDetailedPaths = (yamlData: string) => {
-  const obj: Record<string, any> = yaml.load(yamlData);
+export type RecordOfEnumArrays = Record<string, enumObject[]>;
+
+// Function to merge two Record<string, enumObject[]> objects
+export function mergeEnumObjectRecords(
+  record1: RecordOfEnumArrays,
+  record2: RecordOfEnumArrays
+): RecordOfEnumArrays {
+  // Create a new record that will store the merged results
+  const mergedRecord: RecordOfEnumArrays = {};
+
+  // Helper function to add items to the mergedRecord
+  const addItems = (key: string, items: enumObject[]) => {
+    if (mergedRecord[key]) {
+      mergedRecord[key] = [...mergedRecord[key], ...items];
+    } else {
+      mergedRecord[key] = [...items];
+    }
+  };
+
+  // Process each record and merge them
+  Object.keys(record1).forEach((key) => addItems(key, record1[key]));
+  Object.keys(record2).forEach((key) => addItems(key, record2[key]));
+
+  return mergedRecord;
+}
+
+export function enumsFromApi(yamlData: string) {
+  const obj: any = yaml.load(yamlData);
+  let data = {};
+  for (const key in obj) {
+    data[key] = listDetailedPaths(obj[key]);
+  }
+  return data;
+}
+
+export function enumsToNestes(data: Record<string, enumObject[]>) {
+  let nestdedData = {};
+  for (const key in data) {
+    nestdedData[key] = convertDetailedPathsToNestedObjects(data[key]);
+  }
+  return nestdedData;
+}
+
+const listDetailedPaths = (obj: Record<string, any>) => {
+  // const obj: Record<string, any> = yaml.load(yamlData);
   let detailedPaths = [];
   detailedPaths = explorePaths(obj, "", detailedPaths);
   return detailedPaths;
@@ -57,9 +101,7 @@ function explorePaths(
   }
   return detailedPaths;
 }
-export function convertDetailedPathsToNestedObjects(
-  detailedPaths: enumObject[]
-) {
+function convertDetailedPathsToNestedObjects(detailedPaths: enumObject[]) {
   function setPath(obj, path, value) {
     const keys = path.split(".");
     const lastKey = keys.pop();
@@ -73,12 +115,12 @@ export function convertDetailedPathsToNestedObjects(
   return nestedObject;
 }
 
-(async () => {
-  const filePath = path.join(__dirname, "../../../../test/test.yaml");
-  const data = await readYamlFile(filePath);
-  // const yml = yaml.load(data);
-  const det = listDetailedPaths(data);
-  // const nested = convertDetailedPathsToNestedObjects(det);
-  console.log(JSON.stringify(det, null, 2));
-  //   console.log(convertToYamlWithRefs(nested));
-})();
+// (async () => {
+//   const filePath = path.join(__dirname, "../../../../test/test.yaml");
+//   const data = await readYamlFile(filePath);
+//   // const yml = yaml.load(data);
+//   const det = listDetailedPaths(data);
+//   const nested = convertDetailedPathsToNestedObjects(det);
+//   console.log(JSON.stringify(det, null, 2));
+//   // console.log(convertToYamlWithRefs(nested));
+// })();

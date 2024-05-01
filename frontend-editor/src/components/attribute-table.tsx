@@ -66,6 +66,17 @@ const AttributesTable = ({ attribute }: { attribute: Editable }) => {
   }
 
   const fileEditable: Editable = {
+    name: attribute.name,
+    registerID: attribute.registerID,
+    path: attribute.path,
+    query: {
+      getData: () => attribute.query.getData(),
+      Parent: attribute.query.Parent,
+      deleteParams: { folderName: activeFile },
+      // updateParams: { getTableNames },
+    },
+  };
+  const tableEditable: Editable = {
     name: activeFile,
     registerID: AttributeFileID,
     path: `${attribute.path}/${activeFile}`,
@@ -73,11 +84,8 @@ const AttributesTable = ({ attribute }: { attribute: Editable }) => {
       getData: () => getTableData(activeFile),
       Parent: attribute,
       updateParams: { getTableNames },
+      deleteParams: { sheetName: activeTable },
     },
-  };
-  const tableEditable: Editable = {
-    ...fileEditable,
-    query: { ...fileEditable.query, deleteParams: { sheetName: activeTable } },
   };
 
   return (
@@ -114,7 +122,7 @@ const AttributesTable = ({ attribute }: { attribute: Editable }) => {
           activeFile={activeFile}
           activeTable={activeTable}
           fileData={fileData}
-          editable={fileEditable}
+          editable={tableEditable}
         />
       </div>
     </div>
@@ -160,7 +168,7 @@ function DataTable({
                 <th
                   key={index}
                   className="px-4 py-2 text-left border-b-2 border-gray-200 "
-                  style={{ minWidth: "120px", maxWidth: "200px" }} // Controlling column width
+                  style={{ minWidth: "120px", maxWidth: "200px" }}
                 >
                   {key.toUpperCase()}
                 </th>

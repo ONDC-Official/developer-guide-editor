@@ -4,6 +4,9 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { IoIosArrowDropdown, IoIosArrowDropright } from "react-icons/io";
 import { CgMenuMotion } from "react-icons/cg";
 import { GoRelFilePath } from "react-icons/go";
+import { getData } from "../utils/requestUtils";
+import useEditorToolTip from "../hooks/useEditorToolTip";
+import Tippy from "@tippyjs/react";
 const testEnums = [
   {
     path: "issue.message.issue.catagory",
@@ -383,74 +386,223 @@ const testEnums = [
     ],
   },
 ];
-
+interface Enum {
+  code: string;
+  description: string;
+}
+interface EnumData {
+  path: string;
+  enums: Enum[];
+}
+type EnumResponse = Record<string, EnumData[]>;
 export function EnumContent({ enums }: { enums: Editable }) {
+  const [enumData, setEnumData] = React.useState<EnumResponse>();
+  enums.query.getData = getEnumsData;
+  async function getEnumsData() {
+    const data = await getData(enums.path);
+    setEnumData(data);
+  }
+  React.useEffect(() => {
+    getEnumsData();
+  }, []);
+
   return (
     <>
       <div className="mt-3 ml-3 max-w-full pr-2">
         <div className="flex w-full">
           <div className="flex-1">
-            <Disclosure>
-              {({ open }) => (
-                /* Use the `open` state to conditionally change the direction of an icon. */
-                <>
-                  <Disclosure.Button className="flex justify-between w-full px-4 py-2 text-base font-medium text-left text-blue-900 bg-blue-100 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75">
-                    {
-                      <>
-                        <div className="flex">
-                          <CgMenuMotion
-                            size={20}
-                            className="flex-initial mr-2"
-                          />
-                          <span>Issue</span>
-                        </div>
-                      </>
-                    }
-                    {open ? (
-                      <IoIosArrowDropdown size={25} />
-                    ) : (
-                      <IoIosArrowDropright size={25} />
-                    )}
-                  </Disclosure.Button>
-                  <Transition
-                    enter="transition duration-100 ease-out"
-                    enterFrom="transform scale-95 opacity-0"
-                    enterTo="transform scale-100 opacity-100"
-                    leave="transition duration-75 ease-out"
-                    leaveFrom="transform scale-100 opacity-100"
-                    leaveTo="transform scale-95 opacity-0"
-                  >
-                    <Disclosure.Panel>
-                      {testEnums.map((t, i) => (
-                        <>
-                          <Disclosure>
-                            <Disclosure.Button className="flex w-full px-4 py-2 text-base font-medium text-left text-blue-900 bg-blue-100 rounded-lg hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75">
-                              <GoRelFilePath
-                                size={25}
-                                className="flex-initial mr-2"
-                              />
-                              {t.path}
-                            </Disclosure.Button>
-                            <Disclosure.Panel>
-                              <div className="ml-3">
-                                {t.enums.map((e, i) => (
-                                  <div key={i} className="flex flex-col">
-                                    {e.code} || {e.description}
-                                  </div>
-                                ))}
-                              </div>
-                            </Disclosure.Panel>
-                          </Disclosure>
-                        </>
-                      ))}
-                    </Disclosure.Panel>
-                  </Transition>
-                </>
-              )}
-            </Disclosure>
+            {enumData &&
+              Object.keys(enumData).map((apiName, index) => (
+                <EnumDisclose
+                  key={index}
+                  apiName={apiName}
+                  data={enumData[apiName]}
+                  enumEditable={enums}
+                />
+              ))}
           </div>
         </div>
       </div>
     </>
+  );
+}
+
+function EnumDisclose({
+  apiName,
+  data,
+  enumEditable,
+}: {
+  apiName: string;
+  data: EnumData[];
+  enumEditable: Editable;
+}) {
+  const apiToolTip = useEditorToolTip();
+
+  const apiEidtable = { ...enumEditable };
+  apiEidtable.name = apiName;
+  apiEidtable.query = {
+    getData: enumEditable.query.getData,
+    Parent: enumEditable,
+    addParams: { type: "enum" },
+    deleteParams: {},
+    updateParams: { oldName: apiName },
+  };
+  if (apiEidtable.query.deleteParams) {
+    apiEidtable.query.deleteParams[apiName] = JSON.stringify([]);
+  }
+  apiToolTip.data.current = apiEidtable;
+
+  return (
+    <Disclosure>
+      {({ open }) => (
+        <>
+          <Disclosure.Button
+            className="flex items-center justify-between ml-2 mt-3 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-300 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg
+          transition duration-300 ease-in-out"
+            onContextMenu={apiToolTip.onContextMenu}
+          >
+            <Tippy {...apiToolTip.tippyProps}>
+              <div className="flex items-center justify-between w-full">
+                <div className="flex items-center">
+                  <CgMenuMotion size={20} className="mr-2" />
+                  <span>{apiName}</span>
+                </div>
+                {open ? (
+                  <IoIosArrowDropdown size={25} />
+                ) : (
+                  <IoIosArrowDropright size={25} />
+                )}
+              </div>
+            </Tippy>
+          </Disclosure.Button>
+          <DropTransition>
+            <Disclosure.Panel>
+              {data.map((t, i) => (
+                <EnumList
+                  key={i}
+                  enumData={t}
+                  index={i}
+                  enumEditable={apiEidtable}
+                />
+              ))}
+            </Disclosure.Panel>
+          </DropTransition>
+        </>
+      )}
+    </Disclosure>
+  );
+}
+
+function EnumList({
+  enumData,
+  index,
+  enumEditable,
+}: {
+  enumData: EnumData;
+  index: number;
+  enumEditable: Editable;
+}) {
+  const enumToolTip = useEditorToolTip([true, false]);
+  const editable: Editable = {
+    name: enumData.path.split(".").pop() || "",
+    path: enumEditable.path,
+    registerID: enumEditable.registerID,
+    query: {
+      getData: enumEditable.query.getData,
+      Parent: enumEditable,
+      addParams: { type: "enum" },
+      deleteParams: {},
+      updateParams: {},
+    },
+  };
+  if (editable.query.deleteParams) {
+    editable.query.deleteParams[enumEditable.name] = [
+      { path: enumData.path, enums: enumData.enums },
+    ];
+  }
+  if (editable.query.updateParams) {
+    editable.query.updateParams = {
+      path: enumData.path,
+      enums: enumData.enums,
+    };
+  }
+  enumToolTip.data.current = editable;
+  return (
+    <Disclosure key={index}>
+      <Disclosure.Button
+        className="flex ml-6 mt-1 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-200 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg"
+        onContextMenu={enumToolTip.onContextMenu}
+      >
+        <Tippy {...enumToolTip.tippyProps}>
+          <div className="flex items-center">
+            <GoRelFilePath size={20} className="mr-2" />
+            <span>{enumData.path}</span>
+          </div>
+        </Tippy>
+      </Disclosure.Button>
+      <Disclosure.Panel>
+        <div className="ml-6 p-2 shadow-inner">
+          <EnumTable enumList={enumData.enums} />
+        </div>
+      </Disclosure.Panel>
+    </Disclosure>
+  );
+}
+
+function EnumTable({ enumList }: { enumList: Enum[] }) {
+  enumList = enumList.map((e) => {
+    const ob = { code: e.code, description: e.description };
+    return ob;
+  });
+  const heads = ["code", "description"];
+  return (
+    <>
+      <table className="w-full border-collapse table-auto">
+        <thead>
+          <tr>
+            {heads.map((key, index) => (
+              <th
+                key={index}
+                className="px-4 py-2 text-left border-b-2 border-gray-200 text-base"
+                // style={{ minWidth: "100px", maxWidth: "200px" }}
+              >
+                {key.toUpperCase()}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {enumList.map((e, index) => (
+            <tr key={index}>
+              {Object.values(e)
+                .filter((val) => val != "refrence")
+                .map((value, i) => (
+                  <td
+                    key={i + value}
+                    className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base"
+                  >
+                    {value}
+                  </td>
+                ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </>
+  );
+}
+
+function DropTransition({ children }: any) {
+  return (
+    <Transition
+      enter="transition duration-200 ease-out"
+      enterFrom="transform translate-y-1 opacity-0"
+      enterTo="transform translate-y-0 opacity-100"
+      leave="transition duration-150 ease-in"
+      leaveFrom="transform translate-y-0 opacity-100"
+      leaveTo="transform translate-y-1 opacity-0"
+    >
+      {children}
+    </Transition>
   );
 }

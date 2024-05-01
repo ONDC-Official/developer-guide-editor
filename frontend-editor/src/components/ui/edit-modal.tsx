@@ -1,8 +1,9 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useEffect } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import { Editable } from "../file-structure";
 import Dropdown from "../horizontal-tab";
 import FormFactory from "../forms/form-factory";
+import { IoCloseCircleOutline } from "react-icons/io5";
 
 interface EditModalProps {
   isOpen: any;
@@ -17,18 +18,22 @@ export default function EditModal({
   item,
   editState,
 }: EditModalProps) {
-  async function handleSave() {
-    closeModal();
-  }
-
   function closeModal() {
     setIsOpen(false);
   }
+
   // const form = FormFactory(item);
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className=" relative z-20" onClose={closeModal}>
+        <Dialog
+          as="div"
+          className=" relative z-20"
+          onClose={() => {}}
+          onFocus={() => {
+            console.log("FOCUS ON MODAL");
+          }}
+        >
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -65,9 +70,16 @@ export default function EditModal({
                 <Dialog.Panel className="w-full max-w-screen-sm transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                   <Dialog.Title
                     as="h3"
-                    className="text-lg font-medium leading-6 text-gray-900"
+                    className="text-lg font-medium leading-6 text-gray-900 flex justify-between items-center"
                   >
-                    {editState ? `Edit ${item.name}` : `Add In ${item.name}`}
+                    <span>
+                      {editState ? `Edit ${item.name}` : `Add In ${item.name}`}
+                    </span>
+                    <IoCloseCircleOutline
+                      size={30}
+                      onClick={closeModal}
+                      style={{ cursor: "pointer" }}
+                    />
                   </Dialog.Title>
                   <div className="mt-2"></div>
 
