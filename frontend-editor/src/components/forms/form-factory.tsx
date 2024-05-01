@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Editable } from "../file-structure";
 import AddInComponent from "./add-component";
 import AddInAttributes, { AddRowForm, AddSheet } from "./add-attribute";
@@ -9,6 +9,7 @@ import {
   EnumFileID,
 } from "../../pages/home-page";
 import { EnumApiForm, EnumForm } from "./enum-Form";
+import JsonField from "./JsonField";
 
 const FormFactory = ({
   data,
@@ -62,7 +63,21 @@ const FormFactory = ({
         return <div>No form available for this type.</div>;
     }
   };
-  return <>{renderForm()}</>;
+
+  const [rawState, setRawState] = useState(false);
+
+  return (
+    <>
+      <button
+        onClick={() => setRawState(!rawState)}
+        className="px-4 py-2 bg-gray-800 hover:bg-gray-900 text-white font-mono font-semibold shadow-lg transition duration-300 ease-linear transform hover:scale-105"
+      >
+        {rawState ? "Form" : "Raw"}
+      </button>
+      {rawState && <JsonField />}
+      {!rawState && renderForm()}
+    </>
+  );
 };
 
 export default FormFactory;
