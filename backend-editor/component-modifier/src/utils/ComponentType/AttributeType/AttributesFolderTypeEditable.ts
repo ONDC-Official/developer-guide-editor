@@ -41,7 +41,6 @@ export class AttributesFolderTypeEditable extends folderTypeEditable {
           });
         }
       }
-      // console.log(data);
       return Array.from(data);
     }
     return this.chilrenEditables.map((editable) => editable.name);

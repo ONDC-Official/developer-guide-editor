@@ -54,7 +54,19 @@ export class EditableRegistry {
           }
         }
         if (file.name === "enums") {
-          await comp.add({ ID: "ENUM_FILE" });
+          await comp.add({ ID: "ENUM_FOLDER" });
+          const enumFolder = comp.getTarget("ENUM_FOLDER", "enums", comp);
+          const enumFiles = await fs_p.readdir(enumFolder.folderPath, {
+            withFileTypes: true,
+          });
+          for (const enumFile of enumFiles) {
+            if (enumFile.isDirectory() && enumFile.name !== "default") {
+              await enumFolder.add({
+                ID: "ENUM_FILE",
+                name: enumFile.name,
+              });
+            }
+          }
         }
       }
     }

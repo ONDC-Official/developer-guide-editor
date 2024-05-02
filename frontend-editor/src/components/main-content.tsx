@@ -1,9 +1,9 @@
 import React from "react";
 import AttributesTable from "./attribute-table";
 import { Editable } from "./file-structure";
-import { AttributeFolderID, EnumFileID } from "../pages/home-page";
+import { AttributeFolderID, EnumFolderID } from "../pages/home-page";
 
-import { EnumContent } from "./EnumContent";
+import { EnumContent, EnumFolderContent } from "./EnumContent";
 
 export function MainContent({
   activeEditable,
@@ -16,8 +16,8 @@ export function MainContent({
       {activeEditable?.registerID === AttributeFolderID && (
         <AttributesTable attribute={activeEditable} />
       )}
-      {activeEditable?.registerID === EnumFileID && (
-        <EnumContent enums={activeEditable} />
+      {activeEditable?.registerID === EnumFolderID && (
+        <EnumFolderContent enumFolder={activeEditable} />
       )}
     </>
   );

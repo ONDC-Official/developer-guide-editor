@@ -3,6 +3,15 @@ import yaml from "js-yaml";
 import path from "path";
 
 export async function updateYamlRefComponents(filePath, section, del = false) {
+  if (section === "enums") {
+    await updateYamlRef(
+      filePath,
+      section,
+      { $ref: `./${section}/default/index.yaml` },
+      del
+    );
+    return;
+  }
   await updateYamlRef(
     filePath,
     section,
@@ -16,6 +25,16 @@ export async function updateYamlRefAttr(filePath, section, del = false) {
     section,
     {
       attribute_set: { $ref: `./${section}/index.yaml` },
+    },
+    del
+  );
+}
+export async function updateYamlRefEnum(filePath, section, del = false) {
+  await updateYamlRef(
+    filePath,
+    section,
+    {
+      enum_set: { $ref: `./${section}/index.yaml` },
     },
     del
   );

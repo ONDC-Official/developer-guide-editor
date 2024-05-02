@@ -6,7 +6,8 @@ import {
   AttributeFileID,
   AttributeFolderID,
   CompFolderID,
-  EnumFileID,
+  EnumFileId,
+  EnumFolderID,
 } from "../../pages/home-page";
 import { EnumApiForm, EnumForm } from "./enum-Form";
 import JsonField from "./JsonField";
@@ -46,7 +47,7 @@ const FormFactory = ({
             <AddSheet data={data} setIsOpen={setIsOpen} editState={editState} />
           );
         }
-      case EnumFileID:
+      case EnumFileId:
         if (data.query.addParams?.type === "enum") {
           return (
             <EnumForm data={data} setIsOpen={setIsOpen} editState={editState} />

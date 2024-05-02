@@ -7,385 +7,8 @@ import { GoRelFilePath } from "react-icons/go";
 import { getData } from "../utils/requestUtils";
 import useEditorToolTip from "../hooks/useEditorToolTip";
 import Tippy from "@tippyjs/react";
-const testEnums = [
-  {
-    path: "issue.message.issue.catagory",
-    enums: [
-      {
-        code: "FULFILMENT",
-        description:
-          "Issues related to the timely and accurate disbursement of the loan.",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "ORDER",
-        description:
-          "Issues concerning the loan order and overall loan servicing issues.",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "PAYMENT",
-        description:
-          "Issues pertaining to payments, interest, and charges associated with the loan provided to the borrower.",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-    ],
-  },
-  {
-    path: "issue.message.issue.sub-category",
-    enums: [
-      {
-        code: "ORD01",
-        description: "Incorrect info on the credit report",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "ORD02",
-        description: "delay in updating payment information",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "ORD03",
-        description: "Missing or lost loan documents",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "ORD04",
-        description: "Errors in loan agreements or contracts",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "PMT202",
-        description: "Issuance - Incorrect premium Amount",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "PMT203",
-        description: "Issuance - Payment related issues",
-        reference: "<PR/Issue/Discussion] Links md format text",
-      },
-      {
-        code: "PMT204",
-        description: "Issuance - Refund amount mismatch",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "PMT205",
-        description: "Issuance - Renewal premium clarification",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "PMT206",
-        description: "Issuance - Auto Debit related clarification",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "PMT207",
-        description: "Issuance - TDS Certificate issuance",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "PMT208",
-        description: "Issuance - GSTIN",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "PMT209",
-        description: "Issuance - EMI Calculation",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "ORD210",
-        description: "Issuance -policy benefits & features",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "ORD211",
-        description:
-          "Issuance -Result of Health Checkup / Manual verification of vehicle",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "ORD212",
-        description:
-          "Issuance -Change /Correction of personal details Name, DOB, Address, PED etc",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "ORD213",
-        description: "Issuance -Addition of Family Member/New Born",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "ORD214",
-        description: "Issuance -Ownership Transfer",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "ORD215",
-        description: "Issuance -Customer Details",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "ORD216",
-        description: "Issuance -Vehicle Details Updation",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "ORD217",
-        description: "Issuance -Hypothecation update",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "ORD218",
-        description: "Issuance -Vahan Update",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "ORD219",
-        description: "Issuance -Addition or Removal of Add Ons",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "ORD220",
-        description:
-          "Issuance -Policy Cancellation initiation and status - not able to cancel the policy",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "ORD221",
-        description: "Issuance -Claim Status",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "ORD222",
-        description: "Issuance -Portal Issues",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "ORD223",
-        description: "Issuance - Delay in Claim processing",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "ORD224",
-        description: "Issuance -Claim Repudiation",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "ORD225",
-        description: "Issuance -TPA Change during renewals",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "ORD226",
-        description: "Issuance - Nominee Updation",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "FLM201",
-        description:
-          "Issuance - Policy Issuance Status policy document not received",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "FLM202",
-        description: "Not able to complete the KYC",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "FLM203",
-        description: "Not able to set up E-mandate",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "FLM204",
-        description: "OTP not received during the e-sign of agreement",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "FLM205",
-        description: "Not able to view the agreement",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "FLM206",
-        description: "Need to update the e-mandate details",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "FLM207",
-        description: "Feedback on collection call",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "FLM208",
-        description: "Stop Marketing Communications",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "FLM209",
-        description: "Request for documents",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "FLM210",
-        description: "Need to update personal details",
-        reference: "<PR/Issue/Discussion Links md format text\\",
-      },
-      {
-        code: "FLM211",
-        description: "revoke consent already granted to collect personal data",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "FLM212",
-        description: "delete/forget existing data against my profile",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-    ],
-  },
-  {
-    path: "issue.message.issue.order_details.state",
-    enums: [
-      {
-        code: "GRANTED",
-        description: "Issuance - Nominee Updation",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "PROCESSING",
-        description: "Issuance - Nominee Updation",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "CLAIM_INITIATED",
-        description: "Describes if claim has been initiated",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "CLAIM_PROCESSING",
-        description: "Describes if claim is under process",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "CLAIM_PROCESSED",
-        description: "Describes if claim has been processed",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "CLAIM_REJECTED",
-        description: "Describes if claim has been rejected",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "ONLINE_RENEW",
-        description: "Describes if renewal is online",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "RENEWAL_PROCESSED",
-        description: "Describes if renewal has been processed",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "RENEWAL_INITIATED",
-        description: "Describes if renewal has been initiated",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "INSPECTION_SUCCESSFUL",
-        description: "Describes if inspection has been successful",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "INSPECTION_REJECTED",
-        description: "Describes if renewal has been rejected",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-    ],
-  },
-  {
-    path: "issue.message.issue.source.type",
-    enums: [
-      {
-        code: "CONSUMER",
-        description: "Describes if renewal has been rejected",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "INTERFACING NP",
-        description: "Describes if renewal has been rejected",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "SELLER",
-        description: "Describes if renewal has been rejected",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-    ],
-  },
-  {
-    path: "issue.message.issue.status",
-    enums: [
-      {
-        code: "OPEN",
-        description: "Describes the issue status",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "CLOSED",
-        description: "Describes the issue status",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "RESOLVED",
-        description: "Describes the issue status",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-    ],
-  },
-  {
-    path: "issue.message.issue.issue_type",
-    enums: [
-      {
-        code: "ISSUE",
-        description: "Describes the issue type",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "GRIEVANCE",
-        description: "Describes the issue type",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "DISPUTE",
-        description: "Describes the issue type",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-    ],
-  },
-  {
-    path: "issue.message.issue.issue_actions.complainant_actions.complainant_action",
-    enums: [
-      {
-        code: "OPEN",
-        description: "Describes the complainant_action",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "ESCALATE",
-        description: "Describes the complainant_action",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-      {
-        code: "CLOSE",
-        description: "Describes the complainant_action",
-        reference: "<PR/Issue/Discussion Links md format text",
-      },
-    ],
-  },
-];
+import Dropdown from "./horizontal-tab";
+
 interface Enum {
   code: string;
   description: string;
@@ -395,6 +18,56 @@ interface EnumData {
   enums: Enum[];
 }
 type EnumResponse = Record<string, EnumData[]>;
+
+export function EnumFolderContent({ enumFolder }: { enumFolder: Editable }) {
+  const [folderData, setFolderData] = React.useState<string[]>([]);
+  const [selectedFolder, setSelectedFolder] = React.useState<string>();
+  async function getEnumFolder() {
+    const data = await getData(enumFolder.path);
+    setFolderData(data);
+  }
+  enumFolder.query.getData = getEnumFolder;
+  React.useEffect(() => {
+    getEnumFolder();
+  }, []);
+  const FolderEditable: Editable = {
+    name: selectedFolder ?? "",
+    path: enumFolder.path + "/" + selectedFolder,
+    registerID: "ENUM_FILE",
+    query: {
+      getData: getEnumFolder,
+      Parent: enumFolder,
+      updateParams: { oldName: selectedFolder },
+    },
+  };
+  const EnumEditable: Editable = {
+    name: selectedFolder ?? "",
+    path: enumFolder.path + "/" + selectedFolder,
+    registerID: "ENUM_FILE",
+    query: {
+      Parent: enumFolder,
+      getData: getEnumFolder,
+    },
+  };
+
+  return (
+    <div className="mt-3 ml-3 max-w-full">
+      {/* <div className="flex w-full"> */}
+      <div className="flex-1">
+        <Dropdown
+          items={folderData}
+          selectedItem={selectedFolder ?? ""}
+          setSelectedItem={setSelectedFolder}
+          onOpen={getEnumFolder}
+          editable={FolderEditable}
+        />
+      </div>
+      {selectedFolder && <EnumContent enums={EnumEditable} />}
+      {/* </div> */}
+    </div>
+  );
+}
+
 export function EnumContent({ enums }: { enums: Editable }) {
   const [enumData, setEnumData] = React.useState<EnumResponse>();
   enums.query.getData = getEnumsData;
@@ -408,7 +81,7 @@ export function EnumContent({ enums }: { enums: Editable }) {
 
   return (
     <>
-      <div className="mt-3 ml-3 max-w-full pr-2">
+      <div className="mt-2 max-w-full">
         <div className="flex w-full">
           <div className="flex-1">
             {enumData &&
@@ -457,7 +130,7 @@ function EnumDisclose({
       {({ open }) => (
         <>
           <Disclosure.Button
-            className="flex items-center justify-between ml-2 mt-3 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-300 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg
+            className="flex items-center justify-between mt-3 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-300 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg
           transition duration-300 ease-in-out"
             onContextMenu={apiToolTip.onContextMenu}
           >

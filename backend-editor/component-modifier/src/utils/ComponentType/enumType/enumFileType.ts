@@ -1,4 +1,3 @@
-import { string } from "yaml/dist/schema/common/string";
 import { FileTypeEditable } from "../../FileTypeEditable";
 import { convertToYamlWithRefs } from "../../Yaml Converter/yamlRefConvert";
 import { readYamlFile } from "../../fileUtils";

@@ -43,7 +43,7 @@ const Dropdown = ({
           onChange={handleChange}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          className="bg-gray-200 text-gray-800 py-2 px-4 rounded w-full cursor-pointer  hover:bg-blue-200"
+          className="bg-gray-300 text-black font-medium py-2 px-4 w-full cursor-pointer  hover:bg-blue-200"
         >
           {selectedItem ? null : <option value="">Select an option</option>}
           {items.map((item, index) => (
