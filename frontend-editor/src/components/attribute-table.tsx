@@ -226,14 +226,16 @@ function TableRow({
       Parent: editable.query.Parent,
       getData: () => editable.query.getData(),
       addParams: { type: "addRow", sheet: sheetName, rowData: row },
-      deleteParams: { sheetName: sheetName, attributes: [row] },
+      deleteParams: {},
       copyData: async () => {
         const copy: Record<string, any> = {};
         copy[sheetName] = [row];
         return JSON.stringify(copy, null, 2);
       },
     },
-  } as Editable;
+  };
+  if (tooltip.data.current.query.deleteParams)
+    tooltip.data.current.query.deleteParams[sheetName] = [row];
   return (
     <Tippy {...tooltip.tippyProps}>
       <tr
