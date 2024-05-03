@@ -1,25 +1,28 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useEffect, useRef } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { Editable } from "../file-structure";
 import FormFactory from "../forms/form-factory";
 import { IoCloseCircleOutline } from "react-icons/io5";
+import JsonField from "../forms/JsonField";
 
 interface EditModalProps {
   isOpen: any;
   setIsOpen: any;
   item: Editable;
-  editState: boolean;
 }
 
-export default function EditModal({
-  isOpen,
-  setIsOpen,
-  item,
-  editState,
-}: EditModalProps) {
+export default function RawModal({ isOpen, setIsOpen, item }: EditModalProps) {
   function closeModal() {
     setIsOpen(false);
   }
+  const [defCode, setDefCode] = useState<any>("");
+  useEffect(() => {
+    if (item.query.copyData) {
+      item.query.copyData().then((data) => {
+        setDefCode(data);
+      });
+    }
+  }, [setDefCode, item]);
 
   // const form = FormFactory(item);
   return (
@@ -71,9 +74,7 @@ export default function EditModal({
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900 flex justify-between items-center"
                   >
-                    <span>
-                      {editState ? `Edit ${item.name}` : `Add In ${item.name}`}
-                    </span>
+                    <span>{`${item.registerID} - ${item.name}`}</span>
                     <IoCloseCircleOutline
                       size={30}
                       onClick={closeModal}
@@ -81,11 +82,12 @@ export default function EditModal({
                     />
                   </Dialog.Title>
                   <div className="mt-2"></div>
-
-                  <FormFactory
-                    data={item}
-                    setIsOpen={setIsOpen}
-                    editState={editState}
+                  <JsonField
+                    readOnly={true}
+                    DefaultCode={defCode}
+                    onSubmit={async (code: string) => {
+                      setIsOpen(false);
+                    }}
                   />
                 </Dialog.Panel>
               </Transition.Child>

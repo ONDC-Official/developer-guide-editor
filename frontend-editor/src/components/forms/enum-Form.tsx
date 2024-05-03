@@ -1,13 +1,37 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Editable } from "../file-structure";
 import AutoCompleteInput, { AutoCompleteOption } from "./auto-complete-input";
-import { Input } from "postcss";
 import FormInput from "./form-input";
 import GenericForm from "./generic-form";
 import { getData, patchData, postData } from "../../utils/requestUtils";
 import { DataContext } from "../../context/dataContext";
-import path from "path";
+import { FormFacProps } from "./form-factory";
+import { FieldValues } from "react-hook-form";
 import FormSelect from "./form-select";
+import { EnumFileId } from "../../pages/home-page";
+
+export function EnumFolderForm({ data, setIsOpen, editState }: FormFacProps) {
+  const onPost = async (formData: FieldValues) => {
+    console.log("Data submitted for attributes:", formData);
+    await postData(data.path, formData);
+    await data.query?.getData();
+    setIsOpen(false);
+  };
+  if (editState) {
+    return <span>Enum Folder Edit is not currently supported!</span>;
+  }
+  return (
+    <>
+      <GenericForm
+        onSubmit={onPost}
+        className="w-full mx-auto my-4 p-4 border rounded-lg shadow-blue-500"
+      >
+        <FormSelect name="ID" label="Attribute Type" options={[EnumFileId]} />
+        <FormInput name="name" label="Domain" strip={true} />
+      </GenericForm>
+    </>
+  );
+}
 
 export function EnumForm({
   data,
@@ -50,12 +74,9 @@ export function EnumForm({
         code: code,
         description: description,
       });
-
-      await postData(data.path, body);
-      await data.query.getData();
     }
-    console.log("Data submitted for enums:", formData);
-    console.log("Body:", body);
+    await postData(data.path, body);
+    await data.query.getData();
     setIsOpen(false);
   };
   const [options, setOptions] = useState<AutoCompleteOption[]>([]);
@@ -166,6 +187,7 @@ export function EnumApiForm({
     console.log(body);
     await postData(data.path, body);
     await data.query.getData();
+    console.log(data);
     setIsOpen(false);
   };
 

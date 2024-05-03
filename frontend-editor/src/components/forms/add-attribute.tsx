@@ -86,14 +86,13 @@ export function AddSheet({
   setIsOpen: any;
   editState: boolean;
 }) {
-  if (!data.name) {
+  if (!data.query.Parent) {
     return <div>First ADD a ATTRIBUTE_FILE</div>;
   }
   const onSubmit = async (formData: FieldValues) => {
     const path = data.path;
-    const body = {
-      sheetName: formData.sheet,
-    };
+    const body: Record<string, any> = {};
+    body[formData.sheet] = [];
     console.log("POSTING", path, body);
     await postData(path, body);
     await data.query?.getData();
@@ -150,10 +149,8 @@ export const AddRowForm = ({
   const onSubmit = async (formData: FieldValues) => {
     console.log("Data submitted for row:", formData);
     const path = data.path;
-    const body = {
-      sheetName: data.query.addParams?.sheet,
-      attributes: [formData],
-    };
+    const body: Record<string, any> = {};
+    body[data.query.addParams?.sheet] = [formData];
     console.log("POSTING", path, body);
     await postData(path, body);
     await data.query?.getData();

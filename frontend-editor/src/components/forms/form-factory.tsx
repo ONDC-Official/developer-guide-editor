@@ -9,8 +9,15 @@ import {
   EnumFileId,
   EnumFolderID,
 } from "../../pages/home-page";
-import { EnumApiForm, EnumForm } from "./enum-Form";
+import { EnumApiForm, EnumFolderForm, EnumForm } from "./enum-Form";
 import JsonField from "./JsonField";
+import { postData } from "../../utils/requestUtils";
+
+export interface FormFacProps {
+  data: Editable;
+  setIsOpen: any;
+  editState: boolean;
+}
 
 const FormFactory = ({
   data,
@@ -47,6 +54,14 @@ const FormFactory = ({
             <AddSheet data={data} setIsOpen={setIsOpen} editState={editState} />
           );
         }
+      case EnumFolderID:
+        return (
+          <EnumFolderForm
+            data={data}
+            setIsOpen={setIsOpen}
+            editState={editState}
+          />
+        );
       case EnumFileId:
         if (data.query.addParams?.type === "enum") {
           return (
@@ -67,6 +82,13 @@ const FormFactory = ({
 
   const [rawState, setRawState] = useState(false);
 
+  const onRawSubmit = async (code: string) => {
+    console.log("Posing data", code);
+    await postData(data.path, JSON.parse(code));
+    await data.query.getData();
+    setIsOpen(false);
+  };
+
   return (
     <>
       <button
@@ -75,7 +97,14 @@ const FormFactory = ({
       >
         {rawState ? "Form" : "Raw"}
       </button>
-      {rawState && <JsonField />}
+      {rawState && (
+        <>
+          <h1 className="text-base font-semibold text-gray-800 mb-2 mt-2">
+            Path: {data.path}
+          </h1>
+          <JsonField onSubmit={onRawSubmit} />
+        </>
+      )}
       {!rawState && renderForm()}
     </>
   );

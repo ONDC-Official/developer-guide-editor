@@ -7,6 +7,7 @@ const d = [""]; // Sample data
 
 export interface EditableQuery {
   getData: () => Promise<any>;
+  copyData?: () => Promise<any>;
   Parent: Editable | null;
   addParams?: Record<string, any>;
   deleteParams?: Record<string, any>;

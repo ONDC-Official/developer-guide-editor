@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Editable } from "./file-structure";
 import { Disclosure, Transition } from "@headlessui/react";
 import { IoIosArrowDropdown, IoIosArrowDropright } from "react-icons/io";
@@ -22,9 +22,11 @@ type EnumResponse = Record<string, EnumData[]>;
 export function EnumFolderContent({ enumFolder }: { enumFolder: Editable }) {
   const [folderData, setFolderData] = React.useState<string[]>([]);
   const [selectedFolder, setSelectedFolder] = React.useState<string>();
+  const reRender = useRef(false);
   async function getEnumFolder() {
     const data = await getData(enumFolder.path);
     setFolderData(data);
+    reRender.current = !reRender.current;
   }
   enumFolder.query.getData = getEnumFolder;
   React.useEffect(() => {
@@ -36,7 +38,7 @@ export function EnumFolderContent({ enumFolder }: { enumFolder: Editable }) {
     registerID: "ENUM_FILE",
     query: {
       getData: getEnumFolder,
-      Parent: enumFolder,
+      Parent: enumFolder.query.Parent,
       updateParams: { oldName: selectedFolder },
     },
   };
@@ -46,7 +48,9 @@ export function EnumFolderContent({ enumFolder }: { enumFolder: Editable }) {
     registerID: "ENUM_FILE",
     query: {
       Parent: enumFolder,
-      getData: getEnumFolder,
+      getData: async () => {
+        console.log("hello");
+      },
     },
   };
 
@@ -62,22 +66,31 @@ export function EnumFolderContent({ enumFolder }: { enumFolder: Editable }) {
           editable={FolderEditable}
         />
       </div>
-      {selectedFolder && <EnumContent enums={EnumEditable} />}
+      {selectedFolder && selectedFolder !== "" && (
+        <EnumContent enums={EnumEditable} reRender={reRender.current} />
+      )}
       {/* </div> */}
     </div>
   );
 }
 
-export function EnumContent({ enums }: { enums: Editable }) {
+export function EnumContent({
+  enums,
+  reRender,
+}: {
+  enums: Editable;
+  reRender: boolean;
+}) {
   const [enumData, setEnumData] = React.useState<EnumResponse>();
-  enums.query.getData = getEnumsData;
+
   async function getEnumsData() {
     const data = await getData(enums.path);
     setEnumData(data);
   }
+  enums.query.getData = getEnumsData;
   React.useEffect(() => {
     getEnumsData();
-  }, []);
+  }, [enums.name, reRender]);
 
   return (
     <>
@@ -158,6 +171,7 @@ function EnumDisclose({
                   enumEditable={apiEidtable}
                 />
               ))}
+              {data.length === 0 && <div>No Enums</div>}
             </Disclosure.Panel>
           </DropTransition>
         </>

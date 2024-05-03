@@ -3,6 +3,8 @@ import { Fragment, useContext, useEffect, useState } from "react";
 import { Editable } from "../file-structure";
 import { deleteData } from "../../utils/requestUtils";
 import { DataContext } from "../../context/dataContext";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface ModalProps {
   isOpen: any;
@@ -30,6 +32,7 @@ export default function DeleteModal({
     await deleteData(editable.path, query);
     console.log("GETTING", editable.query.Parent?.query.getData);
     await editable.query.Parent?.query.getData();
+    toast.success("Deleted successfully");
     closeModal();
   }
 

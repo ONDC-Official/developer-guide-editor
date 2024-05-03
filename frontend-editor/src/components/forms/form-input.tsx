@@ -19,7 +19,6 @@ const FormInput = ({
     e.target.value = value; // Set the input field's value
   };
   const handleFocus = (e: any) => {
-    console.log("hello");
     e.stopPropagation();
   };
 

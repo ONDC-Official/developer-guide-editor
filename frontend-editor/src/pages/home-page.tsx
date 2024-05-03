@@ -5,6 +5,8 @@ import FullPageLoader from "../components/loader";
 import { MainContent } from "../components/main-content";
 import { DataContext } from "../context/dataContext";
 import LoadComponent from "../components/LoadComponent";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface FetchedComponents {
   name: string;
@@ -36,8 +38,10 @@ export function HomePage() {
         try {
           console.log(activePath);
           await UndoData(activePath.current);
+          toast.success("Undo successful!");
           await fetchData();
-        } catch (error) {
+        } catch (error: any) {
+          toast.error("NO undo data available");
           console.error("Error making PATCH request:", error);
         }
       }

@@ -23,6 +23,8 @@ export interface AttributeOperation {
   attributes?: AttributeRow[];
 }
 
+type AttributeType = Record<string, AttributeRow[]>;
+
 export interface PatchAttributes {
   type: "sheetName" | "rowData";
   operation: {
@@ -42,33 +44,36 @@ export class AttributeFile extends FileTypeEditable {
     super(path, name);
   }
 
-  async add(additionObject: AttributeOperation) {
-    console.log(additionObject);
-    const workSheet = additionObject.sheetName;
-    const data = await this.getData();
-    if (!data[workSheet] || !additionObject.attributes) {
-      await this.addSheet(additionObject.sheetName, data);
-    } else if (!data[workSheet] && additionObject.attributes) {
-      throw new Error("Sheet not found, please add sheet first");
-    } else {
-      await this.addAttribute(additionObject, data);
+  async add(additionObject: AttributeType) {
+    let data = await this.getData();
+    for (let workSheet in additionObject) {
+      console.log("WORKSHEET", workSheet);
+      if (!data[workSheet]) {
+        data[workSheet] = [];
+      }
+      data = addRows(data, workSheet, additionObject[workSheet]);
     }
+    const yml = sheetsToYAML(data);
+    await overrideYaml(this.yamlPathLong, yml);
   }
 
   async getData() {
     return getSheets(await readYamlFile(this.yamlPathLong));
   }
-  async remove(deletionObject: AttributeOperation) {
-    const workSheet = deletionObject.sheetName;
+  async remove(deletionObject: AttributeType) {
     const data = await this.getData();
-    if (!data[workSheet]) {
-      throw new Error("Sheet not found");
+    for (const sheet in deletionObject) {
+      if (!data[sheet]) {
+        continue;
+      }
+      if (deletionObject[sheet].length === 0) {
+        delete data[sheet];
+      } else {
+        data[sheet] = deleteRows(data, sheet, deletionObject[sheet]);
+      }
     }
-    if (!deletionObject.attributes) {
-      await this.removeSheet(deletionObject.sheetName, data);
-      return;
-    }
-    await this.removeAttributes(deletionObject, data);
+    const yml = sheetsToYAML(data);
+    await overrideYaml(this.yamlPathLong, yml);
   }
 
   async update(patch: PatchAttributes) {
@@ -94,19 +99,8 @@ export class AttributeFile extends FileTypeEditable {
       await overrideYaml(this.yamlPathLong, yml);
     }
   }
-  async addSheet(sheet, data) {
-    console.log(sheet, data);
-    data[sheet] = [];
-    var yml = sheetsToYAML(data);
-    await overrideYaml(this.yamlPathLong, yml);
-  }
   async removeSheet(workSheet: string, data: {}) {
     delete data[workSheet];
-    const yml = sheetsToYAML(data);
-    overrideYaml(this.yamlPathLong, yml);
-  }
-  async addAttribute(attribute: AttributeOperation, data) {
-    data = addRows(data, attribute.sheetName, attribute.attributes);
     const yml = sheetsToYAML(data);
     overrideYaml(this.yamlPathLong, yml);
   }

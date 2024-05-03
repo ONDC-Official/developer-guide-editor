@@ -24,7 +24,7 @@ const AttributesTable = ({ attribute }: { attribute: Editable }) => {
   const [activeFile, setActiveFile] = useState("");
   const [activeTable, setActiveTable] = useState("");
   const [files, setFiles] = useState<string[]>([]);
-  const [fileData, setFileData] = useState({});
+  const [fileData, setFileData] = useState<Record<string, any>>({});
   const tabRef = React.useRef(0);
 
   attribute.query.getData = getAttributesData;
@@ -66,28 +66,37 @@ const AttributesTable = ({ attribute }: { attribute: Editable }) => {
   }
 
   const fileEditable: Editable = {
-    name: attribute.name,
+    name: activeFile,
     registerID: attribute.registerID,
     path: attribute.path,
     query: {
       getData: () => attribute.query.getData(),
       Parent: attribute.query.Parent,
       deleteParams: { folderName: activeFile },
-      // updateParams: { getTableNames },
+      copyData: async () => {
+        return JSON.stringify(fileData, null, 2);
+      },
     },
   };
   const tableEditable: Editable = {
-    name: activeFile,
+    name: activeTable,
     registerID: AttributeFileID,
     path: `${attribute.path}/${activeFile}`,
     query: {
       getData: () => getTableData(activeFile),
       Parent: attribute,
       updateParams: { getTableNames },
-      deleteParams: { sheetName: activeTable },
+      deleteParams: {},
+      copyData: async () => {
+        const table = fileData[activeTable];
+        const copy: Record<string, any> = {};
+        copy[activeTable] = table;
+        return JSON.stringify(copy, null, 2);
+      },
     },
   };
-
+  if (tableEditable.query.deleteParams)
+    tableEditable.query.deleteParams[activeTable] = fileData[activeTable] || [];
   return (
     <div className="mt-3 ml-3 max-w-full">
       <div className="flex w-full">
@@ -151,6 +160,12 @@ function DataTable({
       Parent: editable.query.Parent,
       addParams: { type: "addRow", sheet: activeTable },
       deleteParams: { sheetName: activeTable },
+      copyData: async () => {
+        const table = fileData[activeTable];
+        const copy: Record<string, any> = {};
+        copy[activeTable] = table;
+        return JSON.stringify(copy, null, 2);
+      },
     },
   };
 
@@ -212,6 +227,11 @@ function TableRow({
       getData: () => editable.query.getData(),
       addParams: { type: "addRow", sheet: sheetName, rowData: row },
       deleteParams: { sheetName: sheetName, attributes: [row] },
+      copyData: async () => {
+        const copy: Record<string, any> = {};
+        copy[sheetName] = [row];
+        return JSON.stringify(copy, null, 2);
+      },
     },
   } as Editable;
   return (

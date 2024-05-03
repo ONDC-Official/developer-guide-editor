@@ -10,6 +10,7 @@ import {
   Link,
   useNavigate,
 } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   const navigate = useNavigate();
@@ -24,6 +25,18 @@ function App() {
         <Route path="/login" element={<GitLogin />} />
         <Route path="/home" element={<HomePage />} />
       </Routes>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss={false}
+        draggable
+        pauseOnHover={false}
+        theme="colored"
+      />
     </>
   );
 }

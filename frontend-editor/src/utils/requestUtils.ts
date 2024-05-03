@@ -3,9 +3,9 @@ import axios from "axios";
 const baseURL = "http://localhost:1000/tree/guide";
 
 export async function getData(path: string, query = {}) {
-  console.log("path", path);
+  // console.log("path", path);
   try {
-    console.log(path);
+    // console.log(path);
     const url = `${baseURL}/${path}`;
     const response = await axios.get(url, { params: query });
     return response.data;
