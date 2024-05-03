@@ -29,7 +29,7 @@ export default function DeleteModal({
       query = editable.query.deleteParams;
     }
     console.log("Deleting", editable.path, query);
-    await deleteData(editable.path, query);
+    await deleteData(editable.deletePath, query);
     console.log("GETTING", editable.query.Parent?.query.getData);
     await editable.query.Parent?.query.getData();
     toast.success("Deleted successfully");

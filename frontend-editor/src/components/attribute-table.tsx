@@ -68,7 +68,8 @@ const AttributesTable = ({ attribute }: { attribute: Editable }) => {
   const fileEditable: Editable = {
     name: activeFile,
     registerID: attribute.registerID,
-    path: attribute.path,
+    path: `${attribute.path}/${activeFile}`,
+    deletePath: attribute.path,
     query: {
       getData: () => attribute.query.getData(),
       Parent: attribute.query.Parent,
@@ -82,6 +83,7 @@ const AttributesTable = ({ attribute }: { attribute: Editable }) => {
     name: activeTable,
     registerID: AttributeFileID,
     path: `${attribute.path}/${activeFile}`,
+    deletePath: `${attribute.path}/${activeFile}`,
     query: {
       getData: () => getTableData(activeFile),
       Parent: attribute,
@@ -155,6 +157,7 @@ function DataTable({
     name: editable.name,
     registerID: editable.registerID,
     path: editable.path,
+    deletePath: editable.path,
     query: {
       getData: editable.query?.getData,
       Parent: editable.query.Parent,
@@ -222,6 +225,7 @@ function TableRow({
     name: editable.name,
     registerID: editable.registerID,
     path: editable.path,
+    deletePath: editable.path,
     query: {
       Parent: editable.query.Parent,
       getData: () => editable.query.getData(),

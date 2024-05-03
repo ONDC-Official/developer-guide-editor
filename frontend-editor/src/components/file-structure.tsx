@@ -18,6 +18,7 @@ export interface Editable {
   name: string;
   registerID: string;
   path: string;
+  deletePath: string;
   query: EditableQuery;
 }
 
@@ -41,7 +42,7 @@ export const ComponentsStructure = ({
   if (!componentsChildren) return <></>;
   return (
     <div
-      className={`flex flex-col h-screen w-64 hover:bg-blue-100 fixed left-0 z-50 top-20`}
+      className={`flex flex-col h-screen w-64 hover:bg-blue-100 dark:bg-gray-900 dark:hover:bg-gray-800 fixed left-0 z-50 top-20`}
       onContextMenu={tooltip.onContextMenu}
     >
       <Tippy {...tooltip.tippyProps}>
@@ -68,7 +69,10 @@ function Tab({ item, index, activeTab, handleTabClick }: any) {
   const thisItem = item as Editable;
   tooltip.data.current = thisItem;
   return (
-    <div onContextMenu={tooltip.onContextMenu} className=" hover:bg-blue-300">
+    <div
+      onContextMenu={tooltip.onContextMenu}
+      className=" hover:bg-blue-300 dark:hover:bg-blue-500"
+    >
       <Tippy {...tooltip.tippyProps}>
         <li key={thisItem.name + index} className="px-2 py-2">
           <button
@@ -92,7 +96,7 @@ const tabClass = (isActive: boolean) => `
     ${
       isActive
         ? "bg-blue-500 text-white shadow-lg scale-110" // More contrast for active tab
-        : "text-black hover:bg-blue-100 scale-100" // Improved hover state
+        : "text-black hover:bg-blue-100 dark:hover:bg-blue-500 scale-100 dark:text-white" // Improved hover state
     }
     active:bg-blue-300 shadow-blue-400
   `;

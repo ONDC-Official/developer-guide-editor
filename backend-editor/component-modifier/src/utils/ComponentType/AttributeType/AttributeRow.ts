@@ -60,8 +60,17 @@ export class AttributeFile extends FileTypeEditable {
   async getData() {
     return getSheets(await readYamlFile(this.yamlPathLong));
   }
-  async remove(deletionObject: AttributeType) {
-    let data = await this.getData();
+  async remove(deletionObject: AttributeType | { sheetName: string }) {
+    let data: Record<string, any> = await this.getData();
+    if (
+      "sheetName" in deletionObject &&
+      !Array.isArray(deletionObject.sheetName)
+    ) {
+      delete data[deletionObject.sheetName];
+      const yml = sheetsToYAML(data);
+      await overrideYaml(this.yamlPathLong, yml);
+      return;
+    }
     for (const sheet in deletionObject) {
       if (!data[sheet]) {
         continue;

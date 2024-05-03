@@ -16,15 +16,21 @@ const AddInAttributes = ({
   setIsOpen: any;
   editState: boolean;
 }) => {
+  let path = data.path;
+  if (data.path.split("/").length > 2) {
+    path = data.path.split("/").slice(0, -1).join("/");
+  }
   const onPost = async (formData: FieldValues) => {
     console.log("Data submitted for attributes:", formData);
-    await postData(data.path, formData);
+
+    console.log(path);
+    await postData(path, formData);
     await data.query?.getData();
     setIsOpen(false);
   };
   const onPatch = async (formData: FieldValues) => {
     console.log("Data submitted for attributes:", formData);
-    await patchData(data.path, formData);
+    await patchData(path, formData);
     await data.query?.getData();
     setIsOpen(false);
   };
@@ -48,9 +54,10 @@ const AddInAttributes = ({
   }
   function EditForm() {
     const [option, setOptions] = useState([]);
+    const path = data.path.split("/").slice(0, -1).join("/");
     useEffect(() => {
       const fetchOptions = async () => {
-        const fetched = await getData(data.path);
+        const fetched = await getData(path);
         setOptions(fetched);
       };
       fetchOptions();

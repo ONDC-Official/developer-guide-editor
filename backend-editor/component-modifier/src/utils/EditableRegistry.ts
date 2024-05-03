@@ -1,8 +1,9 @@
 import fs_p from "fs/promises";
-
+import fs from "fs";
+import yaml from "js-yaml";
 import { ComponentsType } from "./ComponentType/ComponentsFolderTypeEditable";
-import { Dirent } from "fs";
-import { initRegistry } from "./RegisterList";
+import { overrideYaml } from "./yamlUtils";
+import { loadYamlWithRefs } from "./fileUtils";
 
 export class EditableRegistry {
   static registry = {};
@@ -23,10 +24,10 @@ export class EditableRegistry {
     await object.initIndexYaml(path, removeContent);
     return object;
   }
-  static async loadComponent(Componentpath, name) {
+  static async loadComponent(componentPath, name) {
     const comp: ComponentsType = await EditableRegistry.create(
       "COMPONENTS-FOLDER",
-      Componentpath,
+      componentPath,
       name
     );
 
@@ -54,12 +55,33 @@ export class EditableRegistry {
           }
         }
         if (file.name === "enums") {
+          const defExists = fs.existsSync(`${comp.folderPath}/enums/default`);
+          const ymlPath = `${comp.folderPath}/enums/index.yaml`;
+          const indexExists = fs.existsSync(ymlPath);
+          let data: any = "";
+          console.log(`Yml exists: ${indexExists} def exists: ${defExists}`);
+          if (indexExists) {
+            const raw = await fs_p.readFile(ymlPath, "utf8");
+            data = await loadYamlWithRefs(ymlPath);
+            // data = await yaml.dump(data);
+            console.log("ENUM DATA", JSON.stringify(data));
+          }
           await comp.add({ ID: "ENUM_FOLDER" });
           const enumFolder = comp.getTarget("ENUM_FOLDER", "enums", comp);
           const enumFiles = await fs_p.readdir(enumFolder.folderPath, {
             withFileTypes: true,
           });
+          if (!defExists) {
+            if (data !== "") {
+              await overrideYaml(
+                enumFolder.folderPath + "/default/index.yaml",
+                yaml.dump(data)
+              );
+            }
+          }
+
           for (const enumFile of enumFiles) {
+            console.log("ENUM FILE", enumFile.name, data, defExists);
             if (enumFile.isDirectory() && enumFile.name !== "default") {
               await enumFolder.add({
                 ID: "ENUM_FILE",

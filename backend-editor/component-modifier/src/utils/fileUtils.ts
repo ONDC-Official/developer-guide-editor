@@ -3,7 +3,17 @@ import fse = require("fs-extra");
 const fs_p = require("fs").promises;
 import path from "path";
 import yaml from "js-yaml";
-import { error } from "console";
+
+import $RefParser from "@apidevtools/json-schema-ref-parser";
+
+export async function loadYamlWithRefs(filePath) {
+  try {
+    const schema = await $RefParser.dereference(filePath);
+    return schema;
+  } catch (error) {
+    console.error("Error parsing schema:", error);
+  }
+}
 
 export async function createIndexYaml(
   relativeFolderPath,
@@ -132,11 +142,14 @@ console.log(__dirname);
 // copyYamlFile(sourceFilePath, destinationFilePath);
 
 // (async () => {
-//   try {
-//     const relativeFolderPath = "../../ONDC-NTS-Specifications/api/cp0";
-//     const structure = await getFileStructureRelative(relativeFolderPath);
-//     console.log("File structure:", structure);
-//   } catch (err) {
-//     console.error("Error testing getFileStructureRelative:", err);
-//   }
+//   const p = "../../../enums/index.yaml";
+//   const data = await loadYamlWithRefs(path.resolve(__dirname, p));
+//   console.log(JSON.stringify(data, null, 2));
+//   // try {
+//   //   const relativeFolderPath = "../../ONDC-NTS-Specifications/api/cp0";
+//   //   const structure = await getFileStructureRelative(relativeFolderPath);
+//   //   console.log("File structure:", structure);
+//   // } catch (err) {
+//   //   console.error("Error testing getFileStructureRelative:", err);
+//   // }
 // })();

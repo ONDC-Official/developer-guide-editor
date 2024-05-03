@@ -55,6 +55,7 @@ export function HomePage() {
   const compEditable: Editable = {
     name: activePath.current,
     path: activePath.current,
+    deletePath: activePath.current,
     registerID: CompFolderID,
     query: {
       getData: fetchData,
@@ -71,6 +72,7 @@ export function HomePage() {
         name: comp.name,
         registerID: comp.registerID,
         path: comp.path,
+        deletePath: comp.path,
         query: {
           Parent: compEditable,
           getData: async () => {},

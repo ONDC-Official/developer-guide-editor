@@ -35,16 +35,22 @@ export function EnumFolderContent({ enumFolder }: { enumFolder: Editable }) {
   const FolderEditable: Editable = {
     name: selectedFolder ?? "",
     path: enumFolder.path + "/" + selectedFolder,
+    deletePath: enumFolder.path + "/" + selectedFolder,
     registerID: "ENUM_FILE",
     query: {
       getData: getEnumFolder,
       Parent: enumFolder.query.Parent,
       updateParams: { oldName: selectedFolder },
+      copyData: async () => {
+        const data = await getData(enumFolder.path + "/" + selectedFolder);
+        return JSON.stringify(data, null, 2);
+      },
     },
   };
   const EnumEditable: Editable = {
     name: selectedFolder ?? "",
     path: enumFolder.path + "/" + selectedFolder,
+    deletePath: enumFolder.path + "/" + selectedFolder,
     registerID: "ENUM_FILE",
     query: {
       Parent: enumFolder,
@@ -132,6 +138,11 @@ function EnumDisclose({
     addParams: { type: "enum" },
     deleteParams: {},
     updateParams: { oldName: apiName },
+    copyData: async () => {
+      const copyDta: Record<string, any> = {};
+      copyDta[apiName] = data;
+      return JSON.stringify(copyDta, null, 2);
+    },
   };
   if (apiEidtable.query.deleteParams) {
     apiEidtable.query.deleteParams[apiName] = JSON.stringify([]);
@@ -193,6 +204,7 @@ function EnumList({
   const editable: Editable = {
     name: enumData.path.split(".").pop() || "",
     path: enumEditable.path,
+    deletePath: enumEditable.path,
     registerID: enumEditable.registerID,
     query: {
       getData: enumEditable.query.getData,
@@ -200,6 +212,11 @@ function EnumList({
       addParams: { type: "enum" },
       deleteParams: {},
       updateParams: {},
+      copyData: async () => {
+        const copyData: Record<string, any> = {};
+        copyData[enumEditable.name] = [enumData];
+        return JSON.stringify(copyData, null, 2);
+      },
     },
   };
   if (editable.query.deleteParams) {
