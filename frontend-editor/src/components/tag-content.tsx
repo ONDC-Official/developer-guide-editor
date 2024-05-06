@@ -10,6 +10,7 @@ import Tippy from "@tippyjs/react";
 import { CgMenuMotion } from "react-icons/cg";
 import { IoIosArrowDropdown, IoIosArrowDropright } from "react-icons/io";
 import { GoRelFilePath } from "react-icons/go";
+import { DropTransition } from "./helper-components";
 
 interface Tag {
   code: string;
@@ -23,7 +24,7 @@ interface Tag {
 
 interface TagData {
   path: string;
-  tags: Tag[];
+  tag: Tag[];
 }
 
 type TagResponse = Record<string, TagData[]>;
@@ -181,6 +182,8 @@ function TagDisclose({
                 )}
               </div>
             </Tippy>
+          </Disclosure.Button>
+          <DropTransition>
             <Disclosure.Panel>
               {data.map((tag, index) => (
                 <AllTagList
@@ -192,7 +195,7 @@ function TagDisclose({
               ))}
               {data.length === 0 && <div>No Enums</div>}
             </Disclosure.Panel>
-          </Disclosure.Button>
+          </DropTransition>
         </>
       )}
     </Disclosure>
@@ -208,6 +211,7 @@ function AllTagList({
   tagData: TagData;
   tagEditable: Editable;
 }) {
+  console.log(tagData);
   const tagToolTip = useEditorToolTip();
   const editable: Editable = {
     name: tagData.path.split(".").pop() ?? "",
@@ -217,7 +221,7 @@ function AllTagList({
     query: {
       getData: tagEditable.query.getData,
       Parent: tagEditable,
-      updateParams: { path: tagData.path, tags: tagData.tags },
+      updateParams: { path: tagData.path, tags: tagData.tag },
       deleteParams: {},
       copyData: async () => {
         const copyData: Record<string, TagData[]> = {};
@@ -228,10 +232,11 @@ function AllTagList({
   };
   if (editable.query.deleteParams) {
     editable.query.deleteParams[tagEditable.name] = [
-      { path: tagData.path, tags: tagData.tags },
+      { path: tagData.path, tags: tagData.tag },
     ];
   }
   tagToolTip.data.current = editable;
+  if (!tagData.tag) return <></>;
   return (
     <Disclosure key={index}>
       <Disclosure.Button
@@ -247,8 +252,58 @@ function AllTagList({
       </Disclosure.Button>
       <Disclosure.Panel>
         <div className="ml-6 p-2 shadow-inner">
-          hello
-          {/* <EnumTable enumList={enumData.enums} /> */}
+          {tagData.tag.map((tag, index) => (
+            <TagGroupInfo key={index} tag={tag} />
+          ))}
+        </div>
+      </Disclosure.Panel>
+    </Disclosure>
+  );
+}
+
+function TagGroupInfo({ tag }: { tag: Tag }) {
+  if (!tag.list) return <h2>Invalid Tag Format!</h2>;
+  return (
+    <Disclosure>
+      <Disclosure.Button className="flex ml-8 mt-1 w-full px-4 py-2 text-base font-medium text-left text-black bg-blue-100 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg">
+        <div className="flex items-center">
+          <span className="text-blue-500">{tag.code}</span>
+        </div>
+      </Disclosure.Button>
+      <Disclosure.Panel className="ml-8 p-4 bg-blue-50 shadow-md">
+        <div className="mb-4">
+          <span className="font-bold">DESCRIPTION:</span>
+          <span className="ml-2 ">{tag.description}</span>
+        </div>
+        <div className="mb-4">
+          <span className="font-bold">REQUIRED:</span>
+          <span className="ml-2 ">{tag.required}</span>
+        </div>
+        <div>
+          <table className="min-w-full text-base">
+            <thead className="bg-blue-100">
+              <tr>
+                <th className="text-left font-bold text-blue-700 px-4 py-2">
+                  CODE
+                </th>
+                <th className="text-left font-bold text-blue-700 px-4 py-2">
+                  DESCRIPTION
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {tag.list.map((list, index) => (
+                <tr key={index} className="bg-blue-100 border-b">
+                  <td className="px-4 py-1 text-blue-500 font-semibold">
+                    {list.code}:
+                  </td>
+                  <td className="px-4 py-1 text-blue-500">
+                    {list.description}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </Disclosure.Panel>
     </Disclosure>
