@@ -28,14 +28,14 @@ export class ComponentsType extends folderTypeEditable {
       name: this.GetForcedName(new_editable.ID),
     };
     await super.add(completeData);
-    const addedChild = this.chilrenEditables.find(
+    const addedChild = this.childrenEditables.find(
       (s) => s.name === completeData.name
     );
     await updateYamlRefComponents(this.yamlPathLong, addedChild.name);
   }
   async getData(query) {
-    if (this.chilrenEditables.length === 0) return [];
-    const data = this.chilrenEditables.map((editable) => {
+    if (this.childrenEditables.length === 0) return [];
+    const data = this.childrenEditables.map((editable) => {
       return {
         name: editable.name,
         registerID: editable.getRegisterID(),

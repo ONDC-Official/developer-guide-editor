@@ -64,7 +64,7 @@ app.all("/guide/*", async (req: any, res, next) => {
   for (const item of pathSegments.slice(1)) {
     if (target instanceof folderTypeEditable) {
       // console.log("children", target.chilrenEditables);
-      const sub = target.chilrenEditables.find((child) => child.name === item);
+      const sub = target.childrenEditables.find((child) => child.name === item);
       if (sub) {
         parent = target;
         target = sub;

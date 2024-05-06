@@ -1,6 +1,7 @@
 import { close } from "fs";
 import { Editable } from "./Editable";
 import { EditableRegistry } from "./EditableRegistry";
+import { FileTypeEditable } from "./FileTypeEditable";
 
 export interface UpdateObj {
   oldName: string;
@@ -8,11 +9,11 @@ export interface UpdateObj {
 }
 
 export abstract class folderTypeEditable extends Editable {
-  chilrenEditables: Editable[];
+  childrenEditables: Editable[];
   allowedList: string[];
   constructor(path, name) {
     super(path, name);
-    this.chilrenEditables = [];
+    this.childrenEditables = [];
   }
   /**
    * Adds a new editable to the childrenEditables array.
@@ -21,11 +22,11 @@ export abstract class folderTypeEditable extends Editable {
    * @param {string} newEditable.name - The name of the editable.
    */
   async add(newEditable: { ID: string; name: string }) {
-    console.log(this.chilrenEditables.map((s) => s.name));
-    if (this.chilrenEditables.map((s) => s.name).includes(newEditable.name)) {
+    console.log(this.childrenEditables.map((s) => s.name));
+    if (this.childrenEditables.map((s) => s.name).includes(newEditable.name)) {
       throw new Error("Editable Already Exists!");
     }
-    this.chilrenEditables.push(
+    this.childrenEditables.push(
       await EditableRegistry.create(
         newEditable.ID,
         this.longPath + `/${newEditable.name}`,
@@ -39,17 +40,19 @@ export abstract class folderTypeEditable extends Editable {
    */
   async remove(deleteTarget: { folderName: string }) {
     console.log("DELETING", deleteTarget);
-    const target = this.chilrenEditables.find(
+    const target = this.childrenEditables.find(
       (s) => s.name === deleteTarget.folderName
     );
-    this.chilrenEditables = this.chilrenEditables.filter((s) => s !== target);
+    this.childrenEditables = this.childrenEditables.filter((s) => s !== target);
     console.log(target);
     await target.destroy();
   }
 
   async update(update: UpdateObj) {
     console.log("PATCHING", update);
-    const target = this.chilrenEditables.find((s) => s.name === update.oldName);
+    const target = this.childrenEditables.find(
+      (s) => s.name === update.oldName
+    );
     try {
       await target.renameFolder(update.newName);
     } catch (e) {
@@ -58,11 +61,14 @@ export abstract class folderTypeEditable extends Editable {
   }
 
   findParent(id, name, first): Editable | string {
-    const searchChildEditable = (editable) => {
-      if (!("chilrenEditables" in editable)) {
+    const searchChildEditable = (editable: Editable) => {
+      if (editable instanceof FileTypeEditable) {
         return null;
       }
-      for (const childEditable of editable.chilrenEditables) {
+      if (!(editable instanceof folderTypeEditable)) {
+        return;
+      }
+      for (const childEditable of editable.childrenEditables) {
         if (
           childEditable.getRegisterID() === id &&
           childEditable.name === name
@@ -84,16 +90,19 @@ export abstract class folderTypeEditable extends Editable {
   }
 
   getTarget(id, name, first): Editable {
-    const searchChildEditable = (editable) => {
+    const searchChildEditable = (editable: Editable) => {
       console.log(editable.getRegisterID(), editable.name);
       if (editable.getRegisterID() === id && editable.name === name) {
         return editable;
       }
-      if (!("chilrenEditables" in editable)) {
+      if (
+        editable instanceof FileTypeEditable ||
+        !(editable instanceof folderTypeEditable)
+      ) {
         return null;
       }
-      console.log(editable);
-      for (const childEditable of editable.chilrenEditables) {
+
+      for (const childEditable of editable.childrenEditables) {
         console.log(
           "ITERATING: ",
           childEditable.getRegisterID(),
@@ -108,10 +117,12 @@ export abstract class folderTypeEditable extends Editable {
       console.log("ITERATION FAILED!");
       return null;
     };
-
+    console.log("SEARCHING FOR: ", id, name);
+    console.log(this.childrenEditables);
     const target = searchChildEditable(first);
     if (!target) {
-      console.log("SEARCH FAILED!");
+      console.log("NOT FOUND!");
+      console.log(this.childrenEditables);
       throw new Error("Editable Not Found!");
     }
     return target;

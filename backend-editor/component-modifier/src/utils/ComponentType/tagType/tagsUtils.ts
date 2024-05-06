@@ -1,31 +1,35 @@
-import yaml from "js-yaml";
-import { readYamlFile } from "../../fileUtils";
 import path from "path";
+import { loadYamlWithRefs } from "../../fileUtils";
 import { convertToYamlWithRefs } from "../../Yaml Converter/yamlRefConvert";
+import yaml from "js-yaml";
 
-export interface enumInfo {
+export interface SingleTag {
   code: string;
   description: string;
-  reference: "<PR/Issue/Discussion Links md format text";
+  reference: string;
 }
 
-export interface enumObject {
+export interface TagInfo {
+  code: string;
+  description: string;
+  reference: string;
+  required: string;
+  list: TagInfo[];
+}
+export interface TagObject {
   path: string;
-  enums: enumInfo[];
+  tag: TagInfo[];
 }
 
-export type RecordOfEnumArrays = Record<string, enumObject[]>;
+export type RecordOfTagArrays = Record<string, TagObject[]>;
 
-// Function to merge two Record<string, enumObject[]> objects
-export function mergeEnumObjectRecords(
-  record1: RecordOfEnumArrays,
-  record2: RecordOfEnumArrays
-): RecordOfEnumArrays {
-  // Create a new record that will store the merged results
-  const mergedRecord: RecordOfEnumArrays = {};
+export function mergeTagObjectRecords(
+  record1: RecordOfTagArrays,
+  record2: RecordOfTagArrays
+): RecordOfTagArrays {
+  const mergedRecord: RecordOfTagArrays = {};
 
-  // Helper function to add items to the mergedRecord
-  const addItems = (key: string, items: enumObject[]) => {
+  const addItems = (key: string, items: TagObject[]) => {
     if (mergedRecord[key]) {
       mergedRecord[key] = [...mergedRecord[key], ...items];
     } else {
@@ -33,14 +37,13 @@ export function mergeEnumObjectRecords(
     }
   };
 
-  // Process each record and merge them
   Object.keys(record1).forEach((key) => addItems(key, record1[key]));
   Object.keys(record2).forEach((key) => addItems(key, record2[key]));
 
   return mergedRecord;
 }
 
-export function enumsFromApi(yamlData: string) {
+export function tagsFromApi(yamlData: string) {
   const obj: any = yaml.load(yamlData);
   let data = {};
   for (const key in obj) {
@@ -49,7 +52,7 @@ export function enumsFromApi(yamlData: string) {
   return data;
 }
 
-export function enumsToNestes(data: Record<string, enumObject[]>) {
+export function tagsToNested(data: Record<string, TagObject[]>) {
   let nestedData = {};
   for (const key in data) {
     nestedData[key] = convertDetailedPathsToNestedObjects(data[key]);
@@ -57,17 +60,16 @@ export function enumsToNestes(data: Record<string, enumObject[]>) {
   return nestedData;
 }
 
-const listDetailedPaths = (obj: Record<string, any>) => {
-  // const obj: Record<string, any> = yaml.load(yamlData);
+function listDetailedPaths(obj: Record<string, any>) {
   let detailedPaths = [];
   detailedPaths = explorePaths(obj, "", detailedPaths);
   return detailedPaths;
-};
+}
 
 function explorePaths(
   subObj: Record<string, any>,
   currentPath: string,
-  detailedPaths: enumObject[]
+  detailedPaths: TagObject[]
 ) {
   for (const key in subObj) {
     const newPath = currentPath ? `${currentPath}.${key}` : key;
@@ -79,19 +81,22 @@ function explorePaths(
       detailedPaths = explorePaths(subObj[key], newPath, detailedPaths);
     }
     if (Array.isArray(subObj[key])) {
-      const enums: enumInfo[] = subObj[key].map((element: any) => {
+      const tags: TagInfo[] = subObj[key].map((element: any) => {
         return {
           code: element.code,
           description: element.description,
           reference: element.reference,
+          required: element.required,
+          list: element.list,
         };
       });
-      detailedPaths.push({ path: newPath, enums: enums });
+      detailedPaths.push({ path: newPath, tag: tags });
     }
   }
   return detailedPaths;
 }
-function convertDetailedPathsToNestedObjects(detailedPaths: enumObject[]) {
+
+function convertDetailedPathsToNestedObjects(detailedPaths: TagObject[]) {
   function setPath(obj, path, value) {
     const keys = path.split(".");
     const lastKey = keys.pop();
@@ -100,17 +105,20 @@ function convertDetailedPathsToNestedObjects(detailedPaths: enumObject[]) {
   }
   const nestedObject = {};
   detailedPaths.forEach((element) => {
-    setPath(nestedObject, element.path, element.enums);
+    setPath(nestedObject, element.path, element.tag);
   });
   return nestedObject;
 }
 
 // (async () => {
-//   const filePath = path.join(__dirname, "../../../../test/test.yaml");
-//   const data = await readYamlFile(filePath);
-//   // const yml = yaml.load(data);
+//   const filePath = path.resolve(
+//     __dirname,
+//     "../../../../../ONDC-NTS-Specifications/tags/index.yaml"
+//   );
+//   const data = await loadYamlWithRefs(filePath);
+//   //   console.log(JSON.stringify(data, null, 2));
 //   const det = listDetailedPaths(data);
 //   const nested = convertDetailedPathsToNestedObjects(det);
 //   console.log(JSON.stringify(det, null, 2));
-//   // console.log(convertToYamlWithRefs(nested));
+//   console.log(convertToYamlWithRefs(nested));
 // })();

@@ -38,7 +38,7 @@ export class EnumFileType extends FileTypeEditable {
     const newData = mergeEnumObjectRecords(data, dataToAdd);
     console.log(newData);
     const yml = enumsToNestes(newData);
-    overrideYaml(this.yamlPathLong, convertToYamlWithRefs(yml));
+    await overrideYaml(this.yamlPathLong, convertToYamlWithRefs(yml));
   }
 
   async remove(dataToDel: EnumDel) {
@@ -60,7 +60,7 @@ export class EnumFileType extends FileTypeEditable {
       }
     }
     const yml = enumsToNestes(data);
-    overrideYaml(this.yamlPathLong, convertToYamlWithRefs(yml));
+    await overrideYaml(this.yamlPathLong, convertToYamlWithRefs(yml));
   }
 
   async update(
@@ -86,6 +86,6 @@ export class EnumFileType extends FileTypeEditable {
       }
     }
     const yml = enumsToNestes(data);
-    overrideYaml(this.yamlPathLong, convertToYamlWithRefs(yml));
+    await overrideYaml(this.yamlPathLong, convertToYamlWithRefs(yml));
   }
 }

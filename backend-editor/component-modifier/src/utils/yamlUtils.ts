@@ -3,7 +3,7 @@ import yaml from "js-yaml";
 import path from "path";
 
 export async function updateYamlRefComponents(filePath, section, del = false) {
-  if (section === "enums") {
+  if (section === "enums" || section === "tags") {
     await updateYamlRef(
       filePath,
       section,
@@ -39,6 +39,18 @@ export async function updateYamlRefEnum(filePath, section, del = false) {
     del
   );
 }
+
+export async function updateYamlRefTags(filePath, section, del = false) {
+  await updateYamlRef(
+    filePath,
+    section,
+    {
+      tags: { $ref: `./${section}/index.yaml` },
+    },
+    del
+  );
+}
+
 async function updateYamlRef(filePath, section, updateLike, del = false) {
   try {
     const stats = await fs.promises.stat(filePath);

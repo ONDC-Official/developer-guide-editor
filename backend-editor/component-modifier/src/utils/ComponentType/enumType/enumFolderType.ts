@@ -19,14 +19,14 @@ export class EnumFolderType extends folderTypeEditable {
       );
     }
     await super.add(newEditable);
-    const addedChild = this.chilrenEditables.find(
+    const addedChild = this.childrenEditables.find(
       (s) => s.name === newEditable.name
     );
     await updateYamlRefEnum(this.yamlPathLong, addedChild.name);
   }
 
   async getData(query: any) {
-    return this.chilrenEditables.map((editable) => editable.name);
+    return this.childrenEditables.map((editable) => editable.name);
   }
   async remove(deleteTarget: { folderName: string }) {
     if (deleteTarget.folderName === "default") {

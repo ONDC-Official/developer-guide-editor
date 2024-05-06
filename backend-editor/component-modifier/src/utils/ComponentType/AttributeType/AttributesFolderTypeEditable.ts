@@ -23,17 +23,17 @@ export class AttributesFolderTypeEditable extends folderTypeEditable {
       );
     }
     await super.add(new_editable);
-    const addedChild = this.chilrenEditables.find(
+    const addedChild = this.childrenEditables.find(
       (s) => s.name === new_editable.name
     );
     await updateYamlRefAttr(this.yamlPathLong, addedChild.name);
   }
 
   async getData(query) {
-    if (this.chilrenEditables.length === 0) return [];
+    if (this.childrenEditables.length === 0) return [];
     if (query.type === "pathSet") {
       const data = new Set();
-      for (const editable of this.chilrenEditables) {
+      for (const editable of this.childrenEditables) {
         const child_data = await editable.getData(query);
         for (const key in child_data) {
           child_data[key].forEach((element) => {
@@ -43,7 +43,7 @@ export class AttributesFolderTypeEditable extends folderTypeEditable {
       }
       return Array.from(data);
     }
-    return this.chilrenEditables.map((editable) => editable.name);
+    return this.childrenEditables.map((editable) => editable.name);
   }
 
   async remove(deleteTarget: { folderName: string }) {
