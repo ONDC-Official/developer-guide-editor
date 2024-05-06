@@ -9,6 +9,7 @@ import useEditorToolTip from "../hooks/useEditorToolTip";
 import Tippy from "@tippyjs/react";
 import { CgMenuMotion } from "react-icons/cg";
 import { IoIosArrowDropdown, IoIosArrowDropright } from "react-icons/io";
+import { GoRelFilePath } from "react-icons/go";
 
 interface Tag {
   code: string;
@@ -189,6 +190,7 @@ function TagDisclose({
                   tagEditable={apiEditable}
                 />
               ))}
+              {data.length === 0 && <div>No Enums</div>}
             </Disclosure.Panel>
           </Disclosure.Button>
         </>
@@ -206,5 +208,49 @@ function AllTagList({
   tagData: TagData;
   tagEditable: Editable;
 }) {
-  return <></>;
+  const tagToolTip = useEditorToolTip();
+  const editable: Editable = {
+    name: tagData.path.split(".").pop() ?? "",
+    path: tagEditable.path,
+    deletePath: tagEditable.path,
+    registerID: tagEditable.registerID,
+    query: {
+      getData: tagEditable.query.getData,
+      Parent: tagEditable,
+      updateParams: { path: tagData.path, tags: tagData.tags },
+      deleteParams: {},
+      copyData: async () => {
+        const copyData: Record<string, TagData[]> = {};
+        copyData[tagEditable.name] = [tagData];
+        return JSON.stringify(copyData, null, 2);
+      },
+    },
+  };
+  if (editable.query.deleteParams) {
+    editable.query.deleteParams[tagEditable.name] = [
+      { path: tagData.path, tags: tagData.tags },
+    ];
+  }
+  tagToolTip.data.current = editable;
+  return (
+    <Disclosure key={index}>
+      <Disclosure.Button
+        className="flex ml-6 mt-1 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-200 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg"
+        onContextMenu={tagToolTip.onContextMenu}
+      >
+        <Tippy {...tagToolTip.tippyProps}>
+          <div className="flex items-center">
+            <GoRelFilePath size={20} className="mr-2" />
+            <span>{tagData.path}</span>
+          </div>
+        </Tippy>
+      </Disclosure.Button>
+      <Disclosure.Panel>
+        <div className="ml-6 p-2 shadow-inner">
+          hello
+          {/* <EnumTable enumList={enumData.enums} /> */}
+        </div>
+      </Disclosure.Panel>
+    </Disclosure>
+  );
 }
