@@ -3,7 +3,7 @@ import { updateYamlRefTags } from "../../yamlUtils";
 import { TagFileType } from "./tagFileType";
 
 export class TagsFolderType extends folderTypeEditable {
-  static REGISTER_ID = "TAGS_FOLDER";
+  static REGISTER_ID = "TAG_FOLDER";
 
   constructor(path: string, name: string) {
     super(path, name);

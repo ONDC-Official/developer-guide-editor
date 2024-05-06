@@ -24,7 +24,7 @@ export class EditableRegistry {
     await object.initIndexYaml(path, removeContent);
     return object;
   }
-  static async loadComponent(componentPath, name) {
+  static async loadComponent(componentPath: string, name: string) {
     const comp: ComponentsType = await EditableRegistry.create(
       "COMPONENTS-FOLDER",
       componentPath,
@@ -61,10 +61,7 @@ export class EditableRegistry {
           let data: any = "";
           console.log(`Yml exists: ${indexExists} def exists: ${defExists}`);
           if (indexExists) {
-            const raw = await fs_p.readFile(ymlPath, "utf8");
             data = await loadYamlWithRefs(ymlPath);
-            // data = await yaml.dump(data);
-            console.log("ENUM DATA", JSON.stringify(data));
           }
           await comp.add({ ID: "ENUM_FOLDER" });
           const enumFolder = comp.getTarget("ENUM_FOLDER", "enums", comp);
@@ -79,13 +76,42 @@ export class EditableRegistry {
               );
             }
           }
-
           for (const enumFile of enumFiles) {
-            console.log("ENUM FILE", enumFile.name, data, defExists);
             if (enumFile.isDirectory() && enumFile.name !== "default") {
               await enumFolder.add({
                 ID: "ENUM_FILE",
                 name: enumFile.name,
+              });
+            }
+          }
+        }
+        if (file.name === "tags") {
+          const defExists = fs.existsSync(`${comp.folderPath}/tags/default`);
+          const ymlPath = `${comp.folderPath}/tags/index.yaml`;
+          const indexExists = fs.existsSync(ymlPath);
+          let data: any = "";
+          console.log(`Yml exists: ${indexExists} def exists: ${defExists}`);
+          if (indexExists) {
+            data = await loadYamlWithRefs(ymlPath);
+          }
+          await comp.add({ ID: "TAG_FOLDER" });
+          const tagFolder = comp.getTarget("TAG_FOLDER", "tags", comp);
+          const tagFiles = await fs_p.readdir(tagFolder.folderPath, {
+            withFileTypes: true,
+          });
+          if (!defExists) {
+            if (data !== "") {
+              await overrideYaml(
+                tagFolder.folderPath + "/default/index.yaml",
+                yaml.dump(data)
+              );
+            }
+          }
+          for (const tagFile of tagFiles) {
+            if (tagFile.isDirectory() && tagFile.name !== "default") {
+              await tagFolder.add({
+                ID: "TAG_FILE",
+                name: tagFile.name,
               });
             }
           }

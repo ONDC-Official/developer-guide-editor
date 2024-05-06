@@ -18,6 +18,8 @@ export const AttributeFolderID = "ATTRIBUTE_FOLDER";
 export const AttributeFileID = "ATTRIBUTE_FILE";
 export const EnumFolderID = "ENUM_FOLDER";
 export const EnumFileId = "ENUM_FILE";
+export const TagFolderID = "TAG_FOLDER";
+export const TagFileID = "TAG_FILE";
 
 export function HomePage() {
   const [loading, setLoading] = React.useState(false);

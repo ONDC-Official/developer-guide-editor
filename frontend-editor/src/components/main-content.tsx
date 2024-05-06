@@ -1,9 +1,14 @@
 import React from "react";
 import AttributesTable from "./attribute-table";
 import { Editable } from "./file-structure";
-import { AttributeFolderID, EnumFolderID } from "../pages/home-page";
+import {
+  AttributeFolderID,
+  EnumFolderID,
+  TagFolderID,
+} from "../pages/home-page";
 
 import { EnumContent, EnumFolderContent } from "./EnumContent";
+import { TagsFolderContent } from "./tag-content";
 
 export function MainContent({
   activeEditable,
@@ -18,6 +23,9 @@ export function MainContent({
       )}
       {activeEditable?.registerID === EnumFolderID && (
         <EnumFolderContent enumFolder={activeEditable} />
+      )}
+      {activeEditable?.registerID === TagFolderID && (
+        <TagsFolderContent tagFolder={activeEditable} />
       )}
     </>
   );
