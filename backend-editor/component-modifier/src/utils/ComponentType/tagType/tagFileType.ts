@@ -5,12 +5,19 @@ import { overrideYaml } from "../../yamlUtils";
 import {
   mergeTagObjectRecords,
   RecordOfTagArrays,
+  TagInfo,
   TagObject,
   tagsFromApi,
   tagsToNested,
 } from "./tagsUtils";
 
-type TagDel = Record<string, TagObject[] | string>;
+interface TagDelObject {
+  path: string;
+  tag: TagInfo[];
+  type: string;
+}
+
+type TagDel = Record<string, TagDelObject[] | string>;
 
 export class TagFileType extends FileTypeEditable {
   static REGISTER_ID = "TAG_FILE";
@@ -26,6 +33,7 @@ export class TagFileType extends FileTypeEditable {
   }
 
   async add(dataToAdd: Record<string, TagObject[]>) {
+    console.log("adding data", dataToAdd);
     this.setMissingReferences(dataToAdd);
     const data = await this.getData();
     const newData = mergeTagObjectRecords(data, dataToAdd);
@@ -41,9 +49,18 @@ export class TagFileType extends FileTypeEditable {
         if (typeof val === "string") {
           delete data[key];
         } else if (Array.isArray(val)) {
-          data[key] = data[key].filter((d) => {
-            return !val.some((del) => del.path === d.path);
-          });
+          for (const tagGroup of val) {
+            if (tagGroup.type === "tagGroup") {
+              data[key] = data[key].filter((d) => d.path !== tagGroup.path);
+            } else if (tagGroup.type === "tag") {
+              const target = data[key].find((d) => d.path === tagGroup.path);
+              if (target) {
+                target.tag = target.tag.filter(
+                  (t) => !tagGroup.tag.find((tg) => tg.code === t.code)
+                );
+              }
+            }
+          }
         }
       }
     }

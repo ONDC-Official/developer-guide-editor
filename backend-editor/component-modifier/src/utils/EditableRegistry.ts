@@ -116,6 +116,7 @@ export class EditableRegistry {
             }
           }
         }
+        
       }
     }
     return comp;

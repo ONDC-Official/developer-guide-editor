@@ -8,10 +8,19 @@ import {
   CompFolderID,
   EnumFileId,
   EnumFolderID,
+  TagFileID,
+  TagFolderID,
 } from "../../pages/home-page";
 import { EnumApiForm, EnumFolderForm, EnumForm } from "./enum-Form";
 import JsonField from "./JsonField";
 import { postData } from "../../utils/requestUtils";
+import {
+  TagApiForm,
+  TagCodesForm,
+  TagFolderForm,
+  TagGroupForm,
+  TagPathForm,
+} from "./tag-forms";
 
 export interface FormFacProps {
   data: Editable;
@@ -29,7 +38,9 @@ const FormFactory = ({
   editState: boolean;
 }) => {
   const renderForm = () => {
-    switch (data.registerID) {
+    const formPath = data.registerID.split("/")[0];
+    console.log("Form Path", formPath);
+    switch (formPath) {
       case CompFolderID:
         return <AddInComponent data={data} setIsOpen={setIsOpen} />;
       case AttributeFolderID:
@@ -70,6 +81,49 @@ const FormFactory = ({
         }
         return (
           <EnumApiForm
+            data={data}
+            setIsOpen={setIsOpen}
+            editState={editState}
+          />
+        );
+      case TagFolderID:
+        if (data.query.addParams?.formType === "addAPI") {
+          return (
+            <TagApiForm
+              data={data}
+              setIsOpen={setIsOpen}
+              editState={editState}
+            />
+          );
+        }
+        return (
+          <TagFolderForm
+            data={data}
+            setIsOpen={setIsOpen}
+            editState={editState}
+          />
+        );
+      case TagFileID:
+        if (data.query.addParams?.formType === "addTag") {
+          return (
+            <TagCodesForm
+              data={data}
+              setIsOpen={setIsOpen}
+              editState={editState}
+            />
+          );
+        }
+        if (data.query.addParams?.formType === "addTagGroup") {
+          return (
+            <TagGroupForm
+              data={data}
+              setIsOpen={setIsOpen}
+              editState={editState}
+            />
+          );
+        }
+        return (
+          <TagPathForm
             data={data}
             setIsOpen={setIsOpen}
             editState={editState}

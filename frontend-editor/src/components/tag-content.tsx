@@ -2,17 +2,18 @@ import { useRef, useState } from "react";
 import { Editable } from "./file-structure";
 import { getData } from "../utils/requestUtils";
 import React from "react";
-import { TagFolderID } from "../pages/home-page";
+import { TagFileID, TagFolderID } from "../pages/home-page";
 import Dropdown from "./horizontal-tab";
 import { Disclosure } from "@headlessui/react";
 import useEditorToolTip from "../hooks/useEditorToolTip";
 import Tippy from "@tippyjs/react";
 import { CgMenuMotion } from "react-icons/cg";
 import { IoIosArrowDropdown, IoIosArrowDropright } from "react-icons/io";
-import { GoRelFilePath } from "react-icons/go";
 import { DropTransition } from "./helper-components";
-
-interface Tag {
+import { IoLayersOutline } from "react-icons/io5";
+import { VscJson } from "react-icons/vsc";
+import path from "path";
+export interface Tag {
   code: string;
   description: string;
   required: string;
@@ -22,7 +23,7 @@ interface Tag {
   }[];
 }
 
-interface TagData {
+export interface TagData {
   path: string;
   tag: Tag[];
 }
@@ -37,7 +38,6 @@ export function TagsFolderContent({ tagFolder }: { tagFolder: Editable }) {
     const data = await getData(tagFolder.path);
     setFolderData(data);
     reRender.current = !reRender.current;
-    console.log(data);
   }
   tagFolder.query.getData = getTagFolder;
   React.useEffect(() => {
@@ -53,6 +53,7 @@ export function TagsFolderContent({ tagFolder }: { tagFolder: Editable }) {
       getData: getTagFolder,
       Parent: tagFolder.query.Parent,
       updateParams: { oldName: selectedFolder },
+      addParams: { formType: "addAPI" },
       copyData: async () => {
         const data = await getData(tagFolder.path + "/" + selectedFolder);
         return JSON.stringify(data, null, 2);
@@ -63,7 +64,7 @@ export function TagsFolderContent({ tagFolder }: { tagFolder: Editable }) {
     name: selectedFolder ?? "",
     path: tagFolder.path + "/" + selectedFolder,
     deletePath: tagFolder.path + "/" + selectedFolder,
-    registerID: tagFolder.registerID,
+    registerID: TagFileID,
     query: {
       Parent: tagFolder,
       getData: async () => {
@@ -109,7 +110,7 @@ export function TagContent({
   tags.query.getData = getTag;
   React.useEffect(() => {
     getTag();
-  }, [reRender]);
+  }, [tags.name, reRender]);
 
   return (
     <>
@@ -193,7 +194,7 @@ function TagDisclose({
                   tagEditable={apiEditable}
                 />
               ))}
-              {data.length === 0 && <div>No Enums</div>}
+              {data.length === 0 && <div>No Tag Groups</div>}
             </Disclosure.Panel>
           </DropTransition>
         </>
@@ -222,6 +223,11 @@ function AllTagList({
       getData: tagEditable.query.getData,
       Parent: tagEditable,
       updateParams: { path: tagData.path, tags: tagData.tag },
+      addParams: {
+        formType: "addTagGroup",
+        tagPath: tagData.path,
+        apiName: tagEditable.name,
+      },
       deleteParams: {},
       copyData: async () => {
         const copyData: Record<string, TagData[]> = {};
@@ -232,7 +238,7 @@ function AllTagList({
   };
   if (editable.query.deleteParams) {
     editable.query.deleteParams[tagEditable.name] = [
-      { path: tagData.path, tags: tagData.tag },
+      { path: tagData.path, tags: tagData.tag, type: "tagGroup" },
     ];
   }
   tagToolTip.data.current = editable;
@@ -245,67 +251,114 @@ function AllTagList({
       >
         <Tippy {...tagToolTip.tippyProps}>
           <div className="flex items-center">
-            <GoRelFilePath size={20} className="mr-2" />
+            <VscJson size={20} className="mr-2" />
             <span>{tagData.path}</span>
           </div>
         </Tippy>
       </Disclosure.Button>
       <Disclosure.Panel>
-        <div className="ml-6 p-2 shadow-inner">
+        <div className="ml-6 p-1 shadow-inner">
           {tagData.tag.map((tag, index) => (
-            <TagGroupInfo key={index} tag={tag} />
+            <TagGroupInfo key={index} tag={tag} editable={editable} />
           ))}
         </div>
+        {tagData.tag.length === 0 && <div className="ml-8">No Tags</div>}
       </Disclosure.Panel>
     </Disclosure>
   );
 }
 
-function TagGroupInfo({ tag }: { tag: Tag }) {
+function TagGroupInfo({ tag, editable }: { tag: Tag; editable: Editable }) {
+  const toolTip = useEditorToolTip();
+  const tagPath = editable.query.addParams?.tagPath;
+  const tagAPI = editable.query.addParams?.apiName;
+  const tagEditable: Editable = {
+    name: tag.code,
+    path: editable.path,
+    deletePath: editable.path,
+    registerID: editable.registerID,
+    query: {
+      Parent: editable,
+      getData: editable.query.getData,
+      updateParams: { tags: tag.list },
+      addParams: {
+        formType: "addTag",
+        tagPath: tagPath,
+        tagCode: tag.code,
+        tagDescription: tag.description,
+        tagRequired: tag.required,
+        apiName: tagAPI,
+      },
+      deleteParams: {},
+      copyData: async () => {
+        const copyData: Record<string, TagData[]> = {};
+        copyData[tagAPI] = [{ path: tagPath, tag: [tag] }];
+        return JSON.stringify(copyData, null, 2);
+      },
+    },
+  };
+  if (tagEditable.query.deleteParams) {
+    tagEditable.query.deleteParams[tagAPI] = [
+      { path: tagPath, tag: [tag], type: "tag" },
+    ];
+  }
+  toolTip.data.current = tagEditable;
   if (!tag.list) return <h2>Invalid Tag Format!</h2>;
+  console.log(toolTip.tippyProps);
   return (
-    <Disclosure>
-      <Disclosure.Button className="flex ml-8 mt-1 w-full px-4 py-2 text-base font-medium text-left text-black bg-blue-100 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg">
-        <div className="flex items-center">
-          <span className="text-blue-500">{tag.code}</span>
-        </div>
-      </Disclosure.Button>
-      <Disclosure.Panel className="ml-8 p-4 bg-blue-50 shadow-md">
-        <div className="mb-4">
-          <span className="font-bold">DESCRIPTION:</span>
-          <span className="ml-2 ">{tag.description}</span>
-        </div>
-        <div className="mb-4">
-          <span className="font-bold">REQUIRED:</span>
-          <span className="ml-2 ">{tag.required}</span>
-        </div>
-        <div>
-          <table className="min-w-full text-base">
-            <thead className="bg-blue-100">
-              <tr>
-                <th className="text-left font-bold text-blue-700 px-4 py-2">
-                  CODE
-                </th>
-                <th className="text-left font-bold text-blue-700 px-4 py-2">
-                  DESCRIPTION
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {tag.list.map((list, index) => (
-                <tr key={index} className="bg-blue-100 border-b">
-                  <td className="px-4 py-1 text-blue-500 font-semibold">
-                    {list.code}:
-                  </td>
-                  <td className="px-4 py-1 text-blue-500">
-                    {list.description}
-                  </td>
+    <Disclosure as={"div"}>
+      <>
+        <Disclosure.Button
+          onContextMenu={toolTip.onContextMenu}
+          className="flex mt-1 ml-8 w-full px-4 py-2 text-base font-medium text-left text-black bg-blue-100 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg"
+        >
+          <Tippy {...toolTip.tippyProps}>
+            <div className="flex items-center">
+              <IoLayersOutline size={20} className="mr-2 text-blue-500" />
+              <span className="text-blue-500">{tag.code}</span>
+            </div>
+          </Tippy>
+        </Disclosure.Button>
+        <Disclosure.Panel
+          className="ml-8 p-4 bg-blue-50 shadow-md transition duration-300 ease-in-out"
+          onContextMenu={toolTip.onContextMenu}
+        >
+          <div className="mb-4">
+            <span className="font-bold">DESCRIPTION:</span>
+            <span className="ml-2 ">{tag.description}</span>
+          </div>
+          <div className="mb-4">
+            <span className="font-bold">REQUIRED:</span>
+            <span className="ml-2 ">{tag.required}</span>
+          </div>
+          <div>
+            <table className="min-w-full text-base hover:bg-100-200 bg-blue-100">
+              <thead>
+                <tr>
+                  <th className="text-left font-bold text-blue-700 px-4 py-2">
+                    CODE
+                  </th>
+                  <th className="text-left font-bold text-blue-700 px-4 py-2">
+                    DESCRIPTION
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </Disclosure.Panel>
+              </thead>
+              <tbody>
+                {tag.list.map((list, index) => (
+                  <tr key={index} className="border-b">
+                    <td className="px-4 py-1 text-blue-500 font-semibold">
+                      {list.code}:
+                    </td>
+                    <td className="px-4 py-1 text-blue-500">
+                      {list.description}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Disclosure.Panel>
+      </>
     </Disclosure>
   );
 }

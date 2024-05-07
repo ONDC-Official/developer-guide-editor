@@ -6,13 +6,13 @@ import yaml from "js-yaml";
 export interface SingleTag {
   code: string;
   description: string;
-  reference: string;
+  reference: "<PR/Issue/Discussion Links md format text";
 }
 
 export interface TagInfo {
   code: string;
   description: string;
-  reference: string;
+  reference: "<PR/Issue/Discussion Links md format text";
   required: string;
   list: TagInfo[];
 }
@@ -29,12 +29,47 @@ export function mergeTagObjectRecords(
 ): RecordOfTagArrays {
   const mergedRecord: RecordOfTagArrays = {};
 
+  const mergeTags = (tags1: TagInfo[], tags2: TagInfo[]): TagInfo[] => {
+    const mergedTags: TagInfo[] = [...tags1];
+    const tagMap = new Map(tags1.map((tag) => [tag.code, tag]));
+
+    tags2.forEach((tag) => {
+      if (tagMap.has(tag.code)) {
+        const existingTag = tagMap.get(tag.code);
+        // Deep merge logic for TagInfo, adjust according to your needs
+        existingTag.description = tag.description
+          ? tag.description
+          : existingTag.description;
+        existingTag.reference = tag.reference
+          ? tag.reference
+          : existingTag.reference;
+        existingTag.required = tag.required
+          ? tag.required
+          : existingTag.required;
+        existingTag.list = tag.list ? tag.list : existingTag.list;
+      } else {
+        mergedTags.push(tag);
+      }
+    });
+
+    return mergedTags;
+  };
+
   const addItems = (key: string, items: TagObject[]) => {
-    if (mergedRecord[key]) {
-      mergedRecord[key] = [...mergedRecord[key], ...items];
-    } else {
-      mergedRecord[key] = [...items];
+    if (!mergedRecord[key]) {
+      mergedRecord[key] = [];
     }
+
+    items.forEach((item) => {
+      const existingItem = mergedRecord[key].find(
+        (existing) => existing.path === item.path
+      );
+      if (existingItem) {
+        existingItem.tag = mergeTags(existingItem.tag, item.tag);
+      } else {
+        mergedRecord[key].push(item);
+      }
+    });
   };
 
   Object.keys(record1).forEach((key) => addItems(key, record1[key]));
