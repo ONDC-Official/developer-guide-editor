@@ -50,7 +50,7 @@ export class EditableRegistry {
       await EditableRegistry.loadAttributes(file, comp);
       await EditableRegistry.loadEnums(file, comp);
       await EditableRegistry.loadTags(file, comp);
-      await EditableRegistry.loadExamples(file, comp);
+      // await EditableRegistry.loadExamples(file, comp);
     }
     return comp;
   }
