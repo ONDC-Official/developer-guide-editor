@@ -89,7 +89,7 @@ export async function overwriteFolder(source: string, target: string) {
   }
 }
 
-export async function readYamlFile(filePath) {
+export async function readYamlFile(filePath: string) {
   try {
     const fileData = await fs_p.readFile(filePath, "utf8");
     return fileData;
@@ -128,6 +128,16 @@ export async function copyDir(
     }
   }
   console.log("Folder copied successfully!");
+}
+
+export async function ValidateJsonSchema(jsonSchema: Record<string, any>) {
+  try {
+    const schema = await JSON.parse(JSON.stringify(jsonSchema));
+    return true;
+  } catch (error) {
+    console.error("Error parsing schema:", error);
+    return false;
+  }
 }
 
 // // Example usage:

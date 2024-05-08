@@ -9,7 +9,7 @@ export class EnumFolderType extends folderTypeEditable {
   constructor(path: string, name: string) {
     super(path, name);
     this.allowedList = [EnumFileType.REGISTER_ID];
-    this.add({ ID: EnumFileType.REGISTER_ID, name: "default" });
+    // this.add({ ID: EnumFileType.REGISTER_ID, name: "default" });
   }
 
   async add(newEditable: { ID: string; name: string }) {

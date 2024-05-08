@@ -7,6 +7,7 @@ import { FieldValues } from "react-hook-form";
 import {
   AttributeFolderID,
   EnumFolderID,
+  ExampleFolderID,
   TagFolderID,
 } from "../../pages/home-page";
 import { postData } from "../../utils/requestUtils";
@@ -33,7 +34,12 @@ const AddInComponent = ({
       <FormSelect
         name="ID"
         label="Select Type"
-        options={[AttributeFolderID, EnumFolderID, TagFolderID]}
+        options={[
+          AttributeFolderID,
+          EnumFolderID,
+          TagFolderID,
+          ExampleFolderID,
+        ]}
       />
     </GenericForm>
   );

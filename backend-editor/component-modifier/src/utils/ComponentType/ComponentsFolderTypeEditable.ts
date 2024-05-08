@@ -7,6 +7,7 @@ import { Editable } from "../Editable";
 import { EnumFileType } from "./enumType/enumFileType";
 import { EnumFolderType } from "./enumType/enumFolderType";
 import { TagsFolderType } from "./tagType/tagsFolderType";
+import { ExampleFolderType } from "./examplesType/exampleFolderType";
 
 export class ComponentsType extends folderTypeEditable {
   getRegisterID(): string {
@@ -19,6 +20,7 @@ export class ComponentsType extends folderTypeEditable {
       AttributesFolderTypeEditable.REGISTER_ID,
       EnumFolderType.REGISTER_ID,
       TagsFolderType.REGISTER_ID,
+      ExampleFolderType.REGISTER_ID,
     ];
   }
   async add(new_editable: { ID: string }) {
@@ -69,6 +71,9 @@ export class ComponentsType extends folderTypeEditable {
     }
     if (ID === TagsFolderType.REGISTER_ID) {
       return "tags";
+    }
+    if (ID === ExampleFolderType.REGISTER_ID) {
+      return "examples";
     }
     return "UNKNOWN";
   }

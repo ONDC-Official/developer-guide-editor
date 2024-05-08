@@ -1,6 +1,7 @@
 import fs from "fs";
 import yaml from "js-yaml";
 import path from "path";
+import { readYamlFile } from "./fileUtils";
 
 export async function updateYamlRefComponents(filePath, section, del = false) {
   if (section === "enums" || section === "tags") {
@@ -46,6 +47,63 @@ export async function updateYamlRefTags(filePath, section, del = false) {
     section,
     {
       tags: { $ref: `./${section}/index.yaml` },
+    },
+    del
+  );
+}
+
+interface ExampleRef {
+  section: string;
+  summary: string;
+  description: string;
+  filePath: string;
+}
+export async function updateYamlRefExamples(
+  exampleRef: ExampleRef,
+  del = false
+) {
+  await updateYamlRef(
+    exampleRef.filePath,
+    exampleRef.section,
+    {
+      summary: exampleRef.summary,
+      description: exampleRef.description,
+      example_set: { $ref: `./${exampleRef.section}/index.yaml` },
+    },
+    del
+  );
+}
+
+export async function updateYamlRefExampleDomain(
+  filePath: string,
+  section: string,
+  summary: string,
+  description: string,
+  exampleName: string,
+  del = false
+) {
+  let refToAdd = [
+    {
+      summary: summary,
+      description: description,
+      value: { $ref: `./${section}/${exampleName}.yaml` },
+    },
+  ];
+  if (fs.existsSync(filePath)) {
+    const data = yaml.load(await readYamlFile(filePath));
+    if (data[section]) {
+      const existing = data[section].examples;
+      if (existing) {
+        refToAdd = [...existing, ...refToAdd];
+      }
+    }
+  }
+  console.log(refToAdd);
+  await updateYamlRef(
+    filePath,
+    section,
+    {
+      examples: refToAdd,
     },
     del
   );

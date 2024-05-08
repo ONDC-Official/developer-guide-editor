@@ -20,6 +20,12 @@ export abstract class Editable {
       path,
       removeContent
     );
+    if (this.name === "enums") {
+      this.add({ ID: "ENUM_FILE", name: "default" });
+    }
+    if (this.name === "tags") {
+      this.add({ ID: "TAG_FILE", name: "default" });
+    }
     console.log("YAML Path:", this.yamlPathLong);
   }
   async renameFolder(newName) {

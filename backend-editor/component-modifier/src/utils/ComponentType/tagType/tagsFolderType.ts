@@ -8,7 +8,7 @@ export class TagsFolderType extends folderTypeEditable {
   constructor(path: string, name: string) {
     super(path, name);
     this.allowedList = [TagFileType.REGISTER_ID];
-    this.add({ ID: TagFileType.REGISTER_ID, name: "default" });
+    // this.add({ ID: TagFileType.REGISTER_ID, name: "default" });
   }
 
   async add(newEditable: { ID: string; name: string }) {

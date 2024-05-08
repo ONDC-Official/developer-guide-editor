@@ -6,6 +6,8 @@ import { EnumFileType } from "./ComponentType/enumType/enumFileType";
 import { EnumFolderType } from "./ComponentType/enumType/enumFolderType";
 import { TagsFolderType } from "./ComponentType/tagType/tagsFolderType";
 import { TagFileType } from "./ComponentType/tagType/tagFileType";
+import { ExampleFolderType } from "./ComponentType/examplesType/exampleFolderType";
+import { ExampleDomainFolderType } from "./ComponentType/examplesType/ExampleDomainFolderType";
 
 export function initRegistry() {
   EditableRegistry.register(ComponentsType);
@@ -15,6 +17,8 @@ export function initRegistry() {
   EditableRegistry.register(EnumFolderType);
   EditableRegistry.register(TagsFolderType);
   EditableRegistry.register(TagFileType);
+  EditableRegistry.register(ExampleFolderType);
+  EditableRegistry.register(ExampleDomainFolderType);
 }
 
 export const FixedNames = {
