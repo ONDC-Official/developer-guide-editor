@@ -30,13 +30,15 @@ export class ExampleDomainFolderType extends folderTypeEditable {
     }
 
     if (
-      newEditable.ID !== "JSON" &&
+      newEditable.ID === "JSON" &&
       typeof newEditable.exampleValue !== "string"
     ) {
+      console.log("validating json");
       const validExample = await ValidateJsonSchema(newEditable.exampleValue);
       if (!validExample) {
         throw new Error("Invalid Example JSON");
       }
+      console.log("validated json");
       await updateYamlRefExampleDomain(
         this.yamlPathLong,
         newEditable.name,

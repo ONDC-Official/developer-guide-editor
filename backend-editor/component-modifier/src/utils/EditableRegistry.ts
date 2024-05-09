@@ -47,10 +47,10 @@ export class EditableRegistry {
     for (const file of compFiles) {
       if (!file.isDirectory()) continue;
 
-      await EditableRegistry.loadAttributes(file, comp);
-      await EditableRegistry.loadEnums(file, comp);
-      await EditableRegistry.loadTags(file, comp);
-      // await EditableRegistry.loadExamples(file, comp);
+      // await EditableRegistry.loadAttributes(file, comp);
+      // await EditableRegistry.loadEnums(file, comp);
+      // await EditableRegistry.loadTags(file, comp);
+      await EditableRegistry.loadExamples(file, comp);
     }
     return comp;
   }
@@ -169,6 +169,7 @@ export class EditableRegistry {
         subYamlData = yaml.load(
           await readYamlFile(subIndexPath)
         ) as ExampleDomainIndexYml;
+        subYamlData = subYamlData || {};
       }
 
       await exampleFolder.add({
@@ -187,7 +188,7 @@ export class EditableRegistry {
       const subFiles = await fs_p.readdir(addedExample.folderPath, {
         withFileTypes: true,
       });
-      console.log(subYamlData);
+      console.log("sub data", subYamlData);
       for (const subFile of subFiles) {
         if (!subFile.isDirectory()) continue;
         if (subFile.name === "forms") continue;

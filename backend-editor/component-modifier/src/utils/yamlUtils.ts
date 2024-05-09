@@ -90,7 +90,8 @@ export async function updateYamlRefExampleDomain(
     },
   ];
   if (fs.existsSync(filePath)) {
-    const data = yaml.load(await readYamlFile(filePath));
+    let data = yaml.load(await readYamlFile(filePath));
+    data = data || {};
     if (data[section]) {
       const existing = data[section].examples;
       if (existing) {
@@ -98,7 +99,7 @@ export async function updateYamlRefExampleDomain(
       }
     }
   }
-  console.log(refToAdd);
+  console.log("bhaiii", refToAdd);
   await updateYamlRef(
     filePath,
     section,
