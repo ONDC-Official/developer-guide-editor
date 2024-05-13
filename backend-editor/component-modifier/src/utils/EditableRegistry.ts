@@ -50,7 +50,7 @@ export class EditableRegistry {
       await EditableRegistry.loadAttributes(file, comp);
       await EditableRegistry.loadEnums(file, comp);
       await EditableRegistry.loadTags(file, comp);
-      // await EditableRegistry.loadExamples(file, comp);
+      await EditableRegistry.loadExamples(file, comp);
     }
     return comp;
   }
@@ -190,6 +190,7 @@ export class EditableRegistry {
       });
       console.log("sub data", subYamlData);
       for (const subFile of subFiles) {
+        const exampleFileName = subFile.name;
         if (!subFile.isDirectory()) continue;
         if (subFile.name === "forms") continue;
 
@@ -198,7 +199,7 @@ export class EditableRegistry {
           for (const example of data.examples) {
             await addedExample.add({
               ID: "JSON",
-              name: exampleDomainName,
+              name: subFile.name,
               exampleName: example.value.$ref.split("/").pop().split(".")[0],
               summary: example.summary,
               description: example.description,

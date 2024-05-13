@@ -27,6 +27,9 @@ export function EnumFolderContent({ enumFolder }: { enumFolder: Editable }) {
   async function getEnumFolder() {
     const data = await getData(enumFolder.path);
     setFolderData(data);
+    if (data.length > 0 && !selectedFolder) {
+      setSelectedFolder(data[0]);
+    }
     reRender.current = !reRender.current;
   }
   enumFolder.query.getData = getEnumFolder;

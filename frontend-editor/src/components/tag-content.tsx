@@ -37,6 +37,9 @@ export function TagsFolderContent({ tagFolder }: { tagFolder: Editable }) {
   async function getTagFolder() {
     const data = await getData(tagFolder.path);
     setFolderData(data);
+    if (data.length > 0 && !selectedFolder) {
+      setSelectedFolder(data[0]);
+    }
     reRender.current = !reRender.current;
   }
   tagFolder.query.getData = getTagFolder;

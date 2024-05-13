@@ -29,7 +29,7 @@ export function MainContent({
       {activeEditable?.registerID === TagFolderID && (
         <TagsFolderContent tagFolder={activeEditable} />
       )}
-      {activeEditable?.registerID === TagFolderID && (
+      {activeEditable?.registerID === ExampleFolderID && (
         <ExampleContent exampleEditable={activeEditable} />
       )}
     </>

@@ -10,7 +10,7 @@ interface AddExample {
 }
 export async function AddExampleJson(addExample: AddExample) {
   try {
-    const path = `${addExample.folderPath}/${addExample.folderApi}}`;
+    const path = `${addExample.folderPath}/${addExample.folderApi}`;
     await fs_p.mkdir(path, { recursive: true });
     await fs_p.writeFile(
       `${path}/${addExample.exampleName}.yaml`,

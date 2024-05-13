@@ -3,6 +3,12 @@ import { updateYamlRefExamples } from "../../yamlUtils";
 import { readYamlFile } from "../../fileUtils";
 import yaml from "js-yaml";
 import { ExampleDomainFolderType } from "./ExampleDomainFolderType";
+
+type ExampleFolderYaml = Record<
+  string,
+  { summary: string; description: string }
+>;
+
 export class ExampleFolderType extends folderTypeEditable {
   static REGISTER_ID = "EXAMPLE_FOLDER";
 
@@ -36,17 +42,13 @@ export class ExampleFolderType extends folderTypeEditable {
       throw new Error(`Error adding example: ${e}`);
     }
   }
+  //q:
 
   async getData(query: any) {
     const string = await readYamlFile(this.yamlPathLong);
-    const data: Record<string, any> = yaml.load(string);
-    return data.map((e) => {
-      return {
-        name: e.name,
-        description: e.description,
-        summary: e.summary,
-      };
-    });
+    const data = yaml.load(string) as ExampleFolderYaml;
+    console.log(data);
+    return data;
   }
   async remove(deleteTarget: { folderName: string }) {
     await super.remove(deleteTarget);
