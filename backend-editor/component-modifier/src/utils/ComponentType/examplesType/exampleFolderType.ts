@@ -45,10 +45,27 @@ export class ExampleFolderType extends folderTypeEditable {
   //q:
 
   async getData(query: any) {
+    if (query.type === "reference") {
+      return await this.getReferenceData();
+    }
     const string = await readYamlFile(this.yamlPathLong);
     const data = yaml.load(string) as ExampleFolderYaml;
     console.log(data);
     return data;
+  }
+  async getReferenceData() {
+    const refs: string[] = [];
+    console.log("getting reference data");
+    for (const child of this.childrenEditables) {
+      const data: Record<string, { $ref: string; apiName: string }[]> =
+        await child.getData({});
+      for (const key in data) {
+        for (const ex of data[key]) {
+          refs.push(`../../examples/${child.name}/${key}/${ex.apiName}.yaml`);
+        }
+      }
+    }
+    return refs;
   }
   async remove(deleteTarget: { folderName: string }) {
     await super.remove(deleteTarget);

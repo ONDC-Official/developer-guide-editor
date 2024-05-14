@@ -3,8 +3,9 @@ import { updateYamlRefExampleDomain } from "../../yamlUtils";
 import { ValidateJsonSchema, deleteFile, readYamlFile } from "../../fileUtils";
 import yaml from "js-yaml";
 import { ExampleDomainIndexYml } from "./exampleFolderType";
-import { FileTypeEditable } from "../../FileTypeEditable";
+// import { FileTypeEditable } from "../../FileTypeEditable";
 import { AddExampleJson } from "./exampleUtils";
+import path from "path";
 
 export class ExampleDomainFolderType extends folderTypeEditable {
   static REGISTER_ID = "EXAMPLE_DOMAIN_FOLDER";
@@ -33,7 +34,7 @@ export class ExampleDomainFolderType extends folderTypeEditable {
       newEditable.ID === "JSON" &&
       typeof newEditable.exampleValue !== "string"
     ) {
-      console.log("validating json");
+      console.log("validating json", newEditable.exampleValue);
       const validExample = await ValidateJsonSchema(newEditable.exampleValue);
       if (!validExample) {
         throw new Error("Invalid Example JSON");
@@ -61,13 +62,19 @@ export class ExampleDomainFolderType extends folderTypeEditable {
     const parsedData = data as ExampleDomainIndexYml;
     const getData: Record<string, any> = {};
     for (const key in parsedData) {
-      getData[key] = parsedData[key].examples.map((e) => {
-        return {
+      getData[key] = [];
+
+      for (const e of parsedData[key].examples) {
+        const p = path.resolve(this.folderPath, e.value.$ref);
+        const fileData = await readYamlFile(p);
+        getData[key].push({
           summary: e.summary,
           description: e.description,
           apiName: e.value.$ref.split("/").pop().split(".")[0],
-        };
-      });
+          $ref: e.value.$ref,
+          exampleJson: yaml.load(fileData),
+        });
+      }
     }
     return getData;
   }

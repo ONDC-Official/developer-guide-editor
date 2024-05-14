@@ -8,6 +8,8 @@ import {
   CompFolderID,
   EnumFileId,
   EnumFolderID,
+  ExampleDomainFolderID,
+  ExampleFolderID,
   TagFileID,
   TagFolderID,
 } from "../../pages/home-page";
@@ -21,6 +23,11 @@ import {
   TagGroupForm,
   TagPathForm,
 } from "./tag-forms";
+import {
+  AddExampleJsonForm,
+  AddNewExampleForm,
+  ExampleDomainForm,
+} from "./example-form";
 
 export interface FormFacProps {
   data: Editable;
@@ -124,6 +131,34 @@ const FormFactory = ({
         }
         return (
           <TagPathForm
+            data={data}
+            setIsOpen={setIsOpen}
+            editState={editState}
+          />
+        );
+      case ExampleFolderID:
+        // if (data.query.addParams?.formType === "addDomain") {
+        //   return <></>;
+        // }
+        return (
+          <ExampleDomainForm
+            data={data}
+            setIsOpen={setIsOpen}
+            editState={editState}
+          />
+        );
+      case ExampleDomainFolderID:
+        if (data.query.addParams?.formType === "AddExample") {
+          return (
+            <AddExampleJsonForm
+              data={data}
+              setIsOpen={setIsOpen}
+              editState={editState}
+            />
+          );
+        }
+        return (
+          <AddNewExampleForm
             data={data}
             setIsOpen={setIsOpen}
             editState={editState}
