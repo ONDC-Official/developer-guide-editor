@@ -163,11 +163,19 @@ export class EditableRegistry {
       if (!file.isDirectory()) continue;
       const exampleDomainName = file.name;
       const subIndexPath = `${exampleFolder.folderPath}/${exampleDomainName}/index.yaml`;
+      const secondaryPath = `${exampleFolder.folderPath}/${exampleDomainName}/${exampleDomainName}.yaml`;
       let subYamlData: ExampleDomainIndexYml = {};
       if (fs.existsSync(subIndexPath)) {
-        subYamlData = yaml.load(
-          await readYamlFile(subIndexPath)
-        ) as ExampleDomainIndexYml;
+        subYamlData = (await loadYamlWithRefs(
+          subIndexPath
+        )) as ExampleDomainIndexYml;
+
+        subYamlData = subYamlData || {};
+      } else if (fs.existsSync(secondaryPath)) {
+        subYamlData = (await loadYamlWithRefs(
+          secondaryPath
+        )) as ExampleDomainIndexYml;
+
         subYamlData = subYamlData || {};
       }
 
@@ -189,12 +197,12 @@ export class EditableRegistry {
       });
       console.log("sub data", subYamlData);
       for (const subFile of subFiles) {
-        const exampleFileName = subFile.name;
         if (!subFile.isDirectory()) continue;
         if (subFile.name === "forms") continue;
 
         if (subYamlData.hasOwnProperty(subFile.name)) {
           const data = subYamlData[subFile.name];
+          ForceUniqueSummary(data);
           for (const example of data.examples) {
             await addedExample.add({
               name: subFile.name,
@@ -204,20 +212,10 @@ export class EditableRegistry {
                   {
                     ID: "JSON",
                     name: subFile.name,
-                    exampleName: example.value.$ref
-                      .split("/")
-                      .pop()
-                      .split(".")[0],
+                    exampleName: " ",
                     summary: example.summary,
                     description: example.description,
-                    exampleValue: await yaml.load(
-                      await readYamlFile(
-                        path.resolve(
-                          addedExample.folderPath,
-                          example.value.$ref
-                        )
-                      )
-                    ),
+                    exampleValue: example.value,
                   },
                 ],
               },
@@ -227,12 +225,32 @@ export class EditableRegistry {
       }
     }
   }
-  private static async loadExamplesFormatted(
-    file: fs.Dirent,
-    comp: ComponentsType
-  ) {}
 }
 
+function ForceUniqueSummary(data: {
+  examples: { summary: string; description: string; value: { $ref: string } }[];
+}) {
+  const summaryCounts = data.examples
+    .map((s) => s.summary.trim())
+    .reduce((acc, summary) => {
+      acc[summary] = (acc[summary] || 0) + 1;
+      return acc;
+    }, {});
+  // Step 2: Create a map to track the number of times each summary has been encountered
+  const summaryTracker = {};
+
+  // Step 3: Modify summaries that occur more than once
+  data.examples.forEach((example) => {
+    const summary = example.summary;
+    if (summaryCounts[summary] > 1) {
+      if (!summaryTracker[summary]) {
+        summaryTracker[summary] = 0;
+      }
+      summaryTracker[summary]++;
+      example.summary = `${summary}-${summaryTracker[summary]}`;
+    }
+  });
+}
 // (async () => {
 //   initRegistry();
 //   console.log(

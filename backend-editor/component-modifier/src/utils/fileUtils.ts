@@ -2,7 +2,6 @@ import fs from "fs";
 import fse = require("fs-extra");
 const fs_p = require("fs").promises;
 import path from "path";
-import yaml from "js-yaml";
 
 import $RefParser from "@apidevtools/json-schema-ref-parser";
 
@@ -152,7 +151,7 @@ console.log(__dirname);
 // copyYamlFile(sourceFilePath, destinationFilePath);
 
 // (async () => {
-//   const p = "../../../enums/index.yaml";
+//   const p = "../../../ONDC-NTS-Specifications/examples/on-demand/index.yaml";
 //   const data = await loadYamlWithRefs(path.resolve(__dirname, p));
 //   console.log(JSON.stringify(data, null, 2));
 //   // try {

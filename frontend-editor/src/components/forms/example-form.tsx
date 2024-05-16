@@ -4,11 +4,9 @@ import GenericForm from "./generic-form";
 import FormSelect from "./form-select";
 import FormInput from "./form-input";
 import { getData, patchData, postData } from "../../utils/requestUtils";
-import { useEffect, useState } from "react";
 import { ExampleData } from "../example-content";
 import JsonField from "./JsonField";
 import { ExampleFolderID } from "../../pages/home-page";
-import JsonViewEditor from "@uiw/react-json-view/editor";
 
 interface NewExample {
   ID: string; // use ID to determine FORM or JSON
