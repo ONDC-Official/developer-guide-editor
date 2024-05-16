@@ -7,20 +7,23 @@ import { CgMenuMotion } from "react-icons/cg";
 import { IoIosArrowDropdown, IoIosArrowDropright } from "react-icons/io";
 import { DropTransition } from "./helper-components";
 import { VscJson } from "react-icons/vsc";
-import JsonField from "./forms/JsonField";
 import JsonView from "@uiw/react-json-view";
 import { ExampleDomainFolderID } from "../pages/home-page";
-import Draggable from "react-draggable";
 import useEditorToolTip from "../hooks/useEditorToolTip";
 import Tippy from "@tippyjs/react";
 import "./jsonViewer.css";
+import { FaHtml5 } from "react-icons/fa";
+import prettier from "prettier/standalone";
+import { set } from "react-hook-form";
 
 export interface ExampleData {
   summary: string;
   description: string;
   apiName: string;
   $ref: string;
-  exampleJson: Record<string, any>;
+  exampleJson: Record<string, any> | string;
+  formName?: string;
+  formHtml?: string;
 }
 
 export function ExampleContent({
@@ -53,10 +56,17 @@ export function ExampleContent({
     query: {
       getData: getExampleFolder,
       Parent: exampleEditable.query.Parent,
-      updateParams: { oldName: selectedFolder },
+      updateParams: {
+        oldName: selectedFolder,
+        summary: folderData[selectedFolder ?? ""]?.summary,
+        description: folderData[selectedFolder ?? ""]?.description,
+      },
       copyData: async () => {
-        const data = await getData(exampleEditable.path + "/" + selectedFolder);
-        return JSON.stringify(data, null, 2);
+        const data: Record<string, ExampleData[]> = await getData(
+          exampleEditable.path + "/" + selectedFolder
+        );
+        const exampleFormat = await convertFormat(data);
+        return JSON.stringify(exampleFormat, null, 2);
       },
     },
   };
@@ -64,12 +74,10 @@ export function ExampleContent({
     name: selectedFolder ?? "",
     path: exampleEditable.path + "/" + selectedFolder,
     deletePath: exampleEditable.path + "/" + selectedFolder,
-    registerID: "EXAMPLE_FILE",
+    registerID: ExampleDomainFolderID,
     query: {
       Parent: exampleEditable,
-      getData: async () => {
-        console.log("hello");
-      },
+      getData: FolderEditable.query.getData,
     },
   };
 
@@ -154,7 +162,7 @@ function ExampleDisclose({
   data: ExampleData[];
   exampleEditable: Editable;
 }) {
-  const apiToolTip = useEditorToolTip();
+  const apiToolTip = useEditorToolTip([false, true, true]);
   const editable: Editable = {
     name: apiName,
     path: exampleEditable.path,
@@ -164,10 +172,14 @@ function ExampleDisclose({
       Parent: exampleEditable.query.Parent,
       getData: exampleEditable.query.getData,
       addParams: { apiCat: apiName },
+      deleteParams: {
+        folderName: apiName,
+      },
       copyData: async () => {
-        const d: Record<string, any> = {};
+        const d: Record<string, ExampleData[]> = {};
         d[apiName] = data;
-        return JSON.stringify(d, null, 2);
+        const formatted = await convertFormat(d);
+        return JSON.stringify(formatted, null, 2);
       },
     },
   };
@@ -223,7 +235,19 @@ function ExampleList({
   index: number;
   exampleEditable: Editable;
 }) {
-  const tagToolTip = useEditorToolTip();
+  const tagToolTip = useEditorToolTip([true, false, true]);
+  const jsonToolTip = useEditorToolTip([true, false, false]);
+
+  if (exampleData.formName && exampleData.formHtml) {
+    return (
+      <FormDisclose
+        formName={exampleData.formName}
+        formHtml={exampleData.formHtml}
+        editable={exampleEditable}
+      />
+    );
+  }
+
   const editable: Editable = {
     name: exampleEditable.name,
     path: exampleEditable.path,
@@ -233,14 +257,26 @@ function ExampleList({
       Parent: exampleEditable.query.Parent,
       getData: exampleEditable.query.getData,
       addParams: { apiCat: exampleData.apiName },
+      updateParams: {
+        exampleName: exampleData.apiName,
+        summary: exampleData.summary,
+        description: exampleData.description,
+        formType: "EditExampleCategory",
+        exampleJson: exampleData.exampleJson,
+      },
+      deleteParams: {
+        folderName: exampleEditable.name,
+        exampleName: exampleData.apiName,
+      },
       copyData: async () => {
-        return JSON.stringify(exampleData, null, 2);
+        const formatted = await convertFormat({
+          [exampleEditable.name]: [exampleData],
+        });
+        return JSON.stringify(formatted, null, 2);
       },
     },
   };
   tagToolTip.data.current = editable;
-
-  const jsonToolTip = useEditorToolTip([true, false, false]);
 
   const jsonEditable: Editable = {
     name: exampleEditable.name,
@@ -256,28 +292,27 @@ function ExampleList({
         data: exampleData,
       },
       copyData: async () => {
-        const data = await getData(exampleEditable.query.Parent?.path ?? "", {
-          type: "reference",
+        const formatted = await convertFormat({
+          [exampleEditable.name]: [exampleData],
         });
-        return JSON.stringify(data, null, 2);
-        // return JSON.stringify(exampleData, null, 2);
+        return JSON.stringify(formatted, null, 2);
       },
     },
   };
   jsonToolTip.data.current = jsonEditable;
-
+  console.log(jsonEditable.query.getData);
   return (
     <Disclosure key={index}>
       <Disclosure.Button
         className="flex ml-6 mt-3 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-200 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg"
-        // onContextMenu={tagToolTip.onContextMenu}
+        onContextMenu={tagToolTip.onContextMenu}
       >
-        {/* <Tippy {...tagToolTip.tippyProps}> */}
-        <div className="flex items-center">
-          <VscJson size={20} className="mr-2" />
-          <span>{exampleData.apiName}</span>
-        </div>
-        {/* </Tippy> */}
+        <Tippy {...tagToolTip.tippyProps}>
+          <div className="flex items-center">
+            <VscJson size={20} className="mr-2" />
+            <span>{exampleData.apiName}</span>
+          </div>
+        </Tippy>
       </Disclosure.Button>
       <Disclosure.Panel>
         <div className="ml-6 p-3 shadow-inner bg-gray-200">
@@ -291,10 +326,10 @@ function ExampleList({
                 <Tippy {...jsonToolTip.tippyProps}>
                   <JsonView
                     onContextMenu={jsonToolTip.onContextMenu}
-                    value={exampleData.exampleJson}
+                    value={exampleData.exampleJson as Record<string, any>}
                     displayDataTypes={false}
-                    className="jsonViewer"
-                    // style={jsonTheme as React.CSSProperties} // Explicitly type the style prop
+                    className="jsonViewer text-xl"
+                    style={{ fontSize: "15px" }}
                   />
                 </Tippy>
               </span>
@@ -306,33 +341,109 @@ function ExampleList({
   );
 }
 
-const jsonTheme = {
-  "font-size": "14px",
-  "--w-rjv-color": "#2c3e50", // Deep navy blue for general text
-  "--w-rjv-key-number": "#e74c3c", // Bright red for numbers, good contrast
-  "--w-rjv-key-string": "#2980b9", // Vibrant blue for string keys
-  "--w-rjv-background-color": "#f3f4f6", // Light grey, your specified background
-  "--w-rjv-line-color": "#bdc3c7", // Soft grey for lines, subtle
-  "--w-rjv-arrow-color": "#3498db", // Bright blue for arrows, eye-catching
-  "--w-rjv-edit-color": "#3498db", // Same blue for edit interactions
-  "--w-rjv-info-color": "#95a5a6", // Soft grey for informational text, unobtrusive
-  "--w-rjv-update-color": "#2980b9", // Consistent blue for updates
-  "--w-rjv-copied-color": "#3498db", // Blue for the copy action, noticeable
-  "--w-rjv-copied-success-color": "#27ae60", // Vivid green for success
-  "--w-rjv-curlybraces-color": "#34495e", // Darker grey-blue for structure characters
-  "--w-rjv-colon-color": "#34495e", // Same as curly braces for consistency
-  "--w-rjv-brackets-color": "#34495e", // Matches curly braces and colons
-  "--w-rjv-ellipsis-color": "#95a5a6", // Light grey for ellipsis, not too prominent
-  "--w-rjv-quotes-color": "#3498db", // Blue for quotes, matching arrows
-  "--w-rjv-quotes-string-color": "#e67e22", // Orange for string values, distinct
-  "--w-rjv-type-string-color": "#e67e22", // Orange for string types, very distinct
-  "--w-rjv-type-int-color": "#c0392b", // Strong red for integers, stands out
-  "--w-rjv-type-float-color": "#c0392b", // Same red for floats, consistency
-  "--w-rjv-type-bigint-color": "#c0392b", // Red for big integers, uniform look
-  "--w-rjv-type-boolean-color": "#3498db", // Blue for booleans, matches key themes
-  "--w-rjv-type-date-color": "#2980b9", // Blue for dates, easily recognizable
-  "--w-rjv-type-url-color": "#2980b9", // Consistent blue for URLs
-  "--w-rjv-type-null-color": "#95a5a6", // Grey for null, neutral and soft
-  "--w-rjv-type-nan-color": "#e67e22", // Orange for NaN, unique and distinct
-  "--w-rjv-type-undefined-color": "#95a5a6", // Grey for undefined, matching null
-};
+function FormDisclose({
+  formName,
+  formHtml,
+  editable,
+}: {
+  formName: string;
+  formHtml: string;
+  editable: Editable;
+}) {
+  const [html, setHtml] = React.useState(formHtml);
+  useEffect(() => {
+    prettier.format(formHtml, { parser: "html" }).then((formatted) => {
+      setHtml(formatted);
+    });
+  }, [formHtml]);
+  console.log(html);
+
+  const formEditable: Editable = {
+    name: formName,
+    path: editable.path,
+    deletePath: editable.path,
+    registerID: ExampleDomainFolderID,
+    query: {
+      Parent: editable.query.Parent,
+      getData: editable.query.getData,
+      deleteParams: {
+        formName: formName,
+      },
+      addParams: {
+        formType: "AddHTML",
+        exampleData: html,
+      },
+      copyData: async () => {
+        let summary = formName.split("_").slice(1).join(" ");
+        const d = {
+          examples: {
+            form: [
+              {
+                ID: "FORM",
+                name: "form",
+                summary: summary,
+                exampleValue: html,
+              },
+            ],
+          },
+        };
+        return JSON.stringify(d, null, 2);
+      },
+    },
+  };
+  const jsonToolTip = useEditorToolTip([true, false, true]);
+  jsonToolTip.data.current = formEditable;
+  return (
+    <Disclosure>
+      <Disclosure.Button
+        onContextMenu={jsonToolTip.onContextMenu}
+        className="flex ml-6 mt-3 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-200 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg"
+      >
+        <Tippy {...jsonToolTip.tippyProps}>
+          <div className="flex items-center">
+            <FaHtml5 size={20} className="mr-2" />
+            <span>{formName}</span>
+          </div>
+        </Tippy>
+      </Disclosure.Button>
+      <Disclosure.Panel>
+        <div className="ml-6 p-3 shadow-inner bg-gray-100">
+          <div className="p-2 border border-blue-50 mr-2">
+            <div className="text-left flex w-full">
+              <pre className=" text-gray-800 block shadow w-full">{html}</pre>
+              <pre
+                className="content text-gray-800 block shadow w-full"
+                dangerouslySetInnerHTML={{ __html: html }}
+              />
+            </div>
+          </div>
+        </div>
+      </Disclosure.Panel>
+    </Disclosure>
+  );
+}
+
+async function convertFormat(data: Record<string, ExampleData[]>) {
+  const exampleFormat = {
+    examples: {} as any,
+  };
+
+  for (const key in data) {
+    exampleFormat.examples[key] = data[key].map((e) => {
+      const converted = {
+        ID: "JSON",
+        name: key,
+        exampleName: e.apiName,
+        summary: e.summary,
+        description: e.description,
+        exampleValue: e.exampleJson,
+      };
+      if (e.formHtml && e.formName) {
+        converted.exampleValue = e.formHtml;
+        converted.exampleName = e.formName;
+      }
+      return converted;
+    });
+  }
+  return exampleFormat;
+}

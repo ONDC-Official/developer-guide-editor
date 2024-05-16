@@ -26,6 +26,8 @@ import {
 import {
   AddExampleJsonForm,
   AddNewExampleForm,
+  EditExampleCategoryForm,
+  EditHtmlForm,
   ExampleDomainForm,
 } from "./example-form";
 
@@ -137,9 +139,6 @@ const FormFactory = ({
           />
         );
       case ExampleFolderID:
-        // if (data.query.addParams?.formType === "addDomain") {
-        //   return <></>;
-        // }
         return (
           <ExampleDomainForm
             data={data}
@@ -148,6 +147,24 @@ const FormFactory = ({
           />
         );
       case ExampleDomainFolderID:
+        if (data.query.addParams?.formType === "AddHTML") {
+          return (
+            <EditHtmlForm
+              data={data}
+              setIsOpen={setIsOpen}
+              editState={editState}
+            />
+          );
+        }
+        if (data.query.updateParams?.formType === "EditExampleCategory") {
+          return (
+            <EditExampleCategoryForm
+              data={data}
+              setIsOpen={setIsOpen}
+              editState={editState}
+            />
+          );
+        }
         if (data.query.addParams?.formType === "AddExample") {
           return (
             <AddExampleJsonForm

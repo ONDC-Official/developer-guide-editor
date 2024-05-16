@@ -26,7 +26,6 @@
   --w-rjv-type-null-color: #95a5a6; /* Grey for null, neutral and soft */
   --w-rjv-type-nan-color: #e67e22; /* Orange for NaN, unique and distinct */
   --w-rjv-type-undefined-color: #95a5a6; /* Grey for undefined, matching null */
-  font-size: 14px; /* Setting font size globally if needed */
 }
 
 .jsonViewer:hover {

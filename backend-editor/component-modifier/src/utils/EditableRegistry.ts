@@ -5,7 +5,6 @@ import yaml from "js-yaml";
 import { ComponentsType } from "./ComponentType/ComponentsFolderTypeEditable";
 import { overrideYaml } from "./yamlUtils";
 import { loadYamlWithRefs, readYamlFile } from "./fileUtils";
-import { describe } from "node:test";
 import {
   ExampleDomainIndexYml,
   ExampleFolderType,
@@ -198,22 +197,40 @@ export class EditableRegistry {
           const data = subYamlData[subFile.name];
           for (const example of data.examples) {
             await addedExample.add({
-              ID: "JSON",
               name: subFile.name,
-              exampleName: example.value.$ref.split("/").pop().split(".")[0],
-              summary: example.summary,
-              description: example.description,
-              exampleValue: await yaml.load(
-                await readYamlFile(
-                  path.resolve(addedExample.folderPath, example.value.$ref)
-                )
-              ),
+              ID: "JSON",
+              examples: {
+                [subFile.name]: [
+                  {
+                    ID: "JSON",
+                    name: subFile.name,
+                    exampleName: example.value.$ref
+                      .split("/")
+                      .pop()
+                      .split(".")[0],
+                    summary: example.summary,
+                    description: example.description,
+                    exampleValue: await yaml.load(
+                      await readYamlFile(
+                        path.resolve(
+                          addedExample.folderPath,
+                          example.value.$ref
+                        )
+                      )
+                    ),
+                  },
+                ],
+              },
             });
           }
         }
       }
     }
   }
+  private static async loadExamplesFormatted(
+    file: fs.Dirent,
+    comp: ComponentsType
+  ) {}
 }
 
 // (async () => {

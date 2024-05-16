@@ -47,7 +47,7 @@ export class HistoryUtil {
     if (this.history.length === 0) return;
     try {
       const oldestHistory = this.history.shift();
-      await fs.rmdir(oldestHistory, { recursive: true });
+      await fs.rm(oldestHistory, { recursive: true });
       console.log(`Removed oldest history: ${oldestHistory}`);
     } catch (error) {
       console.error("Failed to remove oldest history:", error);

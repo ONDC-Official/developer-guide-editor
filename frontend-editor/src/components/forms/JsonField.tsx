@@ -5,10 +5,12 @@ import "react-toastify/dist/ReactToastify.css";
 function JsonField({
   readOnly = false,
   DefaultCode = JSON.stringify({ example: "data" }, null, 2),
+  lang = "json",
   onSubmit,
 }: {
   readOnly?: boolean;
   DefaultCode?: string;
+  lang?: string;
   onSubmit: (code: string) => Promise<any>;
 }) {
   // State for storing the code
@@ -29,6 +31,7 @@ function JsonField({
     }
   }
   function validateJson(jsonString: string) {
+    if (lang !== "json") return true;
     try {
       JSON.parse(jsonString);
       return true;
@@ -37,10 +40,13 @@ function JsonField({
     }
   }
   return (
-    <div className="w-full h-full mt-4 border border-gray-500">
+    <div
+      className="w-full h-full mt-4 border border-gray-500"
+      onKeyDown={(e) => e.stopPropagation()}
+    >
       <Editor
         height="70vh" // set editor height
-        defaultLanguage="json" // specify the language
+        defaultLanguage={lang} // specify the language
         defaultValue={code} // set the initial value
         onChange={handleEditorChange} // handle changes
         options={{

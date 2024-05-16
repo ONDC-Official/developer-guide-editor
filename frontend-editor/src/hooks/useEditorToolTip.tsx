@@ -1,7 +1,8 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import "tippy.js/animations/perspective-subtle.css";
 import EditorToolTip from "../components/ui/editor-tool-tip";
-import { Editable } from "@/components/file-structure";
+import { Editable } from "../components/file-structure";
+import { EditMode } from "../utils/config";
 interface TippyProps {
   content: JSX.Element;
   hideOnClick: boolean;
@@ -26,6 +27,9 @@ interface TooltipProps {
 }
 
 export default function useEditorToolTip(buttonStates = [true, true, true]) {
+  if (!EditMode) {
+    buttonStates = [false, false, false];
+  }
   const [visible, setVisible] = useState(false);
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [hover, setHover] = useState(false);
