@@ -256,7 +256,7 @@ export function EditHtmlForm({
         form: [
           {
             ID: "FORM",
-            name: "form",
+            name: "forms",
             exampleName: data.name,
             summary: summary,
             exampleValue: FormData,

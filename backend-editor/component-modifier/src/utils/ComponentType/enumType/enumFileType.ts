@@ -1,5 +1,5 @@
 import { FileTypeEditable } from "../../FileTypeEditable";
-import { convertToYamlWithRefs } from "../../Yaml Converter/yamlRefConvert";
+import { convertToYamlWithRefs } from "../../extraUtils/yamlRefConvert";
 import { readYamlFile } from "../../fileUtils";
 import { overrideYaml } from "../../yamlUtils";
 import {

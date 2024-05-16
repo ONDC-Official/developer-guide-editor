@@ -57,10 +57,17 @@ export class ExampleFolderType extends folderTypeEditable {
     const refs: string[] = [];
     console.log("getting reference data");
     for (const child of this.childrenEditables) {
-      const data: Record<string, { $ref: string; apiName: string }[]> =
-        await child.getData({});
+      const data: Record<
+        string,
+        { $ref: string; apiName: string; formName?: string }[]
+      > = await child.getData({});
       for (const key in data) {
         for (const ex of data[key]) {
+          if (ex.formName) {
+            refs.push(
+              `../../examples/${child.name}/${key}/${ex.formName}.html`
+            );
+          }
           refs.push(`../../examples/${child.name}/${key}/${ex.apiName}.yaml`);
         }
       }

@@ -35,9 +35,9 @@ export async function AddForm(
   folderPath: string
 ) {
   try {
-    const path = `${folderPath}/form`;
+    const path = `${folderPath}/forms`;
     await fs_p.mkdir(path, { recursive: true });
-    await fs_p.writeFile(`${folderPath}/form/${formName}.html`, formHtml);
+    await fs_p.writeFile(`${folderPath}/forms/${formName}.html`, formHtml);
   } catch (e) {
     throw new Error(`Error adding form: ${e}`);
   }
@@ -45,7 +45,7 @@ export async function AddForm(
 
 export async function GetFormData(folderPath: string) {
   try {
-    const path = `${folderPath}/form`;
+    const path = `${folderPath}/forms`;
     if (!fs.existsSync(path)) {
       return undefined;
     }

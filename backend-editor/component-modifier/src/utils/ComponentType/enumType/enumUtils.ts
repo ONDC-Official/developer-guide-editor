@@ -1,7 +1,7 @@
 import yaml from "js-yaml";
 import { readYamlFile } from "../../fileUtils";
 import path from "path";
-import { convertToYamlWithRefs } from "../../Yaml Converter/yamlRefConvert";
+import { convertToYamlWithRefs } from "../../extraUtils/yamlRefConvert";
 
 export interface enumInfo {
   code: string;

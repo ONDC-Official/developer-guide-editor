@@ -101,12 +101,14 @@ export default function EditorToolTip({
             </button>
           )}
           <Draggable>
-            <DeleteModal
-              isOpen={delModalState}
-              setIsOpen={setDelModalState}
-              editable={data}
-              onConfirm={() => {}}
-            />
+            <div>
+              <DeleteModal
+                isOpen={delModalState}
+                setIsOpen={setDelModalState}
+                editable={data}
+                onConfirm={() => {}}
+              />
+            </div>
           </Draggable>
           <EditModal
             isOpen={editModalState}

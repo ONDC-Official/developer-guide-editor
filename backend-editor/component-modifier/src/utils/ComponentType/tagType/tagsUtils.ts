@@ -1,6 +1,6 @@
 import path from "path";
 import { loadYamlWithRefs } from "../../fileUtils";
-import { convertToYamlWithRefs } from "../../Yaml Converter/yamlRefConvert";
+import { convertToYamlWithRefs } from "../../extraUtils/yamlRefConvert";
 import yaml from "js-yaml";
 
 export interface SingleTag {

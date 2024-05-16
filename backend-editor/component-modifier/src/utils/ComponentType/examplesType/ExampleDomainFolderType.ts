@@ -50,6 +50,9 @@ export class ExampleDomainFolderType extends folderTypeEditable {
   }
 
   async addSingleExample(newEditable: NewExample) {
+    if (newEditable.name === "forms" && newEditable.ID !== "FORM") {
+      throw new Error("To use form please select form type");
+    }
     if (newEditable.ID === "FORM") {
       await AddForm(
         newEditable.exampleName,
@@ -109,7 +112,7 @@ export class ExampleDomainFolderType extends folderTypeEditable {
     }
     const formData = await GetFormData(this.folderPath);
     if (formData) {
-      getData["form"] = formData;
+      getData["forms"] = formData;
     }
 
     return getData;

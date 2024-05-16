@@ -1,6 +1,6 @@
 import { FileTypeEditable } from "../../FileTypeEditable";
 import { readYamlFile } from "../../fileUtils";
-import { convertToYamlWithRefs } from "../../Yaml Converter/yamlRefConvert";
+import { convertToYamlWithRefs } from "../../extraUtils/yamlRefConvert";
 import { overrideYaml } from "../../yamlUtils";
 import {
   mergeTagObjectRecords,

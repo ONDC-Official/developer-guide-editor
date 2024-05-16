@@ -198,7 +198,32 @@ export class EditableRegistry {
       console.log("sub data", subYamlData);
       for (const subFile of subFiles) {
         if (!subFile.isDirectory()) continue;
-        if (subFile.name === "forms") continue;
+        // if (subFile.name === "forms") {
+        //   console.log(subFile.name, "inside");
+        //   const forms = await fs_p.readdir(subFile.path, {
+        //     withFileTypes: true,
+        //   });
+        //   // console.log(forms);
+        //   for (const f of forms) {
+        //     const html = await fs_p.readFile(f.path);
+        //     await addedExample.add({
+        //       name: subFile.name,
+        //       ID: "FORM",
+        //       examples: {
+        //         [subFile.name]: [
+        //           {
+        //             name: subFile.name,
+        //             ID: "FORM",
+        //             exampleName: " ",
+        //             summary: f.name,
+        //             description: " ",
+        //             exampleValue: html,
+        //           },
+        //         ],
+        //       },
+        //     });
+        //   }
+        // }
 
         if (subYamlData.hasOwnProperty(subFile.name)) {
           const data = subYamlData[subFile.name];
