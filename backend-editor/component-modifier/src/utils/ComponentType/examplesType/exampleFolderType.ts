@@ -67,8 +67,9 @@ export class ExampleFolderType extends folderTypeEditable {
             refs.push(
               `../../examples/${child.name}/${key}/${ex.formName}.html`
             );
+          } else {
+            refs.push(`../../examples/${child.name}/${key}/${ex.apiName}.yaml`);
           }
-          refs.push(`../../examples/${child.name}/${key}/${ex.apiName}.yaml`);
         }
       }
     }
