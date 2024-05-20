@@ -12,6 +12,7 @@ import { HistoryUtil } from "../utils/histroyUtils";
 import { Session } from "inspector";
 import { ComponentsType } from "../utils/ComponentType/ComponentsFolderTypeEditable";
 import { Request, Response, NextFunction } from 'express';
+import  {buildWrapper} from "../utils/build/build";
 
 interface EditableMap<T> {
   [key: string]: T;
@@ -189,9 +190,12 @@ app.delete("/guide/*", async (req, res, next) => {
 
 app.post("/build",async(req : Request,res :Response,next:NextFunction)=>{
   try{
-      
+     buildWrapper()
+    res.send("build triggered")
     
-  }catch(error){
-
-  }
+  }catch(e){
+    res.status(500).json({
+      error: "Internal Server Error",
+      errorMessage: e.message,
+    });  }
 })

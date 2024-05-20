@@ -1,5 +1,5 @@
 const fs = require("fs");
-const yaml = require("js-yaml");
+import yaml from "js-yaml"
 const path = require('path');
 
 const $RefParser = require("json-schema-ref-parser");
@@ -17,10 +17,10 @@ require("ajv-errors")(ajv);
 const args = process.argv.slice(2);
 // var example_set = args[0]
 // var flow_set = args[1]
-var base_yaml = "./beckn_yaml.yaml"; //args[0];
-var example_yaml = "./index.yaml"; //args[1]; //  main file of the yamls
-var outputPath = "../build/build.yaml";
-var uiPath = "../../ui/build.js";
+var base_yaml = "./src/utils/build/beckn_yaml.yaml"; //args[0];
+var example_yaml = "../ONDC-NTS-Specifications/api/components/index.yaml"; //args[1]; //  main file of the yamls
+var outputPath = "./build/build.yaml";
+var uiPath = "./build/build.js";
 // const outputPath = `./build.yaml`;
 // const unresolvedFilePath = `https://raw.githubusercontent.com/beckn/protocol-specifications/master/api/transaction/components/index.yaml`
 const tempPath = `./temp.yaml`;
@@ -66,6 +66,7 @@ async function validateSchema(schema, data) {
 async function validateFlows(flows, schemaMap) {
     let hasTrueResult = false; // Flag variable
   for (const flowItem of flows) {
+
     const { steps } = flowItem;
     if (steps && steps?.length) {
       for (const step of steps) {
@@ -132,6 +133,7 @@ async function matchKeyType(
       type = allOfType;
     }
     if (typeof checkEnum?.code != type) {
+
       throw Error(`Enum type not matched: ${currentAttrib} in ${logObject}`);
     }
   }
@@ -272,8 +274,9 @@ async function validateAttributes(attribute, schemaMap) {
   }
 async function getSwaggerYaml(example_set, outputPath) {
   try {
+
+
     const schema = await baseYMLFile(example_yaml);
-    return 
     const baseYAML = await baseYMLFile(base_yaml);
     const { flows, examples: exampleSets, enum: enums, tags,attributes } = schema || [];
     const { paths } = baseYAML;
@@ -306,17 +309,17 @@ async function getSwaggerYaml(example_set, outputPath) {
     }
 
     //move to separate files
-    if (!process.argv.includes(SKIP_VALIDATION.enums) && !hasTrueResult) {
-      hasTrueResult = await validateEnumsTags(enums, schemaMap);
-    }
-    if (!process.argv.includes(SKIP_VALIDATION.tags) && !hasTrueResult) {
-      //@ts-ignore
-      hasTrueResult = await validateTags(tags, schemaMap);
-    }
+    // if (!process.argv.includes(SKIP_VALIDATION.enums) && !hasTrueResult) {
+    //   hasTrueResult = await validateEnumsTags(enums, schemaMap);
+    // }
+    // if (!process.argv.includes(SKIP_VALIDATION.tags) && !hasTrueResult) {
+    //   //@ts-ignore
+    //   hasTrueResult = await validateTags(tags, schemaMap);
+    // }
 
-    if (!process.argv.includes(SKIP_VALIDATION.attributes) && !hasTrueResult) {
-      hasTrueResult = await validateAttributes(attributes, schemaMap);
-    }
+    // if (!process.argv.includes(SKIP_VALIDATION.attributes) && !hasTrueResult) {
+    //   hasTrueResult = await validateAttributes(attributes, schemaMap);
+    // }
 
     if (hasTrueResult) return;
 
@@ -400,7 +403,7 @@ if(!fs.existsSync(path.join(filePath)))fs.mkdirSync(filePath) //create docs fold
 
 function readfileWithYaml(){
     const yamlFilePath = path.join('./docs/', '', 'index.yaml');
-    const yamlData = yaml.load(fs.readFileSync(yamlFilePath, 'utf8'));
+    const yamlData : any = yaml.load(fs.readFileSync(yamlFilePath, 'utf8'));
     return yamlData.filenames;
 }
 
@@ -428,14 +431,17 @@ function compareFiles () {
     fs.writeFileSync(yamlFilePath, yamlString, 'utf8');
   };
     
-async function buildWrapper(){
+export async function buildWrapper(){
   try{
     const markdownFiles = checkMDFiles();
     writeFilenamesToYaml(markdownFiles);
+
     compareFiles();
+
     getSwaggerYaml("example_set", outputPath);
   }
   catch(e){
     console.log(e)
   }
 }
+

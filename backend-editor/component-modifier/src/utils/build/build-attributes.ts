@@ -1,4 +1,6 @@
 const xlsx = require("node-xlsx").default;
+const yaml = require("js-yaml")
+const fs = require("fs")
 
 
 export async function buildAttribiutes() {

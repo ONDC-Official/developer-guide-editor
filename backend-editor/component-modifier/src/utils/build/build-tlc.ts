@@ -1,5 +1,6 @@
 const xlsx = require("node-xlsx").default;
-
+const yaml = require("js-yaml");
+const fs = require("fs");
 
 export async function buildTlc() {
   const workSheetsFromBuffer = xlsx.parse(`../../tlc.xlsx`);
@@ -15,3 +16,4 @@ export async function buildTlc() {
 }
 
 
+module.exports = { buildTlc }

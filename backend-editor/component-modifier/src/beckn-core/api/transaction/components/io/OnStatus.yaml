@@ -1,0 +1,23 @@
+type: object
+properties:
+  context:
+    allOf:
+      - $ref: "../../../../schema/Context.yaml"
+      - type: object
+        properties:
+          action:
+            enum:
+              - on_status
+        required:
+          - action
+  message:
+    type: object
+    properties:
+      order:
+        $ref: "../../../../schema/Order.yaml"
+    required:
+      - order
+  error:
+    $ref: "../../../../schema/Error.yaml"
+required:
+  - context
