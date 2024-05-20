@@ -10,6 +10,8 @@
     "@octokit/rest": "^20.1.1",
     "@types/lodash": "^4.17.0",
     "axios": "^1.7.0",
+    "ajv": "^8.13.0",
+    "ajv-formats": "^3.0.1",
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
     "debug": "~2.6.9",

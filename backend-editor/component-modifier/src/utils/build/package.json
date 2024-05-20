@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "ajv-errors": "^3.0.0",
+    "node-xlsx": "^0.24.0"
+  }
+}

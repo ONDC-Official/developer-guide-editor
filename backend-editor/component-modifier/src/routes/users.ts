@@ -11,6 +11,7 @@ import { copyDir, deleteFolderSync, overwriteFolder } from "../utils/fileUtils";
 import { HistoryUtil } from "../utils/histroyUtils";
 import { Session } from "inspector";
 import { ComponentsType } from "../utils/ComponentType/ComponentsFolderTypeEditable";
+import { Request, Response, NextFunction } from 'express';
 
 interface EditableMap<T> {
   [key: string]: T;
@@ -185,3 +186,12 @@ app.delete("/guide/*", async (req, res, next) => {
     });
   }
 });
+
+app.post("/build",async(req : Request,res :Response,next:NextFunction)=>{
+  try{
+      
+    
+  }catch(error){
+
+  }
+})
