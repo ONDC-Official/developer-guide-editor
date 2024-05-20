@@ -163,7 +163,16 @@ export class EditableRegistry {
       if (!file.isDirectory()) continue;
       const exampleDomainName = file.name;
       const subIndexPath = `${exampleFolder.folderPath}/${exampleDomainName}/index.yaml`;
-      const secondaryPath = `${exampleFolder.folderPath}/${exampleDomainName}/${exampleDomainName}.yaml`;
+      let secondaryPath = `${exampleFolder.folderPath}/${exampleDomainName}/${exampleDomainName}.yaml`;
+      if (
+        indexData[exampleDomainName] &&
+        indexData[exampleDomainName].example_set.$ref
+      ) {
+        secondaryPath = path.resolve(
+          file.path,
+          indexData[exampleDomainName].example_set.$ref
+        );
+      }
       let subYamlData: ExampleDomainIndexYml = {};
       if (fs.existsSync(subIndexPath)) {
         subYamlData = (await loadYamlWithRefs(

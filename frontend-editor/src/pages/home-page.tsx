@@ -40,10 +40,11 @@ export function HomePage() {
         event.preventDefault(); // Prevent the browser's default undo behavior
         console.log("Ctrl + Z pressed");
         try {
-          console.log(activePath);
+          setLoading(true);
           await UndoData(activePath.current);
           toast.success("Undo successful!");
           await fetchData();
+          setLoading(false);
         } catch (error: any) {
           toast.error("NO undo data available");
           console.error("Error making PATCH request:", error);

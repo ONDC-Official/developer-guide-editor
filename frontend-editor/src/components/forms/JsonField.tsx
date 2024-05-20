@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Editor from "@monaco-editor/react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import LoadingButton from "../ui/loadingButton";
 function JsonField({
   readOnly = false,
   DefaultCode = JSON.stringify({ example: "data" }, null, 2),
@@ -20,10 +21,10 @@ function JsonField({
   function handleEditorChange(value: any, event: any) {
     setCode(value);
   }
-  async function handleButton(event: any) {
+  async function handleButton() {
     if (readOnly) {
       navigator.clipboard.writeText(code);
-      toast("Copied successfully");
+      // toast("Copied successfully");
       await onSubmit(code);
     } else {
       console.log(code);
@@ -58,7 +59,12 @@ function JsonField({
           readOnly: readOnly,
         }}
       />
-      <button
+      <LoadingButton
+        onClick={handleButton}
+        buttonText={readOnly ? "Copy" : "Submit"}
+        disabled={!validateJson(code)}
+      />
+      {/* <button
         disabled={!validateJson(code)}
         onClick={handleButton}
         className={`mt-2 px-4 py-2 font-mono font-semibold shadow-lg transition duration-300 ease-linear transform
@@ -69,7 +75,7 @@ function JsonField({
         }`}
       >
         {readOnly ? "Copy" : "Submit"}
-      </button>
+      </button> */}
     </div>
   );
 }

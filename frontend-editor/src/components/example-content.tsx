@@ -300,7 +300,7 @@ function ExampleList({
     },
   };
   jsonToolTip.data.current = jsonEditable;
-  console.log(jsonEditable.query.getData);
+
   return (
     <Disclosure key={index}>
       <Disclosure.Button
@@ -356,7 +356,6 @@ function FormDisclose({
       setHtml(formatted);
     });
   }, [formHtml]);
-  console.log(html);
 
   const formEditable: Editable = {
     name: formName,
@@ -432,15 +431,17 @@ async function convertFormat(data: Record<string, ExampleData[]>) {
     exampleFormat.examples[key] = data[key].map((e) => {
       const converted = {
         ID: "JSON",
-        name: key,
-        exampleName: e.apiName,
+        // name: key,
+        // exampleName: e.apiName,
         summary: e.summary,
         description: e.description,
         exampleValue: e.exampleJson,
       };
       if (e.formHtml && e.formName) {
+        converted.ID = "FORM";
         converted.exampleValue = e.formHtml;
-        converted.exampleName = e.formName;
+        converted.summary = e.formName;
+        // converted.exampleName = e.formName;
       }
       return converted;
     });

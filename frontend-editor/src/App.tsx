@@ -11,6 +11,8 @@ import {
   useNavigate,
 } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import { BiPlayCircle } from "react-icons/bi";
+import LoadingButton from "./components/ui/loadingButton";
 
 function App() {
   const navigate = useNavigate();
@@ -21,17 +23,22 @@ function App() {
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
   };
+  const buildGuide = () => {
+    console.log("Building guide");
+  };
+  const waitOneSecond = async () => {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    throw new Error("Failed to build");
+  };
+
   return (
     <>
       <div className={darkMode ? "dark" : ""}>
         <OndcTitle>
-          {/* <button
-            onClick={toggleDarkMode}
-            className="bg-gradient-to-r from-gray-200 to-gray-400 dark:from-gray-600 dark:to-gray-800 p-2 rounded-full shadow-md hover:shadow-lg transition duration-300 ease-in-out"
-          >
-            {darkMode ? <FaMoon size={18} /> : <ImSun size={18} />}
-          </button> */}
+          <LoadingButton onClick={waitOneSecond} buttonText="BUILD" />
+          {/* <LoadingButton onClick={waitOneSecond} buttonText="RAISE PR" /> */}
         </OndcTitle>
+
         <Routes>
           <Route path="/login" element={<GitLogin />} />
           <Route path="/home" element={<HomePage />} />
