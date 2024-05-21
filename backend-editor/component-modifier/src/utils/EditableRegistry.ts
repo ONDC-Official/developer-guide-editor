@@ -40,7 +40,20 @@ export class EditableRegistry {
     );
 
     console.log("Loading Component:", comp.folderPath);
-    const compFiles = await fs_p.readdir(comp.folderPath, {
+    let compFiles = await fs_p.readdir(comp.folderPath, {
+      withFileTypes: true,
+    });
+
+    for (const file of compFiles) {
+      if (!file.isDirectory()) continue;
+      if (file.name === "enum") {
+        await fs.renameSync(
+          `${comp.folderPath}/enum`,
+          `${comp.folderPath}/enums`
+        );
+      }
+    }
+    compFiles = await fs_p.readdir(comp.folderPath, {
       withFileTypes: true,
     });
     for (const file of compFiles) {
@@ -148,6 +161,7 @@ export class EditableRegistry {
     const indexPath = `${comp.folderPath}/examples/index.yaml`;
     if (fs.existsSync(indexPath)) {
       indexData = yaml.load(await readYamlFile(indexPath));
+      indexData = indexData || {};
     }
     await comp.add({ ID: "EXAMPLE_FOLDER" });
     const exampleFolder = comp.getTarget(
@@ -164,10 +178,15 @@ export class EditableRegistry {
       const exampleDomainName = file.name;
       const subIndexPath = `${exampleFolder.folderPath}/${exampleDomainName}/index.yaml`;
       let secondaryPath = `${exampleFolder.folderPath}/${exampleDomainName}/${exampleDomainName}.yaml`;
+      console.log("index data");
       if (
         indexData[exampleDomainName] &&
         indexData[exampleDomainName].example_set.$ref
       ) {
+        console.log(
+          "secondary path",
+          indexData[exampleDomainName].example_set.$ref
+        );
         secondaryPath = path.resolve(
           file.path,
           indexData[exampleDomainName].example_set.$ref
