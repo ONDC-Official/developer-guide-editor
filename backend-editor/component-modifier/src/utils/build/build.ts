@@ -20,7 +20,7 @@ const args = process.argv.slice(2);
 var base_yaml = "./src/utils/build/beckn_yaml.yaml"; //args[0];
 var example_yaml = "../ONDC-NTS-Specifications/api/components/index.yaml"; //args[1]; //  main file of the yamls
 var outputPath = "./src/build/build.yaml";
-var uiPath = "./build/build.js";
+var uiPath = "./src/build/build.js";
 // const outputPath = `./build.yaml`;
 // const unresolvedFilePath = `https://raw.githubusercontent.com/beckn/protocol-specifications/master/api/transaction/components/index.yaml`
 const tempPath = `./temp.yaml`;
@@ -92,7 +92,7 @@ async function validateExamples(exampleSets, schemaMap) {
       if (exampleSets[example].example_set[api] && !exampleList) {
         throw Error(`Example not found for ${api}`);
       }
-
+      console.log(exampleList, "exampleList");
       if (exampleList !== undefined)
         for (const payload of Object.keys(exampleList)) {
           const result = await validateSchema(
@@ -104,6 +104,9 @@ async function validateExamples(exampleSets, schemaMap) {
             return (hasTrueResult = true);
           }
         }
+      else {
+        throw new Error("Example not found for " + api);
+      }
     }
   }
 }
@@ -316,6 +319,7 @@ async function getSwaggerYaml(example_set, outputPath) {
     //   hasTrueResult = await validateFlows(flows, schemaMap);
     // }
     if (!process.argv.includes(SKIP_VALIDATION.examples) && !hasTrueResult) {
+      console.log(exampleSets);
       hasTrueResult = await validateExamples(exampleSets, schemaMap);
     }
 
