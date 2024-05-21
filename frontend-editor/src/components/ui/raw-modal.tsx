@@ -5,7 +5,6 @@ import FormFactory from "../forms/form-factory";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import JsonField from "../forms/JsonField";
 import { DataContext } from "../../context/dataContext";
-import Draggable from "react-draggable";
 
 interface EditModalProps {
   isOpen: any;

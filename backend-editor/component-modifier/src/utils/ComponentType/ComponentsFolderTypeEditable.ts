@@ -25,7 +25,9 @@ export class ComponentsType extends folderTypeEditable {
   }
   async add(new_editable: { ID: string }) {
     if (!this.allowedList.includes(new_editable.ID)) {
-      throw new Error("GIVEN TYPE IS NOT ALLOWED IN " + this.getRegisterID());
+      throw new Error(
+        `${new_editable.ID} TYPE IS NOT ALLOWED IN ` + this.getRegisterID()
+      );
     }
     const completeData = {
       ID: new_editable.ID,

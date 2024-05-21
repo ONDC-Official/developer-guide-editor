@@ -100,3 +100,20 @@ export async function UndoData(path: string) {
     );
   }
 }
+
+export async function sendBuildRequest() {
+  try {
+    const url = `http://localhost:1000/tree/build`;
+    const response = await axios.post(url);
+    return response.data;
+  } catch (error: any) {
+    console.log("error", error);
+    throw new Error(
+      error?.message ||
+        error.response.data ||
+        error.response.statusText ||
+        error.response.status ||
+        "Error Building Guide"
+    );
+  }
+}

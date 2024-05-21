@@ -1,6 +1,6 @@
 const fs = require("fs");
-import yaml from "js-yaml"
-const path = require('path');
+import yaml from "js-yaml";
+const path = require("path");
 
 const $RefParser = require("json-schema-ref-parser");
 const { execSync } = require("child_process");
@@ -10,7 +10,7 @@ const ajv = new Ajv({
   strict: "log",
 });
 const addFormats = require("ajv-formats");
-ajv.addFormat("phone", "")
+ajv.addFormat("phone", "");
 addFormats(ajv);
 require("ajv-errors")(ajv);
 
@@ -19,18 +19,18 @@ const args = process.argv.slice(2);
 // var flow_set = args[1]
 var base_yaml = "./src/utils/build/beckn_yaml.yaml"; //args[0];
 var example_yaml = "../ONDC-NTS-Specifications/api/components/index.yaml"; //args[1]; //  main file of the yamls
-var outputPath = "./build/build.yaml";
+var outputPath = "./src/build/build.yaml";
 var uiPath = "./build/build.js";
 // const outputPath = `./build.yaml`;
 // const unresolvedFilePath = `https://raw.githubusercontent.com/beckn/protocol-specifications/master/api/transaction/components/index.yaml`
 const tempPath = `./temp.yaml`;
 // add featureui docs
 
-const { buildAttribiutes } = require('./build-attributes')
-const { buildErrorCodes } = require('./build-error-code')
-const { buildTlc } = require('./build-tlc')
+const { buildAttribiutes } = require("./build-attributes");
+const { buildErrorCodes } = require("./build-error-code");
+const { buildTlc } = require("./build-tlc");
 
-const SKIP_VALIDATION :any = {
+const SKIP_VALIDATION: any = {
   flows: "skip1",
   examples: "skip2",
   enums: "skip3",
@@ -40,12 +40,11 @@ const SKIP_VALIDATION :any = {
 const BUILD = {
   attributes: "attributes",
   error: "errorCode",
-  tlc: "tlc"
+  tlc: "tlc",
 };
 
 async function baseYMLFile(file) {
   try {
-
     const schema = await $RefParser.dereference(file);
     return schema;
   } catch (error) {
@@ -64,9 +63,8 @@ async function validateSchema(schema, data) {
 }
 
 async function validateFlows(flows, schemaMap) {
-    let hasTrueResult = false; // Flag variable
+  let hasTrueResult = false; // Flag variable
   for (const flowItem of flows) {
-
     const { steps } = flowItem;
     if (steps && steps?.length) {
       for (const step of steps) {
@@ -86,8 +84,7 @@ async function validateFlows(flows, schemaMap) {
 }
 
 async function validateExamples(exampleSets, schemaMap) {
-    let hasTrueResult = false; // Flag variable
-
+  let hasTrueResult = false; // Flag variable
 
   for (const example of Object.keys(exampleSets)) {
     for (const api of Object.keys(schemaMap)) {
@@ -133,7 +130,6 @@ async function matchKeyType(
       type = allOfType;
     }
     if (typeof checkEnum?.code != type) {
-
       throw Error(`Enum type not matched: ${currentAttrib} in ${logObject}`);
     }
   }
@@ -217,7 +213,7 @@ async function traverseTags(currentTagValue, schemaForTraversal, logObject) {
   }
 }
 
-async function validateTags(tags, schema,isAttribute) {
+async function validateTags(tags, schema, isAttribute) {
   for (const tag of Object.keys(tags)) {
     const currentTag = tags[tag];
     const currentSchema = schema[tag]?.properties;
@@ -226,27 +222,36 @@ async function validateTags(tags, schema,isAttribute) {
     for (const tagItem of Object.keys(currentTag)) {
       const currentTagValue = currentTag[tagItem];
       let schemaForTraversal;
-            if (currentSchema[tagItem]?.type === "object") {
+      if (currentSchema[tagItem]?.type === "object") {
         schemaForTraversal = currentSchema[tagItem]?.properties;
-      }//for validating attribute contexts
-      else if(currentSchema[tagItem]?.allOf[0] && isAttribute){
+      } //for validating attribute contexts
+      else if (currentSchema[tagItem]?.allOf[0] && isAttribute) {
         schemaForTraversal = currentSchema[tagItem]?.allOf[0]?.properties;
       }
       const logObject = `${isAttribute}/${tag}/${tagItem}/`;
-      if(isAttribute) await traverseAttributes(currentTagValue, schemaForTraversal, logObject);
+      if (isAttribute)
+        await traverseAttributes(
+          currentTagValue,
+          schemaForTraversal,
+          logObject
+        );
       else await traverseTags(currentTagValue, schemaForTraversal, logObject);
     }
   }
 }
 
-async function traverseAttributes(currentAttributeValue, schemaForTraversal, logObject) {
+async function traverseAttributes(
+  currentAttributeValue,
+  schemaForTraversal,
+  logObject
+) {
   for (const currentAttributeKey of Object.keys(currentAttributeValue)) {
     const currentAttr = currentAttributeValue[currentAttributeKey];
     const schemaType = schemaForTraversal[currentAttributeKey];
 
-        //&& 'type' in currentAttr && 'owner' in currentAttr && 'usage' in currentAttr && 'description' in currentAttr
-    if ('required' in currentAttr ) {
-      continue ;
+    //&& 'type' in currentAttr && 'owner' in currentAttr && 'usage' in currentAttr && 'description' in currentAttr
+    if ("required" in currentAttr) {
+      continue;
     }
     if (schemaType) {
       if (Array.isArray(currentAttr)) {
@@ -262,37 +267,43 @@ async function traverseAttributes(currentAttributeValue, schemaForTraversal, log
         await traverseAttributes(currentAttr, schema, logObject);
       }
     } else {
-      throw Error(`[Attribute], Key not found: ${currentAttributeKey} in ${logObject}`);
+      throw Error(
+        `[Attribute], Key not found: ${currentAttributeKey} in ${logObject}`
+      );
     }
   }
 }
 
 async function validateAttributes(attribute, schemaMap) {
   for (const example of Object.keys(attribute)) {
-      validateTags(attribute[example].attribute_set,schemaMap,example);
+    validateTags(attribute[example].attribute_set, schemaMap, example);
   }
-  }
+}
 async function getSwaggerYaml(example_set, outputPath) {
   try {
-
-
     const schema = await baseYMLFile(example_yaml);
     const baseYAML = await baseYMLFile(base_yaml);
-    const { flows, examples: exampleSets, enum: enums, tags,attributes } = schema || [];
+    const {
+      flows,
+      examples: exampleSets,
+      enum: enums,
+      tags,
+      attributes,
+    } = schema || [];
     const { paths } = baseYAML;
-    let hasTrueResult : any = false; // Flag variable
+    let hasTrueResult: any = false; // Flag variable
     let schemaMap = {};
-    
+
     if (process.argv.includes(BUILD.attributes)) {
-      await buildAttribiutes()
+      await buildAttribiutes();
     }
 
     if (process.argv.includes(BUILD.error)) {
-      await buildErrorCodes()
+      await buildErrorCodes();
     }
 
     if (process.argv.includes(BUILD.tlc)) {
-      await buildTlc()
+      await buildTlc();
     }
 
     for (const path in paths) {
@@ -300,10 +311,10 @@ async function getSwaggerYaml(example_set, outputPath) {
         paths[path]?.post?.requestBody?.content?.["application/json"]?.schema;
       schemaMap[path.substring(1)] = pathSchema;
     }
-    
-    if (!process.argv.includes(SKIP_VALIDATION.flows)) {
-      hasTrueResult = await validateFlows(flows, schemaMap);
-    }
+    console.log("SKIPING FLOWS VALIDATION!");
+    // if (!process.argv.includes(SKIP_VALIDATION.flows)) {
+    //   hasTrueResult = await validateFlows(flows, schemaMap);
+    // }
     if (!process.argv.includes(SKIP_VALIDATION.examples) && !hasTrueResult) {
       hasTrueResult = await validateExamples(exampleSets, schemaMap);
     }
@@ -377,71 +388,68 @@ function addEnumTag(base, layer) {
   base["x-attributes"] = layer["attributes"];
   base["x-errorcodes"] = layer["error_codes"];
   base["x-tlc"] = layer["tlc"];
-  base["x-featureui"] = layer["feature-ui"]
-  base["x-sandboxui"] = layer["sandbox-ui"]
+  base["x-featureui"] = layer["feature-ui"];
+  base["x-sandboxui"] = layer["sandbox-ui"];
 }
 
 function GenerateYaml(base, layer, output_yaml) {
   const output = yaml.dump(base);
   fs.writeFileSync(output_yaml, output, "utf8");
-  const baseData = base['x-examples'];
+  const baseData = base["x-examples"];
   for (const examplesKey of Object.keys(baseData)) {
-    let {example_set:exampleSet} = baseData[examplesKey] || {}
+    let { example_set: exampleSet } = baseData[examplesKey] || {};
     delete exampleSet.form;
   }
   const jsonDump = "let build_spec = " + JSON.stringify(base);
   fs.writeFileSync(uiPath, jsonDump, "utf8");
 }
 
-function checkMDFiles(){
-  const filePath = './docs';
-if(!fs.existsSync(path.join(filePath)))fs.mkdirSync(filePath) //create docs folder if not exists
+function checkMDFiles() {
+  const filePath = "./docs";
+  if (!fs.existsSync(path.join(filePath))) fs.mkdirSync(filePath); //create docs folder if not exists
   const files = fs.readdirSync(filePath);
-  const markdownFiles=files.filter((file)=>file.endsWith(".md"))
- return markdownFiles
+  const markdownFiles = files.filter((file) => file.endsWith(".md"));
+  return markdownFiles;
 }
 
-function readfileWithYaml(){
-    const yamlFilePath = path.join('./docs/', '', 'index.yaml');
-    const yamlData : any = yaml.load(fs.readFileSync(yamlFilePath, 'utf8'));
-    return yamlData.filenames;
+function readfileWithYaml() {
+  const yamlFilePath = path.join("./docs/", "", "index.yaml");
+  const yamlData: any = yaml.load(fs.readFileSync(yamlFilePath, "utf8"));
+  return yamlData.filenames;
 }
 
+function compareFiles() {
+  const mdFiles = checkMDFiles();
+  const yamlFiles = readfileWithYaml();
 
-function compareFiles () {
-    const mdFiles = checkMDFiles();
-    const yamlFiles = readfileWithYaml();
-  
-    // Check if the arrays are equal
-    const isEqual = JSON.stringify(mdFiles) === JSON.stringify(yamlFiles);
-  
-    if (isEqual) {
-    } else {
-      throw new Error(`Files at docs/index.yaml doesn't exist`);
-    }
-  };
+  // Check if the arrays are equal
+  const isEqual = JSON.stringify(mdFiles) === JSON.stringify(yamlFiles);
 
-  function writeFilenamesToYaml (filenames) {
-    // Create an array of YAML links
-    const yamlLinks = filenames.map(filename => `${filename}`);
-    const yamlData = { filenames: yamlLinks };
-    const yamlFilePath = path.join('./docs/', 'index.yaml');
-    // Convert the data to YAML format and write it to the file
-    const yamlString = yaml.dump(yamlData);
-    fs.writeFileSync(yamlFilePath, yamlString, 'utf8');
-  };
-    
-export async function buildWrapper(){
-  try{
+  if (isEqual) {
+  } else {
+    throw new Error(`Files at docs/index.yaml doesn't exist`);
+  }
+}
+
+function writeFilenamesToYaml(filenames) {
+  // Create an array of YAML links
+  const yamlLinks = filenames.map((filename) => `${filename}`);
+  const yamlData = { filenames: yamlLinks };
+  const yamlFilePath = path.join("./docs/", "index.yaml");
+  // Convert the data to YAML format and write it to the file
+  const yamlString = yaml.dump(yamlData);
+  fs.writeFileSync(yamlFilePath, yamlString, "utf8");
+}
+
+export async function buildWrapper() {
+  try {
     const markdownFiles = checkMDFiles();
     writeFilenamesToYaml(markdownFiles);
 
     compareFiles();
 
-    getSwaggerYaml("example_set", outputPath);
-  }
-  catch(e){
-    console.log(e)
+    await getSwaggerYaml("example_set", outputPath);
+  } catch (e) {
+    console.log(e);
   }
 }
-

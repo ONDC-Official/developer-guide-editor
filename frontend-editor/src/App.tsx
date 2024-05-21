@@ -13,6 +13,7 @@ import {
 import { ToastContainer } from "react-toastify";
 import { BiPlayCircle } from "react-icons/bi";
 import LoadingButton from "./components/ui/loadingButton";
+import { sendBuildRequest } from "./utils/requestUtils";
 
 function App() {
   const navigate = useNavigate();
@@ -23,19 +24,17 @@ function App() {
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
   };
-  const buildGuide = () => {
+  const buildGuide = async () => {
     console.log("Building guide");
-  };
-  const waitOneSecond = async () => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    throw new Error("Failed to build");
+    const response = await sendBuildRequest();
+    console.log("Response", response);
   };
 
   return (
     <>
       <div className={darkMode ? "dark" : ""}>
         <OndcTitle>
-          <LoadingButton onClick={waitOneSecond} buttonText="BUILD" />
+          <LoadingButton onClick={buildGuide} buttonText="BUILD" />
           {/* <LoadingButton onClick={waitOneSecond} buttonText="RAISE PR" /> */}
         </OndcTitle>
 

@@ -5,14 +5,13 @@ import { EditableRegistry } from "../utils/EditableRegistry";
 import { Editable } from "../utils/Editable";
 import { folderTypeEditable } from "../utils/folderTypeEditable";
 import { FileTypeEditable } from "../utils/FileTypeEditable";
-import { AttributeFile } from "../utils/ComponentType/AttributeType/AttributeRow";
-import { error } from "console";
-import { copyDir, deleteFolderSync, overwriteFolder } from "../utils/fileUtils";
+
+import { deleteFolderSync, overwriteFolder } from "../utils/fileUtils";
 import { HistoryUtil } from "../utils/histroyUtils";
-import { Session } from "inspector";
+
 import { ComponentsType } from "../utils/ComponentType/ComponentsFolderTypeEditable";
-import { Request, Response, NextFunction } from 'express';
-import  {buildWrapper} from "../utils/build/build";
+import { Request, Response, NextFunction } from "express";
+import { buildWrapper } from "../utils/build/build";
 
 interface EditableMap<T> {
   [key: string]: T;
@@ -20,7 +19,7 @@ interface EditableMap<T> {
 const sessionInstances: EditableMap<ComponentsType> = {};
 let currentSessionID: string = "";
 const history = new HistoryUtil(5);
-
+const forkedCompPath = `../../../FORKED_REPO/api/components`;
 initRegistry();
 
 export const app = express();
@@ -48,8 +47,9 @@ app.all("/guide/*", async (req: any, res, next) => {
   }
   currentSessionID = pathSegments[0];
   if (!sessionInstances[currentSessionID] && req.method !== "DELETE") {
+    const oldPath = `../../../ONDC-NTS-Specifications/api/${currentSessionID}`;
     sessionInstances[currentSessionID] = await EditableRegistry.loadComponent(
-      `../../../ONDC-NTS-Specifications/api/${currentSessionID}`,
+      oldPath,
       currentSessionID
     );
   }
@@ -103,6 +103,24 @@ app.get("/guide/*", async (req, res, next) => {
   }
 });
 
+app.post("/reload", async (req, res, next) => {
+  try {
+    delete sessionInstances[currentSessionID];
+    const oldPath = `../../../ONDC-NTS-Specifications/api/${currentSessionID}`;
+    sessionInstances[currentSessionID] = await EditableRegistry.loadComponent(
+      oldPath,
+      currentSessionID
+    );
+    res.status(200).send("DATA RELOADED");
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({
+      error: "Internal Server Error",
+      errorMessage: e.message,
+    });
+  }
+});
+
 app.post("/guide/*", async (req, res, next) => {
   try {
     await history.addHistory(sessionInstances[currentSessionID]);
@@ -130,6 +148,7 @@ app.put("/guide/*", async (req, res, next) => {
     await overwriteFolder(source, folderPath);
     await deleteFolderSync(source);
     console.log("COPY DONE");
+    //`../../../FORKED_REPO/api/${targetName}`
     sessionInstances[targetName] = await EditableRegistry.loadComponent(
       `../../../ONDC-NTS-Specifications/api/${targetName}`,
       targetName
@@ -188,14 +207,14 @@ app.delete("/guide/*", async (req, res, next) => {
   }
 });
 
-app.post("/build",async(req : Request,res :Response,next:NextFunction)=>{
-  try{
-     buildWrapper()
-    res.send("build triggered")
-    
-  }catch(e){
+app.post("/build", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await buildWrapper();
+    res.send("build triggered");
+  } catch (e) {
     res.status(500).json({
       error: "Internal Server Error",
       errorMessage: e.message,
-    });  }
-})
+    });
+  }
+});

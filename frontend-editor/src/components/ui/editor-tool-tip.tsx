@@ -9,7 +9,6 @@ import { Editable } from "../file-structure";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import RawModal from "./raw-modal";
-import Draggable from "react-draggable";
 
 export default function EditorToolTip({
   data,
@@ -100,16 +99,16 @@ export default function EditorToolTip({
               <BsFiletypeRaw className=" size-6" />
             </button>
           )}
-          <Draggable>
-            <div>
-              <DeleteModal
-                isOpen={delModalState}
-                setIsOpen={setDelModalState}
-                editable={data}
-                onConfirm={() => {}}
-              />
-            </div>
-          </Draggable>
+
+          <div>
+            <DeleteModal
+              isOpen={delModalState}
+              setIsOpen={setDelModalState}
+              editable={data}
+              onConfirm={() => {}}
+            />
+          </div>
+
           <EditModal
             isOpen={editModalState}
             setIsOpen={setEditModalState}
