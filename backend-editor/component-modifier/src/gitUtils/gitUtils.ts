@@ -195,20 +195,20 @@ const raisePr = async (
   console.log("Pull Request created successfully:", pullRequest.html_url);
 };
 
-(async () => {
-  const token = "";
-  const url = "https://github.com/ONDC-Official/ONDC-FIS-Specifications";
-  const userName = "rudranshOndc";
-  const repoPath = path.resolve(
-    __dirname,
-    "../../../../backend-editor/FORKED_REPO"
-  );
-  //   await forkRepository(token, url);
-  //   await cloneRepo(token, userName, url);
-  //   await changeBranch(
-  //     path.resolve(__dirname, "../../../../backend-editor/FORKED_REPO"),
-  //     "release-FIS12-2.0.0"
-  //   );
-  await stashFetchCommitAndPushChanges(repoPath, "testing commit");
-  await raisePr(token, url, repoPath, "Test PR", "This is a test PR");
-})();
+// (async () => {
+//   const token = "";
+//   const url = "https://github.com/ONDC-Official/ONDC-FIS-Specifications";
+//   const userName = "rudranshOndc";
+//   const repoPath = path.resolve(
+//     __dirname,
+//     "../../../../backend-editor/FORKED_REPO"
+//   );
+//   //   await forkRepository(token, url);
+//   //   await cloneRepo(token, userName, url);
+//   //   await changeBranch(
+//   //     path.resolve(__dirname, "../../../../backend-editor/FORKED_REPO"),
+//   //     "release-FIS12-2.0.0"
+//   //   );
+//   await stashFetchCommitAndPushChanges(repoPath, "testing commit");
+//   await raisePr(token, url, repoPath, "Test PR", "This is a test PR");
+// })();

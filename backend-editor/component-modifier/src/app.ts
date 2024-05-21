@@ -6,6 +6,7 @@ import logger from "morgan";
 import cors from "cors";
 import { app as indexRouter } from "./routes/index";
 import { app as pathRouter } from "./routes/users";
+import { app as gitRouter } from "./routes/git";
 // var usersRouter = require('./routes/users');
 
 const app = express();
@@ -36,6 +37,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/direct", indexRouter);
 app.use("/tree", pathRouter);
+app.use("/git", gitRouter);
 // app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
