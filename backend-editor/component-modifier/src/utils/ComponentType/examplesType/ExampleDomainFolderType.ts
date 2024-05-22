@@ -63,7 +63,7 @@ export class ExampleDomainFolderType extends folderTypeEditable {
     }
 
     if (newEditable.ID === "JSON") {
-      console.log("validating json", newEditable.exampleValue);
+      // console.log("validating json", newEditable.exampleValue);
       if (typeof newEditable.exampleValue === "string") {
         newEditable.exampleValue = JSON.parse(
           newEditable.exampleValue

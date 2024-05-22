@@ -69,7 +69,7 @@ export class ComponentsType extends folderTypeEditable {
       return "attributes";
     }
     if (ID === EnumFolderType.REGISTER_ID) {
-      return "enums";
+      return "enum";
     }
     if (ID === TagsFolderType.REGISTER_ID) {
       return "tags";

@@ -20,7 +20,7 @@ export abstract class Editable {
       path,
       removeContent
     );
-    if (this.name === "enums") {
+    if (this.name === "enum") {
       this.add({ ID: "ENUM_FILE", name: "default" });
     }
     if (this.name === "tags") {

@@ -45,7 +45,8 @@ export async function createIndexYaml(
 export async function renameFolder(folderPath: string, newName: string) {
   const parentDir = path.dirname(folderPath);
   const newFolderPath = path.join(parentDir, newName);
-
+  console.log("Old folder path:", folderPath);
+  console.log("New folder path:", newFolderPath);
   try {
     await fs.promises.access(newFolderPath);
     throw new Error("Folder with the new name already exists!");

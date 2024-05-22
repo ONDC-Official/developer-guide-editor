@@ -2,18 +2,20 @@ import { EditMode } from "../utils/config";
 
 export function OndcTitle({ children }: any) {
   return (
-    <div className="flex items-center justify-between mx-auto px-4 py-2 shadow-lg fixed top-0 left-0 right-0 z-20 bg-white/30 backdrop-blur-xl">
-      <img
-        src="https://seeklogo.com/images/O/open-network-for-digital-commerce-logo-E7F55933B3-seeklogo.com.png"
-        alt="Logo"
-        className="h-16 w-auto"
-      />
-      <GradientText>
-        DEVELOPER GUIDE{" "}
-        {EditMode && <span className=" text-black">~EDIT_MODE</span>}
-      </GradientText>
-      {children}
-    </div>
+    <>
+      <div className="flex items-center justify-between mx-auto px-4 py-2 shadow-lg fixed top-0 left-0 right-0 z-20 bg-slate-200">
+        <img
+          src="https://seeklogo.com/images/O/open-network-for-digital-commerce-logo-E7F55933B3-seeklogo.com.png"
+          alt="Logo"
+          className="h-16 w-auto"
+        />
+        <GradientText>
+          DEVELOPER GUIDE{" "}
+          {EditMode && <span className=" text-black">~EDIT_MODE</span>}
+        </GradientText>
+        {children}
+      </div>
+    </>
   );
 }
 export function GradientText({ children }: any) {

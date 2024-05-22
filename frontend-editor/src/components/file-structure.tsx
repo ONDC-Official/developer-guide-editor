@@ -42,7 +42,7 @@ export const ComponentsStructure = ({
   if (!componentsChildren) return <></>;
   return (
     <div
-      className={`flex flex-col h-screen w-64 hover:bg-blue-100 dark:bg-gray-900 dark:hover:bg-gray-800 fixed left-0 z-50 top-20`}
+      className={`flex flex-col h-screen w-64 hover:bg-blue-100 border-gray-500 border-x-2 fixed left-0 z-50 top-20 mt-14`}
       onContextMenu={tooltip.onContextMenu}
     >
       <Tippy {...tooltip.tippyProps}>

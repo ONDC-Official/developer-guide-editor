@@ -1,6 +1,7 @@
 import { DataContext } from "../context/dataContext";
 import React from "react";
 import { useForm } from "react-hook-form";
+import FolderSelector from "./ui/folder-selector";
 
 function LoadComponent() {
   const dataContext = React.useContext(DataContext);
@@ -47,6 +48,11 @@ function LoadComponent() {
           </button>
         </div>
       </form>
+
+      <div>
+        <h1>OR you can select a folder to load components from</h1>
+        <FolderSelector afterUpload={onSubmit} />
+      </div>
     </div>
   );
 }

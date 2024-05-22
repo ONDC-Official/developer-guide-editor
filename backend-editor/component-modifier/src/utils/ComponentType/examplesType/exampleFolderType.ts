@@ -50,7 +50,6 @@ export class ExampleFolderType extends folderTypeEditable {
     }
     const string = await readYamlFile(this.yamlPathLong);
     const data = yaml.load(string) as ExampleFolderYaml;
-    console.log(data);
     return data;
   }
   async getReferenceData() {

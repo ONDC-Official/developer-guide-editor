@@ -4,14 +4,19 @@ import path from "path";
 import yaml from "js-yaml";
 import { ComponentsType } from "./ComponentType/ComponentsFolderTypeEditable";
 import { overrideYaml } from "./yamlUtils";
-import { loadYamlWithRefs, readYamlFile } from "./fileUtils";
+import { loadYamlWithRefs, readYamlFile, renameFolder } from "./fileUtils";
 import {
   ExampleDomainIndexYml,
   ExampleFolderType,
 } from "./ComponentType/examplesType/exampleFolderType";
 import { ExampleDomainFolderType } from "./ComponentType/examplesType/ExampleDomainFolderType";
 import { Editable } from "./Editable";
+import { initRegistry } from "./RegisterList";
 
+type exampleYaml = Record<
+  string,
+  { summary: string; description: string; example_set: { $ref: string } }
+>;
 export class EditableRegistry {
   static registry = {};
 
@@ -46,10 +51,10 @@ export class EditableRegistry {
 
     for (const file of compFiles) {
       if (!file.isDirectory()) continue;
-      if (file.name === "enum") {
+      if (file.name === "enums") {
         await fs.renameSync(
-          `${comp.folderPath}/enum`,
-          `${comp.folderPath}/enums`
+          `${comp.folderPath}/enums`,
+          `${comp.folderPath}/enum`
         );
       }
     }
@@ -102,9 +107,9 @@ export class EditableRegistry {
   }
 
   private static async loadEnums(file: fs.Dirent, comp: ComponentsType) {
-    if (file.name === "enums") {
-      const defExists = fs.existsSync(`${comp.folderPath}/enums/default`);
-      const ymlPath = `${comp.folderPath}/enums/index.yaml`;
+    if (file.name === "enum") {
+      const defExists = fs.existsSync(`${comp.folderPath}/enum/default`);
+      const ymlPath = `${comp.folderPath}/enum/index.yaml`;
       const indexExists = fs.existsSync(ymlPath);
       let data: any = "";
       console.log(`Yml exists: ${indexExists} def exists: ${defExists}`);
@@ -112,7 +117,7 @@ export class EditableRegistry {
         data = await loadYamlWithRefs(ymlPath);
       }
       await comp.add({ ID: "ENUM_FOLDER" });
-      const enumFolder = comp.getTarget("ENUM_FOLDER", "enums", comp);
+      const enumFolder = comp.getTarget("ENUM_FOLDER", "enum", comp);
       const enumFiles = await fs_p.readdir(enumFolder.folderPath, {
         withFileTypes: true,
       });
@@ -157,10 +162,10 @@ export class EditableRegistry {
 
   private static async loadExamples(file: fs.Dirent, comp: ComponentsType) {
     if (file.name !== "examples") return;
-    let indexData = {};
+    let indexData: exampleYaml = {};
     const indexPath = `${comp.folderPath}/examples/index.yaml`;
     if (fs.existsSync(indexPath)) {
-      indexData = yaml.load(await readYamlFile(indexPath));
+      indexData = yaml.load(await readYamlFile(indexPath)) as exampleYaml;
       indexData = indexData || {};
     }
     await comp.add({ ID: "EXAMPLE_FOLDER" });
@@ -169,39 +174,51 @@ export class EditableRegistry {
       "examples",
       comp
     ) as ExampleFolderType;
+
+    for (const key in indexData) {
+      const ref = indexData[key].example_set.$ref;
+      const folderName = ref.split("/")[1];
+      const folderPath = `${exampleFolder.folderPath}/${folderName}`;
+      console.log("folderName", folderName, key);
+      try {
+        if (fs.existsSync(folderPath)) {
+          await renameFolder(folderPath, key);
+          const ymlName = ref.split("/")[2];
+          indexData[key].example_set.$ref = `./${key}/${ymlName}`;
+        }
+      } catch (e) {
+        console.log("skipping rename", e);
+      }
+    }
     const exampleFiles = await fs_p.readdir(exampleFolder.folderPath, {
       withFileTypes: true,
     });
-
     for (const file of exampleFiles) {
       if (!file.isDirectory()) continue;
       const exampleDomainName = file.name;
       const subIndexPath = `${exampleFolder.folderPath}/${exampleDomainName}/index.yaml`;
-      let secondaryPath = `${exampleFolder.folderPath}/${exampleDomainName}/${exampleDomainName}.yaml`;
-      console.log("index data");
+
+      let secondaryPath = ``;
+
       if (
+        indexData &&
         indexData[exampleDomainName] &&
         indexData[exampleDomainName].example_set.$ref
       ) {
-        console.log(
-          "secondary path",
-          indexData[exampleDomainName].example_set.$ref
-        );
         secondaryPath = path.resolve(
           file.path,
           indexData[exampleDomainName].example_set.$ref
         );
+        console.log("secondary path", secondaryPath);
+        if (fs.existsSync(secondaryPath)) {
+          await fs_p.rename(secondaryPath, subIndexPath);
+        }
       }
+
       let subYamlData: ExampleDomainIndexYml = {};
       if (fs.existsSync(subIndexPath)) {
         subYamlData = (await loadYamlWithRefs(
           subIndexPath
-        )) as ExampleDomainIndexYml;
-
-        subYamlData = subYamlData || {};
-      } else if (fs.existsSync(secondaryPath)) {
-        subYamlData = (await loadYamlWithRefs(
-          secondaryPath
         )) as ExampleDomainIndexYml;
 
         subYamlData = subYamlData || {};
@@ -226,33 +243,6 @@ export class EditableRegistry {
       console.log("sub data", subYamlData);
       for (const subFile of subFiles) {
         if (!subFile.isDirectory()) continue;
-        // if (subFile.name === "forms") {
-        //   console.log(subFile.name, "inside");
-        //   const forms = await fs_p.readdir(subFile.path, {
-        //     withFileTypes: true,
-        //   });
-        //   // console.log(forms);
-        //   for (const f of forms) {
-        //     const html = await fs_p.readFile(f.path);
-        //     await addedExample.add({
-        //       name: subFile.name,
-        //       ID: "FORM",
-        //       examples: {
-        //         [subFile.name]: [
-        //           {
-        //             name: subFile.name,
-        //             ID: "FORM",
-        //             exampleName: " ",
-        //             summary: f.name,
-        //             description: " ",
-        //             exampleValue: html,
-        //           },
-        //         ],
-        //       },
-        //     });
-        //   }
-        // }
-
         if (subYamlData.hasOwnProperty(subFile.name)) {
           const data = subYamlData[subFile.name];
           ForceUniqueSummary(data);
@@ -289,10 +279,7 @@ function ForceUniqueSummary(data: {
       acc[summary] = (acc[summary] || 0) + 1;
       return acc;
     }, {});
-  // Step 2: Create a map to track the number of times each summary has been encountered
   const summaryTracker = {};
-
-  // Step 3: Modify summaries that occur more than once
   data.examples.forEach((example) => {
     const summary = example.summary;
     if (summaryCounts[summary] > 1) {
@@ -304,12 +291,17 @@ function ForceUniqueSummary(data: {
     }
   });
 }
-// (async () => {
-//   initRegistry();
-//   console.log(
-//     await EditableRegistry.loadComponent(
-//       "../../../ONDC-NTS-Specifications/api/cpo",
-//       "cp0"
-//     )
-//   );
-// })();
+
+// initRegistry();
+// EditableRegistry.loadComponent(
+//   "../../../ONDC-NTS-Specifications/api/components",
+//   "components"
+// );
+
+// renameFolder(
+//   path.resolve(
+//     __dirname,
+//     "../../../ONDC-NTS-Specifications/api/components/examples/personal-loan"
+//   ),
+//   "personal-loans"
+// );

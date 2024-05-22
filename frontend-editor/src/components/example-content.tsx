@@ -14,7 +14,6 @@ import Tippy from "@tippyjs/react";
 import "./jsonViewer.css";
 import { FaHtml5 } from "react-icons/fa";
 import prettier from "prettier/standalone";
-import { set } from "react-hook-form";
 
 export interface ExampleData {
   summary: string;

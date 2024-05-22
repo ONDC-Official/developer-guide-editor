@@ -7,6 +7,7 @@ import { DataContext } from "../context/dataContext";
 import LoadComponent from "../components/LoadComponent";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { GitActionsTab } from "../components/GitActionsTab";
 
 interface FetchedComponents {
   name: string;
@@ -126,12 +127,13 @@ function ComponentView({
 }) {
   return (
     <>
+      <GitActionsTab />
       <div className="flex w-full h-full overflow-hidden">
         <ComponentsStructure
           componentsChildren={components}
           componentParent={parentComp}
         />
-        <div className=" mt-20 ml-64 w-full">
+        <div className=" mt-32 ml-64 w-full">
           <MainContent activeEditable={activeEditable} />
         </div>
       </div>

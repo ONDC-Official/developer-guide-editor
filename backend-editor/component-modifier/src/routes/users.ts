@@ -207,6 +207,20 @@ app.delete("/guide/*", async (req, res, next) => {
   }
 });
 
+app.delete("/sessions", async (req, res, next) => {
+  try {
+    for (const key in sessionInstances) {
+      delete sessionInstances[key];
+    }
+    res.status(200).send("SESSION DELETED");
+  } catch (e) {
+    res.status(500).json({
+      error: "Internal Server Error",
+      errorMessage: e.message,
+    });
+  }
+});
+
 app.post("/build", async (req: Request, res: Response, next: NextFunction) => {
   try {
     await buildWrapper();

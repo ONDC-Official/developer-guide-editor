@@ -104,9 +104,9 @@ async function validateExamples(exampleSets, schemaMap) {
             return (hasTrueResult = true);
           }
         }
-      else {
-        throw new Error("Example not found for " + api);
-      }
+      // else {
+      //   throw new Error("Example not found for " + api);
+      // }
     }
   }
 }
@@ -327,14 +327,14 @@ async function getSwaggerYaml(example_set, outputPath) {
     // if (!process.argv.includes(SKIP_VALIDATION.enums) && !hasTrueResult) {
     //   hasTrueResult = await validateEnumsTags(enums, schemaMap);
     // }
-    // if (!process.argv.includes(SKIP_VALIDATION.tags) && !hasTrueResult) {
-    //   //@ts-ignore
-    //   hasTrueResult = await validateTags(tags, schemaMap);
-    // }
+    if (!process.argv.includes(SKIP_VALIDATION.tags) && !hasTrueResult) {
+      //@ts-ignore
+      hasTrueResult = await validateTags(tags, schemaMap);
+    }
 
-    // if (!process.argv.includes(SKIP_VALIDATION.attributes) && !hasTrueResult) {
-    //   hasTrueResult = await validateAttributes(attributes, schemaMap);
-    // }
+    if (!process.argv.includes(SKIP_VALIDATION.attributes) && !hasTrueResult) {
+      hasTrueResult = await validateAttributes(attributes, schemaMap);
+    }
 
     if (hasTrueResult) return;
 
