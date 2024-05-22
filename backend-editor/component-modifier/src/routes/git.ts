@@ -16,8 +16,13 @@ app.post("/init", async (req, res) => {
   if (!username || !repoUrl || !token) {
     res.status(400).send("Missing required parameters");
   }
-  await forkRepository(token, repoUrl);
-  await cloneRepo(token, username, repoUrl);
+  try {
+    await forkRepository(token, repoUrl);
+    await cloneRepo(token, username, repoUrl);
+  } catch {
+    res.status(500).send("Error initializing repository");
+  }
+  res.status(200).send("Repository initialized successfully");
 });
 
 app.get("/branches", async (req, res) => {
