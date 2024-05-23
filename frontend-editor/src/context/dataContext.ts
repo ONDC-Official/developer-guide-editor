@@ -8,6 +8,7 @@ interface DataContextProps {
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   activeEditable: Editable | undefined;
   setActiveEditable: React.Dispatch<React.SetStateAction<Editable | undefined>>;
+  setReload: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const DataContext = createContext({} as DataContextProps);

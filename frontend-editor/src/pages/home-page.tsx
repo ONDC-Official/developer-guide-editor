@@ -30,10 +30,10 @@ export function HomePage() {
   const activePath = React.useRef<string>("");
   const [pathState, setPathState] = useState<string>("");
   const [activeEditable, setActiveEditable] = React.useState<Editable>();
-
+  const [refresh, setRefresh] = useState(false);
   useEffect(() => {
     fetchData();
-  }, [pathState]);
+  }, [pathState, refresh]);
 
   useEffect(() => {
     const handleKeyDown = async (event: any) => {
@@ -70,6 +70,7 @@ export function HomePage() {
   };
 
   async function fetchData() {
+    console.log("fetching data");
     setLoading(true);
     let getComp: FetchedComponents[] = await getData(activePath.current);
     let compsList: Editable[] = [];
@@ -100,6 +101,7 @@ export function HomePage() {
         setLoading: setLoading,
         activeEditable: activeEditable,
         setActiveEditable: setActiveEditable,
+        setReload: setRefresh,
       }}
     >
       {activePath.current === "" ? (

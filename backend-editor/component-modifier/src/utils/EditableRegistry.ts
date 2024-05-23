@@ -240,7 +240,6 @@ export class EditableRegistry {
       const subFiles = await fs_p.readdir(addedExample.folderPath, {
         withFileTypes: true,
       });
-      console.log("sub data", subYamlData);
       for (const subFile of subFiles) {
         if (!subFile.isDirectory()) continue;
         if (subYamlData.hasOwnProperty(subFile.name)) {

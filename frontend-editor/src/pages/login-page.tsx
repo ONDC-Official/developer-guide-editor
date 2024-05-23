@@ -33,6 +33,8 @@ function GitLogin() {
         token: token,
       });
       if (res.status === 200) {
+        localStorage.setItem("username", username);
+        localStorage.setItem("repoLink", res.data);
         navigate("/home");
       }
     } catch {

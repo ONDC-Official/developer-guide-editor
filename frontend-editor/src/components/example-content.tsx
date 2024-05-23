@@ -321,7 +321,11 @@ function ExampleList({
                 <span>Summary: {exampleData.summary}</span>
               </h2>
               <p>Description: {exampleData.description}</p>
-              <span className="bg-gray-100m p-3 text-gray-800 font-mono block whitespace-pre-wrap shadow">
+              <span
+                className="bg-gray-100m p-3 text-gray-800 font-mono block whitespace-pre-wrap shadow 
+              "
+                style={{ maxHeight: "400px", overflow: "auto" }}
+              >
                 <Tippy {...jsonToolTip.tippyProps}>
                   <JsonView
                     onContextMenu={jsonToolTip.onContextMenu}

@@ -108,7 +108,6 @@ export async function updateYamlRefExampleDomain(
     }
   }
 
-  console.log("bhaiii", refToAdd);
   await updateYamlRef(
     filePath,
     section,

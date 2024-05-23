@@ -30,7 +30,14 @@ export default function DeleteModal({
     }
     dataContext.setLoading(true);
     console.log("Deleting", editable.path, query);
-    await deleteData(editable.deletePath, query);
+    try {
+      await deleteData(editable.deletePath, query);
+    } catch {
+      toast.error("Failed to delete");
+      dataContext.setLoading(false);
+      closeModal();
+      return;
+    }
     console.log("GETTING", editable.query.Parent?.query.getData);
     await editable.query.Parent?.query.getData();
     toast.success("Deleted successfully");

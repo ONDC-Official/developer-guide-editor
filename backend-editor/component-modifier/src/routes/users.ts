@@ -47,9 +47,9 @@ app.all("/guide/*", async (req: any, res, next) => {
   }
   currentSessionID = pathSegments[0];
   if (!sessionInstances[currentSessionID] && req.method !== "DELETE") {
-    const oldPath = `../../../ONDC-NTS-Specifications/api/${currentSessionID}`;
+    // const oldPath = `../../../ONDC-NTS-Specifications/api/${currentSessionID}`;
     sessionInstances[currentSessionID] = await EditableRegistry.loadComponent(
-      oldPath,
+      forkedCompPath,
       currentSessionID
     );
   }
@@ -105,12 +105,18 @@ app.get("/guide/*", async (req, res, next) => {
 
 app.post("/reload", async (req, res, next) => {
   try {
-    delete sessionInstances[currentSessionID];
-    const oldPath = `../../../ONDC-NTS-Specifications/api/${currentSessionID}`;
-    sessionInstances[currentSessionID] = await EditableRegistry.loadComponent(
-      oldPath,
-      currentSessionID
-    );
+    // delete sessionInstances[currentSessionID];
+    // const oldPath = `../../../ONDC-NTS-Specifications/api/${currentSessionID}`;
+    // sessionInstances[currentSessionID] = await EditableRegistry.loadComponent(
+    //   oldPath,
+    //   currentSessionID
+    // );
+    for (const key in sessionInstances) {
+      sessionInstances[key] = await EditableRegistry.loadComponent(
+        forkedCompPath,
+        "components"
+      );
+    }
     res.status(200).send("DATA RELOADED");
   } catch (e) {
     console.error(e);
@@ -149,9 +155,9 @@ app.put("/guide/*", async (req, res, next) => {
     await deleteFolderSync(source);
     console.log("COPY DONE");
     //`../../../FORKED_REPO/api/${targetName}`
-    sessionInstances[targetName] = await EditableRegistry.loadComponent(
-      `../../../ONDC-NTS-Specifications/api/${targetName}`,
-      targetName
+    sessionInstances["components"] = await EditableRegistry.loadComponent(
+      forkedCompPath,
+      "components"
     );
     res.status(200).send("DATA UNDONE");
   } catch (e) {

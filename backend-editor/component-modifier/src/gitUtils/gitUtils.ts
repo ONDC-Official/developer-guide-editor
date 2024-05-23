@@ -159,8 +159,15 @@ export const changeBranch = async (
   branchName: string
 ): Promise<void> => {
   const git = simpleGit(repoPath);
+  const currentBranchSummary = await git.branch();
+  const currentBranch = currentBranchSummary.current;
+  const stashMessage = `stash@${currentBranch}`;
 
   try {
+    // Stash any current changes with a specific message
+    await git.stash(["push", "-u", "-m", stashMessage]);
+    console.log(`Stashed changes for branch ${currentBranch}`);
+
     // Check if the branch exists locally
     const branchSummary = await git.branch();
     if (!branchSummary.all.includes(branchName)) {
@@ -170,6 +177,16 @@ export const changeBranch = async (
     // Checkout the branch
     await git.checkout(branchName);
     console.log(`Switched to branch ${branchName}`);
+
+    // Check if there are stashes for the new branch and apply the most recent one
+    const stashList = await git.stashList();
+    const branchStashIndex = stashList.all.findIndex((stash) =>
+      stash.message.includes(`stash@${branchName}`)
+    );
+    if (branchStashIndex !== -1) {
+      await git.stash(["pop", `stash@{${branchStashIndex}}`]);
+      console.log(`Applied stash for branch ${branchName}`);
+    }
   } catch (error) {
     console.error("Error switching branches:", error.message);
     throw error;
@@ -179,7 +196,10 @@ export const changeBranch = async (
 export const getBranches = async (repoPath: string) => {
   const git = simpleGit(repoPath);
   const branches = await git.branch();
-  return branches.all;
+  let allBranches = branches.all;
+  allBranches = allBranches.filter((b) => b.includes("remotes/origin"));
+
+  return { allBranches: allBranches, currentBranch: branches.current };
 };
 
 /**
@@ -188,7 +208,7 @@ export const getBranches = async (repoPath: string) => {
  * @param {string} commitMessage - The commit message.
  * @returns {Promise<void>}
  */
-const stashFetchCommitAndPushChanges = async (
+export const stashFetchCommitAndPushChanges = async (
   repoPath: string,
   commitMessage: string
 ): Promise<void> => {
@@ -221,7 +241,7 @@ const stashFetchCommitAndPushChanges = async (
   }
 };
 
-const raisePr = async (
+export const raisePr = async (
   token: string,
   repoUrl: string,
   repoPath: string,
@@ -251,26 +271,117 @@ const raisePr = async (
   console.log("Pull Request created successfully:", pullRequest.html_url);
 };
 
+export async function getStatus(repoPath: string) {
+  const git = simpleGit(repoPath);
+  return await git.status();
+}
+
 const getRepoName = async (git: SimpleGit) => {
   const remote = await git.listRemote(["--get-url"]);
   const repoName = remote.split("/").pop()?.split(".git")[0];
   return repoName;
 };
 
-// (async () => {
-//   const token = "";
-//   const url = "https://github.com/ONDC-Official/ONDC-FIS-Specifications";
-//   const userName = "rudranshOndc";
-//   const repoPath = path.resolve(
-//     __dirname,
-//     "../../../../backend-editor/FORKED_REPO"
-//   );
-//   //   await forkRepository(token, url);
-//   //   await cloneRepo(token, userName, url);
-//   //   await changeBranch(
-//   //     path.resolve(__dirname, "../../../../backend-editor/FORKED_REPO"),
-//   //     "release-FIS12-2.0.0"
-//   //   );
-//   await stashFetchCommitAndPushChanges(repoPath, "testing commit");
-//   await raisePr(token, url, repoPath, "Test PR", "This is a test PR");
-// })();
+/**
+ * Resets the current branch by fetching, clearing local changes, and pulling the latest changes.
+ * @param {string} repoPath - The local path of the cloned repository.
+ * @returns {Promise<void>}
+ */
+export const resetCurrentBranch = async (repoPath: string): Promise<void> => {
+  const git = simpleGit(repoPath);
+  console.log(await printAllRemotes(git));
+  try {
+    // Get the current branch name
+    const currentBranchSummary = await git.branch();
+    const currentBranch = currentBranchSummary.current;
+    const stashMessage = `stash@${currentBranch}`;
+
+    console.log(`Current branch is ${currentBranch}`);
+
+    // Fetch all branches to ensure local and remote branches are up to date
+    await git.fetch(["upstream"]);
+    console.log("Fetched all branches from remote");
+
+    // Check if the current branch exists on the remote
+    // const remoteBranches = (await git.branch(["-r"])).all;
+    // if (!remoteBranches.includes(`origin/${currentBranch}`)) {
+    //   throw new Error(
+    //     `Remote branch 'origin/${currentBranch}' does not exist.`
+    //   );
+    // }
+
+    // Stash any current changes, including untracked files, with a specific message
+    await git.stash(["push", "-u", "-m", stashMessage]);
+    console.log(`Stashed changes for branch ${currentBranch}`);
+
+    // Reset the current branch to match the remote branch
+    // await git.reset(["--hard", `origin/${currentBranch}`]);
+    // console.log(`Reset branch ${currentBranch} to match remote branch`);
+
+    // Pull the latest changes from the remote repository
+    let withoutOrigin = currentBranch;
+    if (currentBranch.includes("origin")) {
+      withoutOrigin = currentBranch.split("/")[1];
+    }
+    console.log("withoutOrigin", withoutOrigin);
+    await git.pull("origin", withoutOrigin);
+    console.log(
+      `Pulled latest changes from upstream for branch ${currentBranch}`
+    );
+
+    // Check for and delete the stash associated with this branch
+    const stashList = await git.stashList();
+    const branchStashIndex = stashList.all.findIndex((stash) =>
+      stash.message.includes(stashMessage)
+    );
+    if (branchStashIndex !== -1) {
+      await git.stash(["drop", `stash@{${branchStashIndex}}`]);
+      console.log(`Deleted stash for branch ${currentBranch}`);
+    }
+  } catch (error) {
+    console.error("Error resetting branch:", error.message);
+    throw error;
+  }
+};
+
+export const printAllRemotes = async (git: SimpleGit): Promise<void> => {
+  try {
+    // Get the list of all remote repositories
+    const remotes = await git.getRemotes(true);
+    if (remotes.length === 0) {
+      console.log("No remote repositories found.");
+      return;
+    }
+
+    console.log("Remote repositories:");
+    remotes.forEach((remote) => {
+      console.log(`Name: ${remote.name}`);
+      console.log(`Fetch URL: ${remote.refs.fetch}`);
+      console.log(`Push URL: ${remote.refs.push}`);
+      console.log("---");
+    });
+  } catch (error) {
+    console.error("Error fetching remote repositories:", error.message);
+    throw error;
+  }
+};
+
+(async () => {
+  const token = "";
+  const url = "https://github.com/ONDC-Official/ONDC-FIS-Specifications";
+  const userName = "rudranshOndc";
+  const repoPath = path.resolve(
+    __dirname,
+    "../../../../backend-editor/FORKED_REPO"
+  );
+  //   await forkRepository(token, url);
+  //   await cloneRepo(token, userName, url);
+  //   await changeBranch(
+  //     path.resolve(__dirname, "../../../../backend-editor/FORKED_REPO"),
+  //     "release-FIS12-2.0.0"
+  //   );
+  // console.log(await getStatus(repoPath));
+  // await stashFetchCommitAndPushChanges(repoPath, "testing commit");
+  // await raisePr(token, url, repoPath, "Test PR", "This is a test PR");
+  // await resetCurrentBranch(repoPath);
+})();
