@@ -1,6 +1,7 @@
+import axios from "axios";
 import { EditMode } from "../utils/config";
 import { Listbox, Transition } from "@headlessui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BiCheck } from "react-icons/bi";
 import { FaExclamationCircle, FaGithub, FaUndo } from "react-icons/fa";
 import { RiArrowUpDownFill } from "react-icons/ri";
@@ -51,8 +52,21 @@ const people = [
   { id: 5, name: "feat/FIS10" },
 ];
 
-function BranchListBox({}) {
-  const [selected, setSelected] = useState(people[0]);
+export function BranchListBox({}) {
+  const [branches, setBranches] = useState([]);
+  const [selected, setSelected] = useState({ id: 1, name: "master" });
+
+  useEffect(() => {
+    axios.get("http://localhost:1000/git/branches").then((res) => {
+      console.log(res);
+      const data = res.data;
+      const branchList = data.map((branch: string, index: number) => {
+        return { id: index, name: branch };
+      });
+      setBranches(branchList);
+      setSelected(branchList[0]);
+    });
+  }, []);
 
   return (
     <Listbox value={selected} onChange={setSelected}>

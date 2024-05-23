@@ -1,7 +1,9 @@
 import { DataContext } from "../context/dataContext";
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import FolderSelector from "./ui/folder-selector";
+import axios from "axios";
+import { BranchListBox } from "./GitActionsTab";
 
 function LoadComponent() {
   const dataContext = React.useContext(DataContext);
@@ -33,6 +35,7 @@ function LoadComponent() {
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             placeholder="Component name"
           />
+          {/* <BranchListBox /> */}
           {errors.componentName && (
             <span className="text-red-500 text-xs italic">
               Component name is required.

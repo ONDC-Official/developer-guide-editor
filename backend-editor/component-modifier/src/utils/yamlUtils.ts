@@ -4,7 +4,7 @@ import path from "path";
 import { readYamlFile } from "./fileUtils";
 
 export async function updateYamlRefComponents(filePath, section, del = false) {
-  if (section === "enums" || section === "tags") {
+  if (section === "enum" || section === "tags") {
     await updateYamlRef(
       filePath,
       section,

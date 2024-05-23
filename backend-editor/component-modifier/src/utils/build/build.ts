@@ -323,10 +323,11 @@ async function getSwaggerYaml(example_set, outputPath) {
       hasTrueResult = await validateExamples(exampleSets, schemaMap);
     }
 
-    //move to separate files
-    // if (!process.argv.includes(SKIP_VALIDATION.enums) && !hasTrueResult) {
-    //   hasTrueResult = await validateEnumsTags(enums, schemaMap);
-    // }
+    // move to separate files
+    if (!process.argv.includes(SKIP_VALIDATION.enums) && !hasTrueResult) {
+      hasTrueResult = await validateEnumsTags(enums, schemaMap);
+    }
+
     if (!process.argv.includes(SKIP_VALIDATION.tags) && !hasTrueResult) {
       //@ts-ignore
       hasTrueResult = await validateTags(tags, schemaMap);

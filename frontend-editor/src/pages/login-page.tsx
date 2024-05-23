@@ -1,4 +1,4 @@
-import LoadComponent from "../components/LoadComponent";
+import FullPageLoader from "../components/loader";
 
 import axios from "axios";
 import React, { useContext, useState } from "react";
@@ -22,10 +22,11 @@ function GitLogin() {
       setToken(value);
     }
   };
-
+  console.log(loading);
   const handleLogin = async () => {
     setLoading(true);
     try {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       const res = await axios.post("http://localhost:1000/git/init", {
         username: username,
         repoUrl: repoLink,
@@ -106,7 +107,7 @@ function GitLogin() {
           </button>
         </div>
       </div>
-      {loading && <LoadComponent />}
+      {loading && <FullPageLoader />}
     </>
   );
 }

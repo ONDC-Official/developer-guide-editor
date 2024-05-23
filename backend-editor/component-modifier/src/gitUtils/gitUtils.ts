@@ -1,7 +1,7 @@
 import { Octokit } from "@octokit/rest";
-import { execSync } from "child_process";
+import fs from "fs";
 import path from "path";
-import simpleGit from "simple-git";
+import simpleGit, { SimpleGit } from "simple-git";
 import { deleteFolderSync } from "../utils/fileUtils";
 
 export const forkRepository = async (token: string, repoUrl: string) => {
@@ -12,42 +12,90 @@ export const forkRepository = async (token: string, repoUrl: string) => {
     auth: token,
   });
 
+  const retryOperation = async (operation, retries = 3, delay = 1000) => {
+    for (let i = 0; i < retries; i++) {
+      try {
+        return await operation();
+      } catch (error) {
+        if (i < retries - 1) {
+          console.log(`Retrying... (${i + 1}/${retries})`);
+          await new Promise((res) => setTimeout(res, delay));
+        } else {
+          throw error;
+        }
+      }
+    }
+  };
+
   try {
+    // Check if the repo is already forked
+    const { data: userRepos } = await retryOperation(() =>
+      octokit.repos.listForAuthenticatedUser()
+    );
+
+    const forkedRepo = userRepos.find((r) => r.name === repo);
+    // console.log(userRepos);
+    console.log(forkedRepo);
+    if (forkedRepo) {
+      console.log("Repository is already forked:", forkedRepo.html_url);
+      return forkedRepo.html_url;
+    }
+
     // Fork the repository
-    const response = await octokit.repos.createFork({
-      owner,
-      repo,
-    });
+    const response = await retryOperation(() =>
+      octokit.repos.createFork({
+        owner,
+        repo,
+      })
+    );
 
     console.log("Repository forked successfully:", response.data);
 
     // Get the list of branches from the original repository
-    const { data: branches } = await octokit.repos.listBranches({
-      owner,
-      repo,
-    });
+    const { data: branches } = await retryOperation(() =>
+      octokit.repos.listBranches({
+        owner,
+        repo,
+      })
+    );
 
     const forkedOwner = response.data.owner.login;
+    const forkedRepoName = response.data.name;
 
     for (const branch of branches) {
       const branchName = branch.name;
       console.log(`Processing branch: ${branchName}`);
 
-      // Push each branch to the forked repository
-      const branchUrl = `https://github.com/${forkedOwner}/${repo}.git`;
-      execSync(`git fetch ${repoUrl} ${branchName}`);
-      execSync(
-        `git push ${branchUrl} refs/remotes/origin/${branchName}:refs/heads/${branchName}`
-      );
+      try {
+        // Get the commit SHA of the branch
+        const { data: branchData } = await octokit.repos.getBranch({
+          owner,
+          repo,
+          branch: branchName,
+        });
+
+        // Create the branch in the forked repository
+        await octokit.git.createRef({
+          owner: forkedOwner,
+          repo: forkedRepoName,
+          ref: `refs/heads/${branchName}`,
+          sha: branchData.commit.sha,
+        });
+
+        console.log(`Branch ${branchName} processed successfully.`);
+      } catch (error) {
+        console.error(
+          `Failed to process branch ${branchName}: ${error.message}`
+        );
+        console.log(`Skipping branch ${branchName}.`);
+      }
     }
+
+    console.log("All branches have been processed.");
     const forkedRepoUrl = `https://github.com/${forkedOwner}/${repo}.git`;
-    console.log("All branches have been forked successfully.");
     return forkedRepoUrl;
   } catch (error) {
-    console.error(
-      "Error forking repository:",
-      error.response ? error.response.data : error.message
-    );
+    throw new Error(`Error forking repository: ${error.message}`);
   }
 };
 
@@ -75,7 +123,15 @@ export const cloneRepo = async (
     "../../../../backend-editor/FORKED_REPO"
   );
   try {
-    await deleteFolderSync(localPath);
+    // await deleteFolderSync(localPath);
+    if (fs.existsSync(localPath)) {
+      const existingRepo = simpleGit(localPath);
+      const repoName = await getRepoName(existingRepo);
+      if (repoName === repo) {
+        console.log("Repository already cloned");
+        return;
+      }
+    }
     await git.clone(authenticatedUrl, localPath);
     const clonedRepo = simpleGit(localPath);
 
@@ -193,6 +249,12 @@ const raisePr = async (
   });
 
   console.log("Pull Request created successfully:", pullRequest.html_url);
+};
+
+const getRepoName = async (git: SimpleGit) => {
+  const remote = await git.listRemote(["--get-url"]);
+  const repoName = remote.split("/").pop()?.split(".git")[0];
+  return repoName;
 };
 
 // (async () => {
