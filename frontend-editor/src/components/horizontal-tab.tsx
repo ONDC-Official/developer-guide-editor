@@ -9,15 +9,17 @@ const Dropdown = ({
   selectedItem,
   onOpen,
   editable,
+  editOrders = [true, true, true],
 }: {
   items: string[];
   setSelectedItem: (item: string) => void;
   selectedItem: string;
   onOpen: () => void;
   editable: Editable;
+  editOrders?: boolean[];
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const tooltip = useEditorToolTip();
+  const tooltip = useEditorToolTip(editOrders);
   tooltip.data.current = editable;
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedItem(event.target.value);
