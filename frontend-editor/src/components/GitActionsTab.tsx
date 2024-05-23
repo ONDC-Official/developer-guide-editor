@@ -53,7 +53,7 @@ const people = [
 ];
 
 export function BranchListBox({}) {
-  const [branches, setBranches] = useState([]);
+  const [branches, setBranches] = useState<{ id: number; name: string }[]>([]);
   const [selected, setSelected] = useState({ id: 1, name: "master" });
 
   useEffect(() => {
@@ -63,6 +63,7 @@ export function BranchListBox({}) {
       const branchList = data.map((branch: string, index: number) => {
         return { id: index, name: branch };
       });
+      console.log(branchList);
       setBranches(branchList);
       setSelected(branchList[0]);
     });
@@ -86,7 +87,7 @@ export function BranchListBox({}) {
           leaveTo="opacity-0"
         >
           <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
-            {people.map((person, personIdx) => (
+            {branches.map((person, personIdx) => (
               <Listbox.Option
                 key={personIdx}
                 className={({ active }) =>
