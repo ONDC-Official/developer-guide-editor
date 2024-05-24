@@ -123,6 +123,7 @@ const AttributesTable = ({ attribute }: { attribute: Editable }) => {
             setSelectedItem={setActiveTable}
             selectedItem={activeTable}
             onOpen={getTableNames}
+            editOrders={[true, true, false]}
           />
         </div>
       </div>

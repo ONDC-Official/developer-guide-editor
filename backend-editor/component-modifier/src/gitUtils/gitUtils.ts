@@ -216,14 +216,14 @@ export const stashFetchCommitAndPushChanges = async (
   console.log("status", git.status());
   try {
     // Stash local changes
-    await git.stash();
+    // await git.stash();
     // Fetch updates from remote
     // const branch = (await git.branch()).current;
     // await git.fetch("upstream", branch);
-    await git.fetch();
+    // await git.fetch();
 
     // Apply the stashed changes
-    await git.stash(["pop"]);
+    // await git.stash(["pop"]);
 
     // Stage all changes
     await git.add("./*");
@@ -267,8 +267,8 @@ export const raisePr = async (
     head: `${forkedOwner}:${branchName}`,
     base: branchName,
   });
-
-  console.log("Pull Request created successfully:", pullRequest.html_url);
+  return pullRequest.html_url;
+  // console.log("Pull Request created successfully:", pullRequest.html_url);
 };
 
 export async function getStatus(repoPath: string) {
@@ -366,22 +366,22 @@ export const printAllRemotes = async (git: SimpleGit): Promise<void> => {
   }
 };
 
-(async () => {
-  const token = "";
-  const url = "https://github.com/ONDC-Official/ONDC-FIS-Specifications";
-  const userName = "rudranshOndc";
-  const repoPath = path.resolve(
-    __dirname,
-    "../../../../backend-editor/FORKED_REPO"
-  );
-  //   await forkRepository(token, url);
-  //   await cloneRepo(token, userName, url);
-  //   await changeBranch(
-  //     path.resolve(__dirname, "../../../../backend-editor/FORKED_REPO"),
-  //     "release-FIS12-2.0.0"
-  //   );
-  // console.log(await getStatus(repoPath));
-  // await stashFetchCommitAndPushChanges(repoPath, "testing commit");
-  // await raisePr(token, url, repoPath, "Test PR", "This is a test PR");
-  // await resetCurrentBranch(repoPath);
-})();
+// (async () => {
+//   const token = "";
+//   const url = "https://github.com/ONDC-Official/ONDC-FIS-Specifications";
+//   const userName = "rudranshOndc";
+//   const repoPath = path.resolve(
+//     __dirname,
+//     "../../../../backend-editor/FORKED_REPO"
+//   );
+//   //   await forkRepository(token, url);
+//   //   await cloneRepo(token, userName, url);
+//   //   await changeBranch(
+//   //     path.resolve(__dirname, "../../../../backend-editor/FORKED_REPO"),
+//   //     "release-FIS12-2.0.0"
+//   //   );
+//   // console.log(await getStatus(repoPath));
+//   // await stashFetchCommitAndPushChanges(repoPath, "testing commit");
+//   // await raisePr(token, url, repoPath, "Test PR", "This is a test PR");
+//   // await resetCurrentBranch(repoPath);
+// })();

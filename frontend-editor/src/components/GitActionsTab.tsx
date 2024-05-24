@@ -9,6 +9,7 @@ import { DataContext } from "../context/dataContext";
 import ReusableModal from "./ui/generic-modal";
 import JsonView from "@uiw/react-json-view";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 
 export function GitActionsTab({}) {
   const [branches, setBranches] = useState<{ id: number; name: string }[]>([]);
@@ -233,8 +234,18 @@ const PrForm = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data: any) => {
-    console.log(data);
+  const dataContext = React.useContext(DataContext);
+
+  const onSubmit = async (data: any) => {
+    try {
+      dataContext.setLoading(true);
+      const body = { ...data, url: localStorage.getItem("repoLink") as string };
+      const prLink = await axios.post("http://localhost:1000/git/openPR", body);
+      dataContext.setLoading(false);
+      window.open(prLink.data, "_blank");
+    } catch {
+      toast.error("Error opening PR");
+    }
   };
 
   return (
