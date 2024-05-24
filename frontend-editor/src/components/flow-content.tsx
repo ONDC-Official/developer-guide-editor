@@ -76,6 +76,7 @@ export function FlowFolderContent({ flowFolder }: { flowFolder: Editable }) {
     query: {
       getData: getflowFolder,
       Parent: flowFolder.query.Parent,
+      addParams: {},
       updateParams: { oldName: selectedFolder },
       copyData: async () => {
         const data = await getData(flowFolder.path + "/" + selectedFolder);
@@ -95,6 +96,11 @@ export function FlowFolderContent({ flowFolder }: { flowFolder: Editable }) {
       },
     },
   };
+
+  if (FolderEditable.query.addParams) {
+    FolderEditable.query.addParams = {type:'add'};
+  }
+
 
   return (
     <>

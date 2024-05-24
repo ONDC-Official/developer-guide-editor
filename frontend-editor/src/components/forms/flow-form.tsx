@@ -66,23 +66,21 @@ export function FlowFolderForm({
 
     const body: Record<string, any> = {};
     //handle new
-    if(data.query.updateParams.buttonClicked ==="new"){
-        const path : string[] = data.path.split('/')
-        path.pop()
-        const url = path.join("/")
-        let body 
-        for (const key in formData){
-          body = {name:formData[key]}
-        }
-        body.ID = data.registerID
-        await postData(url, body);
-    }
-    // edit existing
-    if(data.query.updateParams.buttonClicked ==="edit"){
+    if(!editState){
       const path : string[] = data.path.split('/')
       path.pop()
       const url = path.join("/")
-      let body
+      let body: any = {}
+      for (const key in formData){
+        body = {name:formData[key]}
+      }
+      body.ID = data.registerID
+      await postData(url, body);
+  }else if(editState){
+    const path : string[] = data.path.split('/')
+      path.pop()
+      const url = path.join("/")
+      let body: any = {}
       for(const key in formData){
         body = {newName: formData[key]}
       }
@@ -90,7 +88,7 @@ export function FlowFolderForm({
       body.oldName = data.name;
 
       await patchData(url, body)
-    }
+  }
     await data.query.getData();
     setIsOpen(false);
   };
