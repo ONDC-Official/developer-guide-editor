@@ -1,6 +1,6 @@
 import React from "react";
 import GenericForm from "./generic-form";
-import FormInput from "./form-input";
+import {FormInput} from "./form-input";
 import FormSelect from "./form-select";
 import { Editable } from "../file-structure";
 import { FieldValues } from "react-hook-form";

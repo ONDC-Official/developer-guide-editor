@@ -4,7 +4,7 @@ import { getData, postData } from "../../utils/requestUtils";
 import GenericForm from "./generic-form";
 import { TagFileID } from "../../pages/home-page";
 import FormSelect from "./form-select";
-import FormInput from "./form-input";
+import {FormInput} from "./form-input";
 import AutoCompleteInput, { AutoCompleteOption } from "./auto-complete-input";
 import { useContext, useEffect, useState } from "react";
 import { DataContext } from "../../context/dataContext";

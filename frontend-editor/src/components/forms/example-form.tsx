@@ -2,7 +2,7 @@ import { on } from "events";
 import { Editable } from "../file-structure";
 import GenericForm from "./generic-form";
 import FormSelect from "./form-select";
-import FormInput from "./form-input";
+import {FormInput} from "./form-input";
 import { getData, patchData, postData } from "../../utils/requestUtils";
 import { ExampleData } from "../example-content";
 import JsonField from "./JsonField";
