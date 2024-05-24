@@ -44,7 +44,7 @@ export abstract class folderTypeEditable extends Editable {
       (s) => s.name === deleteTarget.folderName
     );
     this.childrenEditables = this.childrenEditables.filter((s) => s !== target);
-    console.log(target);
+    // console.log(target);
     await target.destroy();
   }
 
@@ -91,7 +91,7 @@ export abstract class folderTypeEditable extends Editable {
 
   getTarget(id, name, first): Editable {
     const searchChildEditable = (editable: Editable) => {
-      console.log(editable.getRegisterID(), editable.name);
+      // console.log(editable.getRegisterID(), editable.name);
       if (editable.getRegisterID() === id && editable.name === name) {
         return editable;
       }
@@ -117,12 +117,9 @@ export abstract class folderTypeEditable extends Editable {
       console.log("ITERATION FAILED!");
       return null;
     };
-    console.log("SEARCHING FOR: ", id, name);
-    console.log(this.childrenEditables);
     const target = searchChildEditable(first);
     if (!target) {
       console.log("NOT FOUND!");
-      console.log(this.childrenEditables);
       throw new Error("Editable Not Found!");
     }
     return target;

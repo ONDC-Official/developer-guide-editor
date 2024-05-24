@@ -54,6 +54,7 @@ app.post("/changeBranch", async (req, res) => {
       branchName
     );
     await axios.post("http://localhost:1000/tree/reload");
+
     res.status(200).send("Branch changed successfully");
   } catch (err) {
     res.status(500).send("Error changing branch");

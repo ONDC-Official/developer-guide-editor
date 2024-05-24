@@ -5,7 +5,6 @@ import simpleGit, { SimpleGit } from "simple-git";
 import { deleteFolderSync } from "../utils/fileUtils";
 
 export const forkRepository = async (token: string, repoUrl: string) => {
-  // Extract the owner and repo from the URL
   const [owner, repo] = repoUrl.replace("https://github.com/", "").split("/");
 
   const octokit = new Octokit({
@@ -159,8 +158,16 @@ export const changeBranch = async (
   branchName: string
 ): Promise<void> => {
   const git = simpleGit(repoPath);
+
   const currentBranchSummary = await git.branch();
-  const currentBranch = currentBranchSummary.current;
+  const currentBranch = "remotes/" + currentBranchSummary.current;
+  console.log(`Current branch is ${currentBranch}`);
+  console.log(`Switching to branch ${branchName}`);
+  if (currentBranch === branchName) {
+    console.log(`Already on branch ${branchName}`);
+    return;
+  }
+
   const stashMessage = `stash@${currentBranch}`;
 
   try {
@@ -196,6 +203,7 @@ export const changeBranch = async (
 export const getBranches = async (repoPath: string) => {
   const git = simpleGit(repoPath);
   const branches = await git.branch();
+  console.log(branches);
   let allBranches = branches.all;
   allBranches = allBranches.filter((b) => b.includes("remotes/origin"));
 
@@ -213,28 +221,22 @@ export const stashFetchCommitAndPushChanges = async (
   commitMessage: string
 ): Promise<void> => {
   const git = simpleGit(repoPath);
-  console.log("status", git.status());
   try {
-    // Stash local changes
-    // await git.stash();
-    // Fetch updates from remote
-    // const branch = (await git.branch()).current;
-    // await git.fetch("upstream", branch);
-    // await git.fetch();
+    const branch = (await git.branchLocal()).current;
 
-    // Apply the stashed changes
-    // await git.stash(["pop"]);
+    let withoutOrigin = branch;
+    if (branch.includes("origin")) {
+      withoutOrigin = branch.split("/")[1];
+    }
 
-    // Stage all changes
     await git.add("./*");
-
-    // Commit changes with the provided message
+    console.log("Changes added successfully");
     await git.commit(commitMessage);
-
-    // Push changes to the remote repository
-    await git.push();
-
-    console.log("Changes pushed successfully.");
+    console.log("Changes committed successfully");
+    console.log(git.listConfig());
+    const res = await git.push("origin", branch);
+    console.log(res);
+    console.log("Changes pushed successfully to branch:", branch);
   } catch (error) {
     console.error("Error during commit and push process:", error.message);
     throw error;
@@ -302,21 +304,9 @@ export const resetCurrentBranch = async (repoPath: string): Promise<void> => {
     await git.fetch(["upstream"]);
     console.log("Fetched all branches from remote");
 
-    // Check if the current branch exists on the remote
-    // const remoteBranches = (await git.branch(["-r"])).all;
-    // if (!remoteBranches.includes(`origin/${currentBranch}`)) {
-    //   throw new Error(
-    //     `Remote branch 'origin/${currentBranch}' does not exist.`
-    //   );
-    // }
-
     // Stash any current changes, including untracked files, with a specific message
     await git.stash(["push", "-u", "-m", stashMessage]);
     console.log(`Stashed changes for branch ${currentBranch}`);
-
-    // Reset the current branch to match the remote branch
-    // await git.reset(["--hard", `origin/${currentBranch}`]);
-    // console.log(`Reset branch ${currentBranch} to match remote branch`);
 
     // Pull the latest changes from the remote repository
     let withoutOrigin = currentBranch;
@@ -374,6 +364,7 @@ export const printAllRemotes = async (git: SimpleGit): Promise<void> => {
 //     __dirname,
 //     "../../../../backend-editor/FORKED_REPO"
 //   );
+//   // await getBranches(repoPath);
 //   //   await forkRepository(token, url);
 //   //   await cloneRepo(token, userName, url);
 //   //   await changeBranch(
@@ -381,7 +372,8 @@ export const printAllRemotes = async (git: SimpleGit): Promise<void> => {
 //   //     "release-FIS12-2.0.0"
 //   //   );
 //   // console.log(await getStatus(repoPath));
-//   // await stashFetchCommitAndPushChanges(repoPath, "testing commit");
+//   // changeBranch(repoPath, "master");
+//   await stashFetchCommitAndPushChanges(repoPath, "testing commit");
 //   // await raisePr(token, url, repoPath, "Test PR", "This is a test PR");
 //   // await resetCurrentBranch(repoPath);
 // })();

@@ -44,7 +44,7 @@ export class EditableRegistry {
       name
     );
 
-    console.log("Loading Component:", comp.folderPath);
+    // console.log("Loading Component:", comp.folderPath);
     let compFiles = await fs_p.readdir(comp.folderPath, {
       withFileTypes: true,
     });
@@ -179,7 +179,7 @@ export class EditableRegistry {
       const ref = indexData[key].example_set.$ref;
       const folderName = ref.split("/")[1];
       const folderPath = `${exampleFolder.folderPath}/${folderName}`;
-      console.log("folderName", folderName, key);
+      // console.log("folderName", folderName, key);
       try {
         if (fs.existsSync(folderPath)) {
           await renameFolder(folderPath, key);

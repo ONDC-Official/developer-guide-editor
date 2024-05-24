@@ -127,7 +127,6 @@ export async function copyDir(
       await fs_p.copyFile(srcPath, destPath);
     }
   }
-  console.log("Folder copied successfully!");
 }
 
 export async function ValidateJsonSchema(jsonSchema: Record<string, any>) {

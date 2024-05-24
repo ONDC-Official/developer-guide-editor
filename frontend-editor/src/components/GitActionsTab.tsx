@@ -13,10 +13,7 @@ import { toast } from "react-toastify";
 
 export function GitActionsTab({}) {
   const [branches, setBranches] = useState<{ id: number; name: string }[]>([]);
-  const [selected, setSelected] = useState({
-    id: 1,
-    name: "remotes/origin/master",
-  });
+  const [selected, setSelected] = useState<{ id: number; name: string }>();
   const [action, setAction] = useState("status"); // ["status","reset","openPR"
   const [url, setUrl] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
@@ -32,18 +29,26 @@ export function GitActionsTab({}) {
           return { id: index, name: branch };
         }
       );
+
       console.log(data.currentBranch, branchList);
       const curr = branchList.find(
-        (branch) => branch.name === data.currentBranch
+        (branch) => branch.name === "remotes/" + data.currentBranch
       ) ?? { id: 1, name: "loading" };
+      console.log(curr);
       setBranches(branchList);
       setSelected(curr);
-      setUrl(localStorage.getItem("repoLink") as string);
+      setUrl(
+        convertBranchToUrl(
+          localStorage.getItem("repoLink") as string,
+          curr.name
+        )
+      );
     });
   }, []);
 
   useEffect(() => {
     async function changeBranch() {
+      if (!selected) return;
       try {
         dataContext.setLoading(true);
         await axios.post("http://localhost:1000/git/changeBranch", {
@@ -90,6 +95,7 @@ export function GitActionsTab({}) {
     setAction("status");
   }
 
+  if (!selected) return <>loading</>;
   return (
     <>
       <div className="flex flex-row h-14 w-full bg-slate-200 fixed top-20 z-10 border-b-2 border-t-2 border-gray-500">
@@ -108,7 +114,11 @@ export function GitActionsTab({}) {
             <BranchListBox
               branches={branches}
               selected={selected}
-              onChange={setSelected}
+              onChange={
+                setSelected as React.Dispatch<
+                  React.SetStateAction<{ id: number; name: string }>
+                >
+              }
             />
             {EditMode && (
               <div className="flex items-center space-x-2">

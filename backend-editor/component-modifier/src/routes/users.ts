@@ -111,6 +111,7 @@ app.post("/reload", async (req, res, next) => {
     //   oldPath,
     //   currentSessionID
     // );
+    console.log(sessionInstances);
     for (const key in sessionInstances) {
       sessionInstances[key] = await EditableRegistry.loadComponent(
         forkedCompPath,

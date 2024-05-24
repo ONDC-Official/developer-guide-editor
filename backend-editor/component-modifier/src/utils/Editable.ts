@@ -26,7 +26,7 @@ export abstract class Editable {
     if (this.name === "tags") {
       this.add({ ID: "TAG_FILE", name: "default" });
     }
-    console.log("YAML Path:", this.yamlPathLong);
+    // console.log("YAML Path:", this.yamlPathLong);
   }
   async renameFolder(newName) {
     [this.yamlPathLong, this.folderPath] = await renameFolder(

@@ -55,7 +55,7 @@ app.use(async (req: any, res, next) => {
   let target = null;
   try {
     target = await comp.getTarget(req.editableID, req.editableName, comp);
-    console.log("target:", target);
+    // console.log("target:", target);
     req.target = target;
     next();
   } catch {
@@ -64,7 +64,7 @@ app.use(async (req: any, res, next) => {
 });
 
 app.get("/guide", async (req: any, res) => {
-  console.log("test", req.editableID);
+  // console.log("test", req.editableID);
   try {
     const data = await req.target.getData();
     res.status(200).send(data);
