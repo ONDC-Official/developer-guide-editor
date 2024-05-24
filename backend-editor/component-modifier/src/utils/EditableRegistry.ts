@@ -68,6 +68,8 @@ export class EditableRegistry {
       await EditableRegistry.loadEnums(file, comp);
       await EditableRegistry.loadTags(file, comp);
       await EditableRegistry.loadExamples(file, comp);
+      await EditableRegistry.loadFlows(file, comp);
+
     }
     return comp;
   }
@@ -106,6 +108,30 @@ export class EditableRegistry {
     }
   }
 
+
+  private static async loadFlows(file: fs.Dirent, comp: ComponentsType) {
+    if (file.name === "flows") {
+      await comp.add({
+        ID: "FLOW_FOLDER",
+      });
+      const attr = comp.getTarget("FLOW_FOLDER", "flows", comp);
+      const attrFiles = await fs_p.readdir(attr.folderPath, {
+        withFileTypes: true,
+      });
+      
+      for (const attrFile of attrFiles) {
+        if (attrFile.isDirectory()) {
+          
+          await attr.add({
+            ID: "FLOW_FILE",
+            name: attrFile.name,
+          });
+        }
+      }
+    }
+
+
+  }
   private static async loadEnums(file: fs.Dirent, comp: ComponentsType) {
     if (file.name === "enum") {
       const defExists = fs.existsSync(`${comp.folderPath}/enum/default`);

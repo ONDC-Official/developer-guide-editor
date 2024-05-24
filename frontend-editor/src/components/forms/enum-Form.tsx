@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Editable } from "../file-structure";
 import AutoCompleteInput, { AutoCompleteOption } from "./auto-complete-input";
-import FormInput from "./form-input";
+import {FormInput} from "./form-input";
 import GenericForm from "./generic-form";
 import { getData, patchData, postData } from "../../utils/requestUtils";
 import { DataContext } from "../../context/dataContext";

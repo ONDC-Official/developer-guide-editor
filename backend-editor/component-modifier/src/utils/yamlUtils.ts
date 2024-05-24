@@ -4,7 +4,7 @@ import path from "path";
 import { readYamlFile } from "./fileUtils";
 
 export async function updateYamlRefComponents(filePath, section, del = false) {
-  if (section === "enum" || section === "tags") {
+  if (section === "enums" || section === "tags") {
     await updateYamlRef(
       filePath,
       section,
@@ -30,6 +30,19 @@ export async function updateYamlRefAttr(filePath, section, del = false) {
     del
   );
 }
+
+export async function updateYamlRefFlow(filePath, section, del = false) {
+
+  await updateYamlRef(
+    filePath,
+    section,
+     { $ref: `./${section}/index.yaml` },
+    del,
+    'array'
+  );
+}
+
+
 export async function updateYamlRefEnum(filePath, section, del = false) {
   await updateYamlRef(
     filePath,
@@ -118,7 +131,7 @@ export async function updateYamlRefExampleDomain(
   );
 }
 
-async function updateYamlRef(filePath, section, updateLike, del = false) {
+async function updateYamlRef(filePath, section, updateLike, del = false, type? : string) {
   try {
     const stats = await fs.promises.stat(filePath);
     if (!stats.isFile()) {
@@ -126,12 +139,22 @@ async function updateYamlRef(filePath, section, updateLike, del = false) {
     }
     const fileContents = await fs.promises.readFile(filePath, "utf8");
 
-    const data = yaml.load(fileContents) ?? {};
+    let data: any = yaml.load(fileContents) ?? {};
+    if(type == 'array'){
+      if(del){
+        data = updateLike
+      }else{
+        data = !data.length?[]:data
+       data.push(updateLike)
+      }
+    }else{
     if (del) {
       delete data[section];
     } else {
       data[section] = updateLike;
     }
+  }
+
     const newYaml = yaml.dump(data);
     await fs.promises.writeFile(filePath, newYaml, "utf8");
     console.log(`${section} has been updated with new $ref successfully.`);

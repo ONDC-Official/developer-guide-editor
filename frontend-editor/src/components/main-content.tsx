@@ -6,10 +6,13 @@ import {
   EnumFolderID,
   ExampleFolderID,
   TagFolderID,
+  flowFolderID
+  
 } from "../pages/home-page";
 
 import { EnumContent, EnumFolderContent } from "./EnumContent";
 import { TagsFolderContent } from "./tag-content";
+import {FlowFolderContent} from "./flow-content"
 import { ExampleContent } from "./example-content";
 
 export function MainContent({
@@ -17,6 +20,8 @@ export function MainContent({
 }: {
   activeEditable: Editable | undefined;
 }) {
+  console.log(activeEditable,"activeEditable")
+
   if (!activeEditable) return <></>;
   return (
     <>
@@ -28,6 +33,11 @@ export function MainContent({
       )}
       {activeEditable?.registerID === TagFolderID && (
         <TagsFolderContent tagFolder={activeEditable} />
+      )}
+      {/* activeEditable is nothing but the object containg information about current right side section
+      that is opened  */}
+      {activeEditable?.registerID === flowFolderID && (
+        <FlowFolderContent flowFolder={activeEditable} />
       )}
       {activeEditable?.registerID === ExampleFolderID && (
         <ExampleContent exampleEditable={activeEditable} />
