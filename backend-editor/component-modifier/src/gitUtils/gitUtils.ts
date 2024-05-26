@@ -1,7 +1,7 @@
 import { Octokit } from "@octokit/rest";
 import fs from "fs";
 import path from "path";
-import simpleGit, { SimpleGit } from "simple-git";
+import simpleGit, { ResetMode, SimpleGit } from "simple-git";
 import { deleteFolderSync } from "../utils/fileUtils";
 
 export const forkRepository = async (token: string, repoUrl: string) => {
@@ -183,6 +183,7 @@ export const changeBranch = async (
     }
     // Checkout the branch
     await git.checkout(branchName);
+    // await git.checkoutBranch(branchName, "origin");
     console.log(`Switched to branch ${branchName}`);
 
     // Check if there are stashes for the new branch and apply the most recent one
@@ -222,21 +223,19 @@ export const stashFetchCommitAndPushChanges = async (
 ): Promise<void> => {
   const git = simpleGit(repoPath);
   try {
-    const branch = (await git.branchLocal()).current;
+    const branch = (await git.branch()).current;
 
-    let withoutOrigin = branch;
-    if (branch.includes("origin")) {
-      withoutOrigin = branch.split("/")[1];
-    }
-
+    let withoutOrigin = extractBranchName(branch);
     await git.add("./*");
     console.log("Changes added successfully");
     await git.commit(commitMessage);
     console.log("Changes committed successfully");
-    console.log(git.listConfig());
-    const res = await git.push("origin", branch);
+    console.log("HEAD:" + withoutOrigin);
+    const res = await git.push("origin", "HEAD:" + withoutOrigin);
     console.log(res);
-    console.log("Changes pushed successfully to branch:", branch);
+    console.log("Changes pushed successfully to branch:", withoutOrigin);
+    // git.checkoutBranch(withoutOrigin, "origin/" + withoutOrigin);
+    await changeBranch(repoPath, branch);
   } catch (error) {
     console.error("Error during commit and push process:", error.message);
     throw error;
@@ -251,25 +250,31 @@ export const raisePr = async (
   prBody: string
 ) => {
   // Create a PR
-  const octokit = new Octokit({
-    auth: token,
-  });
-  const git = simpleGit(repoPath);
-  const [owner, repo] = repoUrl.replace("https://github.com/", "").split("/");
+  try {
+    const octokit = new Octokit({
+      auth: token,
+    });
+    const git = simpleGit(repoPath);
+    const [owner, repo] = repoUrl.replace("https://github.com/", "").split("/");
 
-  const branchName = (await git.branch()).current;
-  const {
-    data: { login: forkedOwner },
-  } = await octokit.users.getAuthenticated();
-  const { data: pullRequest } = await octokit.pulls.create({
-    owner,
-    repo,
-    title: prTitle,
-    body: prBody,
-    head: `${forkedOwner}:${branchName}`,
-    base: branchName,
-  });
-  return pullRequest.html_url;
+    const branchName = (await git.branch()).current;
+    const {
+      data: { login: forkedOwner },
+    } = await octokit.users.getAuthenticated();
+    const { data: pullRequest } = await octokit.pulls.create({
+      owner,
+      repo,
+      title: prTitle,
+      body: prBody,
+      head: `${forkedOwner}:${branchName}`,
+      base: branchName,
+    });
+    return pullRequest.html_url;
+  } catch (e) {
+    console.log("Error creating PR");
+    console.log(e.message);
+    throw new Error(`Error creating PR: ${e.message}`);
+  }
   // console.log("Pull Request created successfully:", pullRequest.html_url);
 };
 
@@ -314,6 +319,7 @@ export const resetCurrentBranch = async (repoPath: string): Promise<void> => {
       withoutOrigin = currentBranch.split("/")[1];
     }
     console.log("withoutOrigin", withoutOrigin);
+    await git.reset(ResetMode.HARD);
     await git.pull("origin", withoutOrigin);
     console.log(
       `Pulled latest changes from upstream for branch ${currentBranch}`
@@ -356,24 +362,40 @@ export const printAllRemotes = async (git: SimpleGit): Promise<void> => {
   }
 };
 
-// (async () => {
-//   const token = "";
-//   const url = "https://github.com/ONDC-Official/ONDC-FIS-Specifications";
-//   const userName = "rudranshOndc";
-//   const repoPath = path.resolve(
-//     __dirname,
-//     "../../../../backend-editor/FORKED_REPO"
-//   );
-//   // await getBranches(repoPath);
-//   //   await forkRepository(token, url);
-//   //   await cloneRepo(token, userName, url);
-//   //   await changeBranch(
-//   //     path.resolve(__dirname, "../../../../backend-editor/FORKED_REPO"),
-//   //     "release-FIS12-2.0.0"
-//   //   );
-//   // console.log(await getStatus(repoPath));
-//   // changeBranch(repoPath, "master");
-//   await stashFetchCommitAndPushChanges(repoPath, "testing commit");
-//   // await raisePr(token, url, repoPath, "Test PR", "This is a test PR");
-//   // await resetCurrentBranch(repoPath);
-// })();
+/**
+ * Extracts the branch name by removing the remote prefix (e.g., 'origin/')
+ * and any other similar prefixes.
+ *
+ * @param fullBranchName - The full branch name, potentially with a remote prefix.
+ * @returns The branch name without the remote prefix.
+ */
+function extractBranchName(fullBranchName: string): string {
+  // Split the branch name by '/'
+  const parts = fullBranchName.split("/");
+
+  // Return the last part of the split array, which is the actual branch name
+  return parts[parts.length - 1];
+}
+
+(async () => {
+  const token = "";
+  const url = "https://github.com/ONDC-Official/ONDC-FIS-Specifications";
+  const userName = "rudranshOndc";
+  const repoPath = path.resolve(
+    __dirname,
+    "../../../../backend-editor/FORKED_REPO"
+  );
+  // await getBranches(repoPath);
+  //   await forkRepository(token, url);
+  //   await cloneRepo(token, userName, url);
+  //   await changeBranch(
+  //     path.resolve(__dirname, "../../../../backend-editor/FORKED_REPO"),
+  //     "release-FIS12-2.0.0"
+  //   );
+  // console.log(await getStatus(repoPath));
+  // changeBranch(repoPath, "master");
+  // await stashFetchCommitAndPushChanges(repoPath, "testing commit");
+  // console.log(await getBranches(repoPath));
+  // await raisePr(token, url, repoPath, "Test PR", "This is a test PR");
+  // await resetCurrentBranch(repoPath);
+})();
