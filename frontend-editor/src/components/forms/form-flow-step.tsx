@@ -70,7 +70,7 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
     //Find example defalt value from example api and set it
 
     setExampleDefaultValue(
-      examples.find((element) => element === exampleField.value.$ref)
+      examples.find((element : any) => element === exampleField.value.$ref)
     );
     setexampleArray(examples);
   }

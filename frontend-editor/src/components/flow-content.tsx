@@ -340,7 +340,7 @@ export function FlowContent({
   async function getFlow() {
     let data = await getData(flows.path);
     const dataArray = ['summary','details','references','steps']
-    let cleanedData = {}
+    let cleanedData : any = {}
     if(data!== undefined){
       dataArray.forEach((api)=>{
         cleanedData[api]= data[api] || []

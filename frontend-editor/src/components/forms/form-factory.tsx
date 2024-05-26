@@ -101,12 +101,6 @@ const FormFactory = ({
           />
         );
       case flowFolderID:
-        if (data.query.addParams?.type === "enum") {
-          return (
-            <EnumForm data={data} setIsOpen={setIsOpen} editState={editState} />
-          );
-        }
-
         return (
           <FlowFolderForm
           data={data}

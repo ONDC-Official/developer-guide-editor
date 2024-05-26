@@ -9,6 +9,7 @@ import {
   EnumFolderID,
   ExampleFolderID,
   TagFolderID,
+  flowFolderID
 } from "../../pages/home-page";
 import { postData } from "../../utils/requestUtils";
 
@@ -39,6 +40,7 @@ const AddInComponent = ({
           EnumFolderID,
           TagFolderID,
           ExampleFolderID,
+          flowFolderID
         ]}
       />
     </GenericForm>

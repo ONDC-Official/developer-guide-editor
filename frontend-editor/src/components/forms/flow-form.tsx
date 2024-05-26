@@ -58,10 +58,11 @@ export function FlowFolderForm({
   let detailValues = {};
   console.log("hello")
 
+  if(editState){
   if (data.query.updateParams && data.query.updateParams?.data) {
     detailValues = { [data.name]: data.query.updateParams?.data };
   }
-
+  }
   const onSubmit = async (formData: Record<string, string>) => {
 
     const body: Record<string, any> = {};
@@ -99,7 +100,7 @@ export function FlowFolderForm({
       className="w-full mx-auto my-4 p-4 border rounded-lg shadow-blue-500"
       defaultValues={detailValues}
     >
-      <FormInput name={data.name} label={data.name} />
+      <FormInput name={" "} label={ editState? "Edit Flow Name" : "Add Flow Name"} />
     </GenericForm>
   );
 }
