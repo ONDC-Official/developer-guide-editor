@@ -244,6 +244,8 @@ export function StepsContent({
     <>
       {apiName == "steps" && (
         <Disclosure>
+             {({ open }) => (
+<>
           <Disclosure.Button
             onContextMenu={apiToolTip.onContextMenu}
             className="flex ml-6 mt-1 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-200 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg"
@@ -256,8 +258,10 @@ export function StepsContent({
                   <span className="flex items-end">: {element.summary}</span>
                   
                 </div>
+                
                 {open  ? (
                   <IoIosArrowDropdown size={25} />
+                  
                 ) : (
                   <IoIosArrowDropright size={25} />
                 )}
@@ -319,7 +323,9 @@ export function StepsContent({
               </div>
             </Disclosure.Panel>
           </DropTransition>
-        </Disclosure>
+          </>
+             )}
+       </Disclosure>
       )}
     </>
   );
