@@ -12,9 +12,14 @@ import {
 } from "../gitUtils/gitUtils";
 import path from "path";
 import axios from "axios";
+import { isBinary } from "../utils/fileUtils";
 
 export const app = express();
 app.use(express.json());
+const forkRepoPath = "../../../../backend-editor/FORKED_REPO"
+const forkedRepoPathBinary = "./FORKED_REPO"
+const forkedRepoComputedPath = isBinary? path.join(path.dirname(process.execPath), forkedRepoPathBinary) : forkRepoPath
+
 
 app.post("/init", async (req, res) => {
   let link = "";
@@ -35,8 +40,9 @@ app.post("/init", async (req, res) => {
 
 app.get("/branches", async (req, res) => {
   try {
+
     const branches = await getBranches(
-      path.resolve(__dirname, "../../../../backend-editor/FORKED_REPO")
+      path.resolve(__dirname, forkedRepoComputedPath)
     );
     res.status(200).send(branches);
   } catch (err) {
@@ -51,7 +57,7 @@ app.post("/changeBranch", async (req, res) => {
   }
   try {
     await changeBranch(
-      path.resolve(__dirname, "../../../../backend-editor/FORKED_REPO"),
+      path.resolve(__dirname, forkedRepoComputedPath),
       branchName
     );
     await axios.post("http://localhost:1000/tree/reload");
@@ -65,7 +71,7 @@ app.post("/changeBranch", async (req, res) => {
 app.get("/status", async (req, res) => {
   try {
     const status = await getStatus(
-      path.resolve(__dirname, "../../../../backend-editor/FORKED_REPO")
+      path.resolve(__dirname, forkedRepoComputedPath)
     );
     res.status(200).send(JSON.stringify(status, null, 2));
   } catch (err) {
@@ -76,7 +82,7 @@ app.get("/status", async (req, res) => {
 app.delete("/reset", async (req, res) => {
   try {
     await resetCurrentBranch(
-      path.resolve(__dirname, "../../../../backend-editor/FORKED_REPO")
+      path.resolve(__dirname, forkedRepoComputedPath)
     );
     await axios.post("http://localhost:1000/tree/reload");
     res.status(200).send("Reset successful");
@@ -93,7 +99,7 @@ app.post("/openPR", async (req, res) => {
   try {
     const repoPath = path.resolve(
       __dirname,
-      "../../../../backend-editor/FORKED_REPO"
+      forkedRepoComputedPath
     );
     await stashFetchCommitAndPushChanges(repoPath, message);
     await new Promise((resolve) => setTimeout(resolve, 2000));
