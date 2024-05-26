@@ -2,6 +2,7 @@ import { ComponentsType } from "./ComponentType/ComponentsFolderTypeEditable";
 import { copyDir, deleteFolderSync } from "./fileUtils";
 import path from "path";
 import fs from "fs/promises";
+import { isBinary } from "./fileUtils";
 
 export class HistoryUtil {
   history: string[];
@@ -11,7 +12,8 @@ export class HistoryUtil {
   constructor(maxHistory: number) {
     this.history = [];
     this.maxHistory = maxHistory;
-    this.historyPath = path.resolve(__dirname, "../../history");
+    const historyPath = isBinary? path.join(path.dirname(process.execPath), "./history") : path.resolve(__dirname, "../../history");
+    this.historyPath = historyPath
 
     this.initializeHistoryFolder();
   }

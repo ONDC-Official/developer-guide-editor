@@ -12,6 +12,8 @@ import { HistoryUtil } from "../utils/histroyUtils";
 import { ComponentsType } from "../utils/ComponentType/ComponentsFolderTypeEditable";
 import { Request, Response, NextFunction } from "express";
 import { buildWrapper } from "../utils/build/build";
+import { isBinary } from "../utils/fileUtils";
+import path from "path"
 
 interface EditableMap<T> {
   [key: string]: T;
@@ -19,7 +21,9 @@ interface EditableMap<T> {
 const sessionInstances: EditableMap<ComponentsType> = {};
 let currentSessionID: string = "";
 const history = new HistoryUtil(5);
-const forkedCompPath = `../../../FORKED_REPO/api/components`;
+
+const forkedCompPath = isBinary? path.join(path.dirname(process.execPath), "./FORKED_REPO/api/components") : `../../../FORKED_REPO/api/components`
+
 initRegistry();
 
 export const app = express();

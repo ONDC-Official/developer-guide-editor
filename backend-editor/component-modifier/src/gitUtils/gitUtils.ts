@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import simpleGit, { ResetMode, SimpleGit } from "simple-git";
 import { deleteFolderSync } from "../utils/fileUtils";
+import { isBinary } from "../utils/fileUtils";
 
 export const forkRepository = async (token: string, repoUrl: string) => {
   const [owner, repo] = repoUrl.replace("https://github.com/", "").split("/");
@@ -117,9 +118,12 @@ export const cloneRepo = async (
 
   // Construct the authenticated URL
   const authenticatedUrl = `https://${token}@github.com/${userName}/${repo}.git`;
+
+  const forkedCompPath = isBinary? path.join(path.dirname(process.execPath), "./FORKED_REPO") : "../../../../backend-editor/FORKED_REPO"
+
   const localPath = path.resolve(
     __dirname,
-    "../../../../backend-editor/FORKED_REPO"
+    forkedCompPath
   );
   try {
     // await deleteFolderSync(localPath);

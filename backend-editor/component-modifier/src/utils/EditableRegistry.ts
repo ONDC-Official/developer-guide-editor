@@ -232,7 +232,7 @@ export class EditableRegistry {
         indexData[exampleDomainName].example_set.$ref
       ) {
         secondaryPath = path.resolve(
-          file.path,
+          file.path || exampleFolder.folderPath, // handle undefined path as binary mode doesn't provide path variable
           indexData[exampleDomainName].example_set.$ref
         );
         console.log("secondary path", secondaryPath);

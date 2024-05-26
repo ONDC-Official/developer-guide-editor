@@ -5,6 +5,8 @@ import path from "path";
 
 import $RefParser from "@apidevtools/json-schema-ref-parser";
 
+export const isBinary = process.argv[0] === process.execPath;
+
 export async function loadYamlWithRefs(filePath) {
   try {
     const schema = await $RefParser.dereference(filePath);
@@ -18,7 +20,7 @@ export async function createIndexYaml(
   relativeFolderPath,
   removeContent = true
 ) {
-  const folderPath = path.join(__dirname, relativeFolderPath);
+  const folderPath = isBinary? relativeFolderPath : path.join(__dirname, relativeFolderPath);
   console.log("Resolved folder path:", folderPath);
   const indexYamlPath = path.join(folderPath, "index.yaml");
   const structure = "";
