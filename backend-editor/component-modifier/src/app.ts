@@ -8,23 +8,9 @@ import { app as indexRouter } from "./routes/index";
 import { app as pathRouter } from "./routes/users";
 import { app as gitRouter } from "./routes/git";
 import { app as uploadRouter } from "./routes/upload";
-// var usersRouter = require('./routes/users');
 
 const app = express();
-app.use(
-  cors((req, callback) => {
-    const corsOptions = {
-      methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS", // Allow these HTTP methods
-      credentials: true, // Allow cookies to be sent with the request
-      allowedHeaders: "Content-Type, Authorization, X-Requested-With", // Allow only these headers
-      corsOptions: {
-        origin: "*",
-      },
-    };
-
-    callback(null, corsOptions); // callback expects two parameters: error and options
-  })
-);
+app.use(cors());
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -35,6 +21,9 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+
+// Serve React build files
+app.use(express.static(path.join(__dirname, "build")));
 
 // app.use("/direct", indexRouter);
 app.use("/tree", pathRouter);
@@ -56,6 +45,11 @@ app.use(function (err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render("error");
+});
+
+// If no Express routes match, serve React app's index.html
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "build", "index.html"));
 });
 
 const port = process.env.PORT || 1000;
