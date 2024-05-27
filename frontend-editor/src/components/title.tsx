@@ -1,4 +1,4 @@
-import { EditMode } from "../utils/config";
+import { GlobalEditMode } from "../utils/config";
 
 export function OndcTitle({ children }: any) {
   return (
@@ -11,7 +11,7 @@ export function OndcTitle({ children }: any) {
         />
         <GradientText>
           DEVELOPER GUIDE{" "}
-          {EditMode && <span className=" text-black">~EDIT_MODE</span>}
+          {GlobalEditMode && <span className=" text-black">~EDIT_MODE</span>}
         </GradientText>
         {children}
       </div>

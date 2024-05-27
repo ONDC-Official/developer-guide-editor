@@ -1,5 +1,5 @@
 import axios from "axios";
-import { EditMode } from "../utils/config";
+import { GlobalEditMode } from "../utils/config";
 import { Listbox, Transition } from "@headlessui/react";
 import React, { useEffect, useRef, useState } from "react";
 import { BiCheck } from "react-icons/bi";
@@ -120,7 +120,7 @@ export function GitActionsTab({}) {
                 >
               }
             />
-            {EditMode && (
+            {GlobalEditMode && (
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => {

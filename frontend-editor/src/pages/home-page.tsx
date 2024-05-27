@@ -24,9 +24,9 @@ export const TagFileID = "TAG_FILE";
 export const ExampleFolderID = "EXAMPLE_FOLDER";
 export const ExampleDomainFolderID = "EXAMPLE_DOMAIN_FOLDER";
 export const flowFolderID = "FLOW_FOLDER";
-export const FlowFileID = "FLOW_FILE"; 
+export const FlowFileID = "FLOW_FILE";
 
-export function HomePage() {
+export function HomePage({ editMode }: { editMode: boolean }) {
   const [loading, setLoading] = React.useState(false);
   const [components, setComponents] = React.useState([] as Editable[]);
   const activePath = React.useRef<string>("");
