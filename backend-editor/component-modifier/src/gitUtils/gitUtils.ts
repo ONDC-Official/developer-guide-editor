@@ -128,7 +128,10 @@ export const cloneRepo = async (
       const repoName = await getRepoName(existingRepo);
       if (repoName === repo) {
         console.log("Repository already cloned");
+
         return;
+      } else {
+        await deleteFolderSync(localPath);
       }
     }
     await git.clone(authenticatedUrl, localPath);
