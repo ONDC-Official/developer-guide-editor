@@ -20,6 +20,7 @@ export async function createIndexYaml(
   relativeFolderPath,
   removeContent = true
 ) {
+  try {
   const folderPath = isBinary? relativeFolderPath : path.join(__dirname, relativeFolderPath);
   console.log("Resolved folder path:", folderPath);
   const indexYamlPath = path.join(folderPath, "index.yaml");
@@ -32,7 +33,6 @@ export async function createIndexYaml(
     console.log("index.yaml already exists, not deleting it...");
     return [indexYamlPath, folderPath];
   }
-  try {
     if (!fs.existsSync(folderPath)) {
       console.log("Folder does not exist, creating it...");
       await fs_p.mkdir(folderPath, { recursive: true, mode: 0o700 });
