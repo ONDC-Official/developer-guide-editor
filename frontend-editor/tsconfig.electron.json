@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "target": "es6",
+    "outDir": "./dist",
+    "lib": ["dom", "esnext"],
+    "allowJs": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "esModuleInterop": true
+  },
+  "include": ["./electron/**/*"]
+}

@@ -3,11 +3,16 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "main": "electron-main.js",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start-react": "vite",
+    "build-electron": "tsc --project tsconfig.electron.json",
+    "start-electron": "electron .",
+    "start": "concurrently \"npm run start-react\" \"npm run start-electron\""
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
@@ -15,6 +20,7 @@
     "@monaco-editor/react": "^4.6.0",
     "@table-library/react-table-library": "^4.1.7",
     "@tippyjs/react": "^4.2.6",
+    "@types/electron": "^1.6.10",
     "@uiw/react-json-view": "^2.0.0-alpha.24",
     "axios": "^1.6.8",
     "mermaid": "^10.9.1",
@@ -39,6 +45,9 @@
     "@typescript-eslint/parser": "^7.2.0",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.19",
+    "concurrently": "^7.6.0",
+    "electron": "^30.0.8",
+    "electron-builder": "^24.13.3",
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
