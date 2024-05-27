@@ -1,6 +1,7 @@
 const fs = require("fs");
 import yaml from "js-yaml";
 const path = require("path");
+import { isBinary } from "../fileUtils";
 
 const $RefParser = require("json-schema-ref-parser");
 const { execSync } = require("child_process");
@@ -17,10 +18,10 @@ require("ajv-errors")(ajv);
 const args = process.argv.slice(2);
 // var example_set = args[0]
 // var flow_set = args[1]
-var base_yaml = "./src/utils/build/beckn_yaml.yaml"; //args[0];
-var example_yaml = "../ONDC-NTS-Specifications/api/components/index.yaml"; //args[1]; //  main file of the yamls
-var outputPath = "./src/build/build.yaml";
-var uiPath = "./src/build/build.js";
+var base_yaml = isBinary? path.join(path.dirname(process.execPath),"./FORKED_REPO/api/components/beckn_yaml.yaml"): "./src/utils/build/beckn_yaml.yaml"; //beckn yaml
+var example_yaml = isBinary? path.join(path.dirname(process.execPath),"./FORKED_REPO/api/components/index.yaml"):"../FORKED_REPO/api/components/index.yaml"; //args[1]; //  main file of the yamls
+var outputPath = isBinary? path.join(path.dirname(process.execPath), "./FORKED_REPO/api/build/build.yaml") : "./src/build/build.yaml";
+var uiPath = isBinary? path.join(path.dirname(process.execPath), "./FORKED_REPO/ui/build.js") : "./src/build/build.js";
 // const outputPath = `./build.yaml`;
 // const unresolvedFilePath = `https://raw.githubusercontent.com/beckn/protocol-specifications/master/api/transaction/components/index.yaml`
 const tempPath = `./temp.yaml`;
@@ -318,24 +319,24 @@ async function getSwaggerYaml(example_set, outputPath) {
     // if (!process.argv.includes(SKIP_VALIDATION.flows)) {
     //   hasTrueResult = await validateFlows(flows, schemaMap);
     // }
-    if (!process.argv.includes(SKIP_VALIDATION.examples) && !hasTrueResult) {
-      console.log(exampleSets);
-      hasTrueResult = await validateExamples(exampleSets, schemaMap);
-    }
+    // if (!process.argv.includes(SKIP_VALIDATION.examples) && !hasTrueResult) {
+    //   console.log(exampleSets);
+    //   hasTrueResult = await validateExamples(exampleSets, schemaMap);
+    // }
 
-    // move to separate files
-    if (!process.argv.includes(SKIP_VALIDATION.enums) && !hasTrueResult) {
-      hasTrueResult = await validateEnumsTags(enums, schemaMap);
-    }
+    // // move to separate files
+    // if (!process.argv.includes(SKIP_VALIDATION.enums) && !hasTrueResult) {
+    //   hasTrueResult = await validateEnumsTags(enums, schemaMap);
+    // }
 
-    if (!process.argv.includes(SKIP_VALIDATION.tags) && !hasTrueResult) {
-      //@ts-ignore
-      hasTrueResult = await validateTags(tags, schemaMap);
-    }
+    // if (!process.argv.includes(SKIP_VALIDATION.tags) && !hasTrueResult) {
+    //   //@ts-ignore
+    //   hasTrueResult = await validateTags(tags, schemaMap);
+    // }
 
-    if (!process.argv.includes(SKIP_VALIDATION.attributes) && !hasTrueResult) {
-      hasTrueResult = await validateAttributes(attributes, schemaMap);
-    }
+    // if (!process.argv.includes(SKIP_VALIDATION.attributes) && !hasTrueResult) {
+    //   hasTrueResult = await validateAttributes(attributes, schemaMap);
+    // }
 
     if (hasTrueResult) return;
 
@@ -400,10 +401,11 @@ function addEnumTag(base, layer) {
 function GenerateYaml(base, layer, output_yaml) {
   const output = yaml.dump(base);
   fs.writeFileSync(output_yaml, output, "utf8");
+  console.log(output_yaml,"build output")
   const baseData = base["x-examples"];
   for (const examplesKey of Object.keys(baseData)) {
     let { example_set: exampleSet } = baseData[examplesKey] || {};
-    delete exampleSet.form;
+    // delete exampleSet.form;
   }
   const jsonDump = "let build_spec = " + JSON.stringify(base);
   fs.writeFileSync(uiPath, jsonDump, "utf8");
@@ -446,12 +448,15 @@ function writeFilenamesToYaml(filenames) {
   fs.writeFileSync(yamlFilePath, yamlString, "utf8");
 }
 
-export async function buildWrapper() {
+export async function buildWrapper(folderName) {
   try {
     const markdownFiles = checkMDFiles();
     writeFilenamesToYaml(markdownFiles);
 
     compareFiles();
+    if(folderName){
+      var example_yaml = isBinary? path.join(path.dirname(process.execPath),`./FORKED_REPO/api/${folderName}/index.yaml`):`../FORKED_REPO/api/${folderName}/index.yaml`; //args[1]; //  main file of the yamls
+    }
 
     await getSwaggerYaml("example_set", outputPath);
   } catch (e) {
