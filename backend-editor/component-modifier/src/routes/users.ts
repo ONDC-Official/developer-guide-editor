@@ -234,7 +234,7 @@ app.delete("/sessions", async (req, res, next) => {
 
 app.post("/build", async (req: Request, res: Response, next: NextFunction) => {
   try {
-    await buildWrapper();
+    await buildWrapper("components");
     res.send("build triggered");
   } catch (e) {
     res.status(500).json({
