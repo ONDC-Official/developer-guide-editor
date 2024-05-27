@@ -171,7 +171,7 @@ export function GitActionsTab({}) {
             </button>
           </div>
         )}
-        {action === "OPEN PR" && <PrForm />}
+        {action === "OPEN PR" && <PrForm setIsOpen={setModalOpen} />}
       </ReusableModal>
     </>
   );
@@ -237,7 +237,7 @@ export function BranchListBox({
   );
 }
 
-const PrForm = () => {
+const PrForm = ({ setIsOpen }: any) => {
   const {
     register,
     handleSubmit,
@@ -249,11 +249,17 @@ const PrForm = () => {
   const onSubmit = async (data: any) => {
     try {
       dataContext.setLoading(true);
-      const body = { ...data, url: localStorage.getItem("repoLink") as string };
+      console.log(localStorage.getItem("orignalRepoLink"));
+      const body = {
+        ...data,
+        url: localStorage.getItem("orignalRepoLink") as string,
+      };
       const prLink = await axios.post("http://localhost:1000/git/openPR", body);
       dataContext.setLoading(false);
+      setIsOpen(false);
       window.open(prLink.data, "_blank");
     } catch {
+      dataContext.setLoading(false);
       toast.error("Error opening PR");
     }
   };

@@ -160,7 +160,8 @@ export const changeBranch = async (
   const git = simpleGit(repoPath);
 
   const currentBranchSummary = await git.branch();
-  const currentBranch = "remotes/" + currentBranchSummary.current;
+  let currentBranch = "remotes/" + currentBranchSummary.current;
+  currentBranch = extractBranchName(currentBranch);
   console.log(`Current branch is ${currentBranch}`);
   console.log(`Switching to branch ${branchName}`);
   if (currentBranch === branchName) {
@@ -182,6 +183,7 @@ export const changeBranch = async (
       await git.fetch("origin", branchName);
     }
     // Checkout the branch
+    console.log("Checking out branch", branchName);
     await git.checkout(branchName);
     // await git.checkoutBranch(branchName, "origin");
     console.log(`Switched to branch ${branchName}`);
@@ -228,14 +230,21 @@ export const stashFetchCommitAndPushChanges = async (
     let withoutOrigin = extractBranchName(branch);
     await git.add("./*");
     console.log("Changes added successfully");
+
     await git.commit(commitMessage);
     console.log("Changes committed successfully");
     console.log("HEAD:" + withoutOrigin);
+
     const res = await git.push("origin", "HEAD:" + withoutOrigin);
+
     console.log(res);
     console.log("Changes pushed successfully to branch:", withoutOrigin);
     // git.checkoutBranch(withoutOrigin, "origin/" + withoutOrigin);
-    await changeBranch(repoPath, branch);
+    // await git.checkout("remotes")
+    console.log("checkout", "remotes/" + branch);
+    await git.checkout("master");
+    await git.checkout("remotes/" + branch);
+    // await changeBranch(repoPath, "remotes/" + branch);
   } catch (error) {
     console.error("Error during commit and push process:", error.message);
     throw error;
@@ -247,27 +256,38 @@ export const raisePr = async (
   repoUrl: string,
   repoPath: string,
   prTitle: string,
-  prBody: string
+  prBody: string,
+  extractedBranchName: string
 ) => {
   // Create a PR
   try {
     const octokit = new Octokit({
       auth: token,
     });
-    const git = simpleGit(repoPath);
+    // const git = simpleGit(repoPath);
     const [owner, repo] = repoUrl.replace("https://github.com/", "").split("/");
 
-    const branchName = (await git.branch()).current;
+    // const branchName = extractBranchName((await git.branch()).current);
+
+    console.log("Branch Name", extractedBranchName);
     const {
       data: { login: forkedOwner },
     } = await octokit.users.getAuthenticated();
+    console.log("fileds", {
+      owner,
+      repo,
+      title: prTitle,
+      body: prBody,
+      head: `${forkedOwner}:${extractedBranchName}`,
+      base: extractedBranchName,
+    });
     const { data: pullRequest } = await octokit.pulls.create({
       owner,
       repo,
       title: prTitle,
       body: prBody,
-      head: `${forkedOwner}:${branchName}`,
-      base: branchName,
+      head: `${forkedOwner}:${extractedBranchName}`,
+      base: extractedBranchName,
     });
     return pullRequest.html_url;
   } catch (e) {
@@ -369,7 +389,7 @@ export const printAllRemotes = async (git: SimpleGit): Promise<void> => {
  * @param fullBranchName - The full branch name, potentially with a remote prefix.
  * @returns The branch name without the remote prefix.
  */
-function extractBranchName(fullBranchName: string): string {
+export function extractBranchName(fullBranchName: string): string {
   // Split the branch name by '/'
   const parts = fullBranchName.split("/");
 
@@ -395,6 +415,7 @@ function extractBranchName(fullBranchName: string): string {
   // console.log(await getStatus(repoPath));
   // changeBranch(repoPath, "master");
   // await stashFetchCommitAndPushChanges(repoPath, "testing commit");
+  // await new Promise((resolve) => setTimeout(resolve, 2000));
   // console.log(await getBranches(repoPath));
   // await raisePr(token, url, repoPath, "Test PR", "This is a test PR");
   // await resetCurrentBranch(repoPath);

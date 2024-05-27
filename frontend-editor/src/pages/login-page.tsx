@@ -35,6 +35,7 @@ function GitLogin() {
       if (res.status === 200) {
         localStorage.setItem("username", username);
         localStorage.setItem("repoLink", res.data);
+        localStorage.setItem("orignalRepoLink", repoLink);
         navigate("/home");
       }
     } catch {

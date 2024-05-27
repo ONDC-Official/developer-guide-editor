@@ -2,6 +2,7 @@ import express from "express";
 import {
   changeBranch,
   cloneRepo,
+  extractBranchName,
   forkRepository,
   getBranches,
   getStatus,
@@ -95,8 +96,20 @@ app.post("/openPR", async (req, res) => {
       "../../../../backend-editor/FORKED_REPO"
     );
     await stashFetchCommitAndPushChanges(repoPath, message);
-    await raisePr(token, url, repoPath, title, message);
-    res.status(200).send("PR created successfully");
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    const extractedBranchName = extractBranchName(
+      (await getBranches(repoPath)).currentBranch
+    );
+    console.log("Branch name", extractedBranchName);
+    const pr = await raisePr(
+      token,
+      url,
+      repoPath,
+      title,
+      message,
+      extractedBranchName
+    );
+    res.status(200).send(pr);
   } catch (err) {
     res.status(500).send("Error creating PR");
   }
