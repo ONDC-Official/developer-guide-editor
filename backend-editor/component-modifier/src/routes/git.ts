@@ -22,16 +22,17 @@ const forkedRepoComputedPath = isBinary? path.join(path.dirname(process.execPath
 
 
 app.post("/init", async (req, res) => {
-  let link = "";
+  try {
+  var link = "";
   const { username, repoUrl, token } = req.body;
   if (!username || !repoUrl || !token) {
     res.status(400).send("Missing required parameters");
     return;
   }
-  try {
     link = await forkRepository(token, repoUrl);
     await cloneRepo(token, username, repoUrl);
-  } catch {
+  } catch(err) {
+    console.log(err)
     res.status(500).send("Error initializing repository");
     return;
   }
@@ -117,6 +118,7 @@ app.post("/openPR", async (req, res) => {
     );
     res.status(200).send(pr);
   } catch (err) {
+    console.log(err)
     res.status(500).send("Error creating PR");
   }
 });
