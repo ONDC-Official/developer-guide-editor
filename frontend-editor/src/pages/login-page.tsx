@@ -131,10 +131,10 @@ function GitLogin() {
               />
             </div>
             <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 flex items-center"
+              className="flex-auto w-full bg-blue-500 hover:bg-blue-400 text-white font-semibold py-2 px-4 rounded transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-opacity-50 shadow-md flex items-center justify-center"
               onClick={handleLogin}
             >
-              <FaGithub className="mr-2" />
+              <FaGithub className="mr-2" size={20} />
               Submit
             </button>
           </div>
