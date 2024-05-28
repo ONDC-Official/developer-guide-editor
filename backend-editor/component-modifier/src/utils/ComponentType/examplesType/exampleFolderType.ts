@@ -3,7 +3,7 @@ import { updateYamlRefExamples } from "../../yamlUtils";
 import { readYamlFile } from "../../fileUtils";
 import yaml from "js-yaml";
 import { ExampleDomainFolderType } from "./ExampleDomainFolderType";
-
+import { readFile } from "fs/promises";
 type ExampleFolderYaml = Record<
   string,
   { summary: string; description: string }
@@ -53,7 +53,7 @@ export class ExampleFolderType extends folderTypeEditable {
     return data;
   }
   async getReferenceData() {
-    const refs: string[] = [];
+    const refs: { $ref: string; value: any }[] = [];
     console.log("getting reference data");
     for (const child of this.childrenEditables) {
       const data: Record<
@@ -63,16 +63,34 @@ export class ExampleFolderType extends folderTypeEditable {
       for (const key in data) {
         for (const ex of data[key]) {
           if (ex.formName) {
-            refs.push(
-              `../../examples/${child.name}/${key}/${ex.formName}.html`
+            let val = {};
+            val = await readFile(
+              this.folderPath + `/${child.name}/${key}/${ex.formName}.html`,
+              "utf8"
             );
+            val = val ? val : {};
+            refs.push({
+              $ref: `../../examples/${child.name}/${key}/${ex.formName}.html`,
+              value: val,
+            });
           } else {
-            refs.push(`../../examples/${child.name}/${key}/${ex.apiName}.yaml`);
+            let val = {};
+            val = await yaml.load(
+              await readYamlFile(
+                this.folderPath + `/${child.name}/${key}/${ex.apiName}.yaml`
+              )
+            );
+            val = val ? val : {};
+            refs.push({
+              $ref: `../../examples/${child.name}/${key}/${ex.apiName}.yaml`,
+              value: val,
+            });
           }
         }
       }
     }
-    return refs;
+
+    return { refs: refs };
   }
   async remove(deleteTarget: { folderName: string }) {
     await super.remove(deleteTarget);
