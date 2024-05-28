@@ -83,7 +83,6 @@ We welcome contributions from the community! To contribute, please follow these 
 4. Push to the branch (`git push origin feature/your-feature-name`).
 5. Open a Pull Request.
 
-For more detailed instructions, please refer to our [CONTRIBUTING.md](CONTRIBUTING.md) file.
 
 ## License
 
