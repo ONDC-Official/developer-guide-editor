@@ -37,7 +37,6 @@ Follow these steps to set up and run the DevGuideEditor project:
 
    ```sh
    git clone https://github.com/extedcouD/DevGuideEditor.git
-   cd DevGuideEditor
    ```
 
 2. **Run the backend:**
@@ -56,7 +55,7 @@ Follow these steps to set up and run the DevGuideEditor project:
      ```
      The backend server will run on `localhost:1000`.
 
-3. **Run the frontend:**
+3. **Run the frontend(in a different terminal):**
    - Navigate to the frontend directory:
      ```sh
      cd DevGuideEditor/frontend-editor
