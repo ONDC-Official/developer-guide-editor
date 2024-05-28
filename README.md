@@ -15,7 +15,19 @@ Ensure you have the following installed on your machine:
 - [Git](https://git-scm.com/)
 - [Node.js](https://nodejs.org/)
 
-Sure, here is the installation part of your README based on the steps you provided:
+## Setup Personal Access Token (PAT)
+
+To use this project, you need to generate a GitHub Personal Access Token (PAT) with the required permissions to fork repositories and make pull requests to `official-ondc/specificaions`. Follow these steps to create and configure your PAT:
+
+**Generate a Personal Access Token (PAT):**
+
+- Go to [GitHub's Personal Access Tokens page](https://github.com/settings/tokens).
+- Click on the "Generate new token" button.
+- Give your token a descriptive name, such as "DevGuideEditor Token".
+- Select the following scopes:
+  - `repo` (control of private repositories is **NOT** required)
+- Click the "Generate token" button at the bottom of the page.
+- **Important:** Copy and save the token somewhere secure. You will not be able to see it again once you leave this page.
 
 ## Installation
 
