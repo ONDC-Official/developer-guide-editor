@@ -6,7 +6,6 @@ DevGuideEditor is a comprehensive tool designed to help developers create, manag
 
 - **User-Friendly Interface**: Simple and intuitive interface for creating and editing development guides.
 
-
 ## Getting Started
 
 ### Prerequisites
@@ -14,32 +13,53 @@ DevGuideEditor is a comprehensive tool designed to help developers create, manag
 Ensure you have the following installed on your machine:
 
 - [Git](https://git-scm.com/)
-- [Node.js](https://nodejs.org/) (if applicable)
+- [Node.js](https://nodejs.org/)
 
-### Installation
+Sure, here is the installation part of your README based on the steps you provided:
 
-1. Clone the repository:
+## Installation
 
-   ```bash
+Follow these steps to set up and run the DevGuideEditor project:
+
+1. **Clone the repository:**
+
+   ```sh
    git clone https://github.com/extedcouD/DevGuideEditor.git
    cd DevGuideEditor
    ```
 
-2. Install the required dependencies:
+2. **Run the backend:**
 
-   ```bash
-   npm install
-   ```
+   - Navigate to the backend directory:
+     ```sh
+     cd DevGuideEditor/backend-editor/component-modifier
+     ```
+   - Install the necessary dependencies:
+     ```sh
+     npm install
+     ```
+   - Start the backend server:
+     ```sh
+     npm start
+     ```
+     The backend server will run on `localhost:1000`.
 
-### Usage
+3. **Run the frontend:**
+   - Navigate to the frontend directory:
+     ```sh
+     cd DevGuideEditor/frontend-editor
+     ```
+   - Install the necessary dependencies:
+     ```sh
+     npm install
+     ```
+   - Start the frontend server:
+     ```sh
+     npm run dev
+     ```
+     The frontend will run on `localhost:5173`.
 
-1. Start the application:
-
-   ```bash
-   npm start
-   ```
-
-2. Open your browser and navigate to `http://localhost:3000` to start using DevGuideEditor.
+With these steps, you should have both the frontend and backend servers up and running.
 
 ## Contributing
 
