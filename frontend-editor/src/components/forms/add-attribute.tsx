@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import GenericForm from "./generic-form";
 import FormSelect from "./form-select";
-import {FormInput} from "./form-input";
+import { FormInput } from "./form-input";
 import { Editable } from "../file-structure";
 import { FieldValues } from "react-hook-form";
 import { getData, patchData, postData } from "../../utils/requestUtils";
@@ -46,6 +46,7 @@ const AddInAttributes = ({
             name="ID"
             label="Attribute Type"
             options={["ATTRIBUTE_FILE"]}
+            labelInfo="Select the type of attribute you want to add"
           />
           <FormInput name="name" label="Domain" strip={true} />
         </GenericForm>
@@ -189,6 +190,7 @@ export const AddRowForm = ({
       <FormInput
         name="path"
         label="Path"
+        labelInfo="This field indicate json path in the payload"
         required={true}
         strip={true}
         disable={editState ? true : false}
@@ -196,17 +198,33 @@ export const AddRowForm = ({
       <FormSelect
         name="required"
         label="Required"
+        labelInfo="This field indicates whether the attribute is optional or required."
         options={["REQUIRED", "OPTIONAL"]}
       />
       <FormSelect
         name="type"
         label="Type"
+        labelInfo="This field specifies the data type of the attribute within the payload."
         required={true}
         options={["NUMERIC", "TEXT", "OBJECT", "BOOLEAN"]}
       />
-      <FormSelect name="owner" label="Owner" options={["BAP", "BPP"]} />
-      <FormInput name="usage" label="Usage" />
-      <FormInput name="description" label="Description" type="textarea" />
+      <FormSelect
+        name="owner"
+        label="Owner"
+        labelInfo="This field specifies the owner of the attribute."
+        options={["BAP", "BPP", "BAP/BPP"]}
+      />
+      <FormInput
+        name="usage"
+        label="Usage"
+        labelInfo="This field provides a sample value that can be used in the payload."
+      />
+      <FormInput
+        name="description"
+        label="Description"
+        type="textarea"
+        labelInfo="Describes usage of the attribute"
+      />
     </GenericForm>
   );
 };

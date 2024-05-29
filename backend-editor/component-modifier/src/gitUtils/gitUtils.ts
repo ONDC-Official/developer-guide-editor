@@ -119,12 +119,11 @@ export const cloneRepo = async (
   // Construct the authenticated URL
   const authenticatedUrl = `https://${token}@github.com/${userName}/${repo}.git`;
 
-  const forkedCompPath = isBinary? path.join(path.dirname(process.execPath), "./FORKED_REPO") : "../../../../backend-editor/FORKED_REPO"
+  const forkedCompPath = isBinary
+    ? path.join(path.dirname(process.execPath), "./FORKED_REPO")
+    : "../../../../backend-editor/FORKED_REPO";
 
-  const localPath = path.resolve(
-    __dirname,
-    forkedCompPath
-  );
+  const localPath = path.resolve(__dirname, forkedCompPath);
   try {
     // await deleteFolderSync(localPath);
     if (fs.existsSync(localPath)) {
@@ -170,7 +169,8 @@ export const changeBranch = async (
   let currentBranch = "remotes/" + currentBranchSummary.current;
   currentBranch = extractBranchName(currentBranch);
   console.log(`Current branch is ${currentBranch}`);
-  console.log(`Switching to branch ${branchName}`);
+  // console.log(git.stashList)
+
   if (currentBranch === branchName) {
     console.log(`Already on branch ${branchName}`);
     return;

@@ -10,6 +10,7 @@ const Dropdown = ({
   onOpen,
   editable,
   editOrders = [true, true, true],
+  disabled = false,
 }: {
   items: string[];
   setSelectedItem: (item: string) => void;
@@ -17,6 +18,7 @@ const Dropdown = ({
   onOpen: () => void;
   editable: Editable;
   editOrders?: boolean[];
+  disabled?: boolean;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const tooltip = useEditorToolTip(editOrders);
@@ -46,6 +48,7 @@ const Dropdown = ({
           onFocus={handleFocus}
           onBlur={handleBlur}
           className="bg-gray-300 text-black font-medium py-2 px-4 w-full cursor-pointer  hover:bg-blue-200"
+          disabled={disabled}
         >
           {selectedItem ? null : <option value="">Select an option</option>}
           {items.map((item, index) => (

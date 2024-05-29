@@ -63,18 +63,27 @@ export function EnumFolderContent({ enumFolder }: { enumFolder: Editable }) {
       },
     },
   };
-
+  const enumToolTip = useEditorToolTip([true, true, false]);
+  enumToolTip.data.current = FolderEditable;
   return (
     <div className="mt-3 ml-3 max-w-full">
       {/* <div className="flex w-full"> */}
       <div className="flex-1">
-        <Dropdown
+        {/* <Dropdown
           items={folderData}
           selectedItem={selectedFolder ?? ""}
           setSelectedItem={setSelectedFolder}
           onOpen={getEnumFolder}
           editable={FolderEditable}
-        />
+        /> */}
+        <Tippy {...enumToolTip.tippyProps}>
+          <h1
+            className="text-xl font-bold text-black bg-gray-100 border border-gray-300 p-2 shadow-md hover:bg-blue-100"
+            onContextMenu={enumToolTip.onContextMenu}
+          >
+            Enums
+          </h1>
+        </Tippy>
       </div>
       {selectedFolder && selectedFolder !== "" && (
         <EnumContent enums={EnumEditable} reRender={reRender.current} />
