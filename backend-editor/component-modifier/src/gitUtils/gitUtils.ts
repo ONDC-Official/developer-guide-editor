@@ -197,8 +197,9 @@ export const changeBranch = async (
 
     // Check if there are stashes for the new branch and apply the most recent one
     const stashList = await git.stashList();
+    // console.log(stashList.all);
     const branchStashIndex = stashList.all.findIndex((stash) =>
-      stash.message.includes(`stash@${branchName}`)
+      stash.message.includes(`stash@${extractBranchName(branchName)}`)
     );
     if (branchStashIndex !== -1) {
       await git.stash(["pop", `stash@{${branchStashIndex}}`]);

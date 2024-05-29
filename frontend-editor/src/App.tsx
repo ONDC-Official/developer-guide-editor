@@ -19,16 +19,15 @@ import { GlobalEditMode, ToggleLocalEditMode } from "./utils/config";
 
 function App() {
   const navigate = useNavigate();
-  useEffect(() => {
-    navigate("/login");
-  }, []);
+  // useEffect(() => {
+  //   navigate("/login");
+  // }, []);
   const [darkMode, setDarkMode] = useState(false);
   const [editState, setEditState] = useState(true);
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
   };
   const buildGuide = async () => {
-    console.log("Building guide");
     const response = await sendBuildRequest();
     console.log("Response", response);
   };
@@ -59,6 +58,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<GitLogin />} />
           <Route path="/home" element={<HomePage editMode={editState} />} />
+          <Route path="/*" element={<GitLogin />} />
         </Routes>
         <ToastContainer
           position="bottom-right"

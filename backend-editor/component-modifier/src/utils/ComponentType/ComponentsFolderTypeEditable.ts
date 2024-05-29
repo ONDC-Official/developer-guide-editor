@@ -1,10 +1,7 @@
-import { error } from "console";
 import { copyDir } from "../fileUtils";
 import { folderTypeEditable } from "../folderTypeEditable";
 import { updateYamlRefComponents } from "../yamlUtils";
 import { AttributesFolderTypeEditable } from "./AttributeType/AttributesFolderTypeEditable";
-import { Editable } from "../Editable";
-import { EnumFileType } from "./enumType/enumFileType";
 import { EnumFolderType } from "./enumType/enumFolderType";
 import { TagsFolderType } from "./tagType/tagsFolderType";
 import { FlowFolderType } from "./flowType/flowFolderType";
@@ -22,7 +19,7 @@ export class ComponentsType extends folderTypeEditable {
       EnumFolderType.REGISTER_ID,
       TagsFolderType.REGISTER_ID,
       FlowFolderType.REGISTER_ID,
-      ExampleFolderType.REGISTER_ID
+      ExampleFolderType.REGISTER_ID,
     ];
   }
   async add(new_editable: { ID: string }) {

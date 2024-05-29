@@ -78,7 +78,7 @@ export function EnumFolderContent({ enumFolder }: { enumFolder: Editable }) {
         /> */}
         <Tippy {...enumToolTip.tippyProps}>
           <h1
-            className="text-xl font-bold text-black bg-gray-100 border border-gray-300 p-2 shadow-md hover:bg-blue-100"
+            className="text-xl font-bold text-black bg-gray-300 border border-gray-300 p-2 shadow-md hover:bg-blue-100"
             onContextMenu={enumToolTip.onContextMenu}
           >
             Enums
