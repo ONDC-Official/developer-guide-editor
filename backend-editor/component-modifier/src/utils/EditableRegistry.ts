@@ -32,7 +32,11 @@ export class EditableRegistry {
     const object = new cls(path, name);
     let removeContent = false;
     if (object.getRegisterID().includes("FOLDER")) {
-      removeContent = true;
+      if (object.getRegisterID() === "COMPONENTS-FOLDER") {
+        removeContent = false;
+      } else {
+        removeContent = true;
+      }
     }
     await object.initIndexYaml(path, removeContent);
     return object;
@@ -69,7 +73,6 @@ export class EditableRegistry {
       await EditableRegistry.loadTags(file, comp);
       await EditableRegistry.loadExamples(file, comp);
       await EditableRegistry.loadFlows(file, comp);
-
     }
     return comp;
   }
@@ -108,7 +111,6 @@ export class EditableRegistry {
     }
   }
 
-
   private static async loadFlows(file: fs.Dirent, comp: ComponentsType) {
     if (file.name === "flows") {
       await comp.add({
@@ -118,10 +120,9 @@ export class EditableRegistry {
       const attrFiles = await fs_p.readdir(attr.folderPath, {
         withFileTypes: true,
       });
-      
+
       for (const attrFile of attrFiles) {
         if (attrFile.isDirectory()) {
-          
           await attr.add({
             ID: "FLOW_FILE",
             name: attrFile.name,
@@ -129,8 +130,6 @@ export class EditableRegistry {
         }
       }
     }
-
-
   }
   private static async loadEnums(file: fs.Dirent, comp: ComponentsType) {
     if (file.name === "enum") {
