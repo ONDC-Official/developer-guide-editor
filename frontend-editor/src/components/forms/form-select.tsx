@@ -1,6 +1,6 @@
 import Tippy from "@tippyjs/react";
 import React from "react";
-import { LabelToolTip } from "./form-input";
+import { LabelToolTip, LabelWithToolTip } from "./form-input";
 
 const FormSelect = ({
   register,
@@ -19,14 +19,8 @@ const FormSelect = ({
   return (
     <>
       <div className="mb-4">
-        <Tippy
-          content={<LabelToolTip label={labelInfo} />}
-          placement="left-start"
-        >
-          <label htmlFor={name} className="text-sm font-medium text-gray-700">
-            {label}
-          </label>
-        </Tippy>
+        <LabelWithToolTip labelInfo={labelInfo} label={label} />
+
         <select
           {...register(name)}
           className="mt-2 block w-full p-2 border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"

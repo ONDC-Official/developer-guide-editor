@@ -405,26 +405,26 @@ export function extractBranchName(fullBranchName: string): string {
   return parts[parts.length - 1];
 }
 
-(async () => {
-  const token = "";
-  const url = "https://github.com/ONDC-Official/ONDC-FIS-Specifications";
-  const userName = "rudranshOndc";
-  const repoPath = path.resolve(
-    __dirname,
-    "../../../../backend-editor/FORKED_REPO"
-  );
-  // await getBranches(repoPath);
-  //   await forkRepository(token, url);
-  //   await cloneRepo(token, userName, url);
-  //   await changeBranch(
-  //     path.resolve(__dirname, "../../../../backend-editor/FORKED_REPO"),
-  //     "release-FIS12-2.0.0"
-  //   );
-  // console.log(await getStatus(repoPath));
-  // changeBranch(repoPath, "master");
-  // await stashFetchCommitAndPushChanges(repoPath, "testing commit");
-  // await new Promise((resolve) => setTimeout(resolve, 2000));
-  // console.log(await getBranches(repoPath));
-  // await raisePr(token, url, repoPath, "Test PR", "This is a test PR");
-  // await resetCurrentBranch(repoPath);
-})();
+// (async () => {
+//   const token = "";
+//   const url = "https://github.com/ONDC-Official/ONDC-FIS-Specifications";
+//   const userName = "rudranshOndc";
+//   const repoPath = path.resolve(
+//     __dirname,
+//     "../../../../backend-editor/FORKED_REPO"
+//   );
+//   // await getBranches(repoPath);
+//   //   await forkRepository(token, url);
+//   //   await cloneRepo(token, userName, url);
+//   //   await changeBranch(
+//   //     path.resolve(__dirname, "../../../../backend-editor/FORKED_REPO"),
+//   //     "release-FIS12-2.0.0"
+//   //   );
+//   // console.log(await getStatus(repoPath));
+//   // changeBranch(repoPath, "master");
+//   // await stashFetchCommitAndPushChanges(repoPath, "testing commit");
+//   // await new Promise((resolve) => setTimeout(resolve, 2000));
+//   // console.log(await getBranches(repoPath));
+//   // await raisePr(token, url, repoPath, "Test PR", "This is a test PR");
+//   // await resetCurrentBranch(repoPath);
+// })();
