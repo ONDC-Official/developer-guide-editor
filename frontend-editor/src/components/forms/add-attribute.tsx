@@ -190,7 +190,7 @@ export const AddRowForm = ({
       <FormInput
         name="path"
         label="Path"
-        labelInfo="This field indicate json path in the payload"
+        labelInfo="This field indicate json path in the payload & in case the type is object add ._description to the path"
         required={true}
         strip={true}
         disable={editState ? true : false}
@@ -211,7 +211,10 @@ export const AddRowForm = ({
       <FormSelect
         name="owner"
         label="Owner"
-        labelInfo="This field specifies the owner of the attribute."
+        labelInfo="This field specifies the owner of the attribute. 
+        BAP: buyer app provider or the buyer app
+        BPP: beckn provider platform or the seller app
+        BAP/BPP: owner can be any."
         options={["BAP", "BPP", "BAP/BPP"]}
       />
       <FormInput

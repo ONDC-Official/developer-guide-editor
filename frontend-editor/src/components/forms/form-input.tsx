@@ -1,7 +1,6 @@
 import Tippy from "@tippyjs/react";
 import React from "react";
 import { GoInfo } from "react-icons/go";
-import { IoInformation, IoInformationCircle } from "react-icons/io5";
 import "tippy.js/animations/perspective-subtle.css";
 
 const FormInput = ({
@@ -119,6 +118,7 @@ export function LabelWithToolTip({
           content={<LabelToolTip label={labelInfo} />}
           placement="right-start"
           animation="perspective-subtle"
+          interactive={true}
         >
           <label className="text-sm font-medium text-gray-700">
             <GoInfo size={22} className="text-black" />
@@ -130,13 +130,19 @@ export function LabelWithToolTip({
 }
 
 export function LabelToolTip({ label }: { label: string }) {
+  const formattedLabelInfo = label.split("\n").map((line, index) => (
+    <React.Fragment key={index}>
+      {line}
+      <br />
+    </React.Fragment>
+  ));
   return (
     <>
-      <div className="relative p-2 pr-8 max-w-xs rounded-lg shadow-lg bg-white/30 backdrop-blur-lg text-white text-sm font-semibold text-center border border-white/20">
+      <div className="relative p-2 pr-8 max-w-xs  shadow-lg bg-blue-50  backdrop-blur-lg text-white text-sm font-semibold text-center border border-white/20">
         <div className="absolute top-2 left-2">
           {/* <IoInformationCircle size={20} className="text-black" /> */}
         </div>
-        <h1 className="text-black mb-1 ml-3">{label}</h1>
+        <h1 className="text-black mb-1 ml-3">{formattedLabelInfo}</h1>
       </div>
     </>
   );
