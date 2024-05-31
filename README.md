@@ -10,6 +10,7 @@ DevGuideEditor is a comprehensive tool designed to help developers create, manag
 - **Undo Function**: simply press **ctrl + z** to undo upto 5 last actions (EDIT,ADD or DELETE).
 - **Component Folder** : Power to create the entire Components folder from scratch.
 - **Copy-Paste** : copy the raw payload and then use the **raw** button inside the **add** form to duplicate entire folders or files.
+
   ![DEMO](./readme-assets/copy-paste.gif)
 
 ## Getting Started
