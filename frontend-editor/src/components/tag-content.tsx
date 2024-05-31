@@ -75,18 +75,27 @@ export function TagsFolderContent({ tagFolder }: { tagFolder: Editable }) {
       },
     },
   };
-
+  const tagToolTip = useEditorToolTip();
+  tagToolTip.data.current = FolderEditable;
   return (
     <>
       <div className="mt-3 ml-3 max-w-full">
         <div className="flex-1">
-          <Dropdown
+          {/* <Dropdown
             items={folderData}
             selectedItem={selectedFolder ?? ""}
             setSelectedItem={setSelectedFolder}
             onOpen={getTagFolder}
             editable={FolderEditable}
-          />
+          /> */}
+          <Tippy {...tagToolTip.tippyProps}>
+            <h1
+              className="text-xl font-bold text-black bg-gray-300 border border-gray-300 p-2 shadow-md hover:bg-blue-100"
+              onContextMenu={tagToolTip.onContextMenu}
+            >
+              Tags
+            </h1>
+          </Tippy>
         </div>
         {selectedFolder && selectedFolder !== "" && (
           <TagContent tags={TagEditable} reRender={reRender.current} />

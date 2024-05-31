@@ -6,7 +6,7 @@ import { deleteData, getData } from "../utils/requestUtils";
 import { Editable } from "./file-structure";
 import useEditorToolTip from "../hooks/useEditorToolTip";
 import Tippy from "@tippyjs/react";
-import { set } from "react-hook-form";
+
 const n = {
   nodes: [
     {
@@ -63,6 +63,9 @@ const AttributesTable = ({ attribute }: { attribute: Editable }) => {
   async function getTableData(fileName: string) {
     const tData = await getData(`${attribute.path}/${fileName}`);
     setFileData(tData);
+    if (Object.keys(tData).length > 0) {
+      setActiveTable(Object.keys(tData)[0]);
+    }
   }
 
   function getTableNames() {
