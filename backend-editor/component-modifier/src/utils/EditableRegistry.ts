@@ -10,8 +10,6 @@ import {
   ExampleFolderType,
 } from "./ComponentType/examplesType/exampleFolderType";
 import { ExampleDomainFolderType } from "./ComponentType/examplesType/ExampleDomainFolderType";
-import { Editable } from "./Editable";
-import { initRegistry } from "./RegisterList";
 
 type exampleYaml = Record<
   string,

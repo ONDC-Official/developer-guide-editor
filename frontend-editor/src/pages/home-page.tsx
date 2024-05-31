@@ -29,7 +29,7 @@ export const FlowFileID = "FLOW_FILE";
 export function HomePage({ editMode }: { editMode: boolean }) {
   const [loading, setLoading] = React.useState(false);
   const [components, setComponents] = React.useState([] as Editable[]);
-  const activePath = React.useRef<string>("");
+  const activePath = React.useRef<string>("components");
   const [pathState, setPathState] = useState<string>("");
   const [activeEditable, setActiveEditable] = React.useState<Editable>();
   const [refresh, setRefresh] = useState(false);
@@ -106,16 +106,13 @@ export function HomePage({ editMode }: { editMode: boolean }) {
         setReload: setRefresh,
       }}
     >
-      {activePath.current === "" ? (
-        <LoadComponent />
-      ) : (
-        <ComponentView
-          components={components}
-          activeEditable={activeEditable}
-          parentComp={compEditable}
-        />
-      )}
-      {loading && <FullPageLoader />}
+      (
+      <ComponentView
+        components={components}
+        activeEditable={activeEditable}
+        parentComp={compEditable}
+      />
+      ){loading && <FullPageLoader />}
     </DataContext.Provider>
   );
 }
