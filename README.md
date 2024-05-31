@@ -5,6 +5,12 @@ DevGuideEditor is a comprehensive tool designed to help developers create, manag
 ## Features
 
 - **User-Friendly Interface**: Simple and intuitive interface for creating and editing development guides.
+- **Edit with Right Click**: Use **right-click** on anything you want to edit in the dev guide.
+  ![Alt Text](../DevGuideEditor/readme-assets/right-click.gif)
+- **Undo Function**: simply press **ctrl + z** to undo upto 5 last actions (EDIT,ADD or DELETE).
+- **Component Folder** : Power to create the entire Components folder from scratch.
+- **Copy-Paste** : copy the raw payload and then use the **raw** button inside the **add** form to duplicate entire folders or files.
+  ![Alt Text](../DevGuideEditor/readme-assets/copy-paste.gif)
 
 ## Getting Started
 
@@ -81,7 +87,6 @@ We welcome contributions from the community! To contribute, please follow these 
 3. Make your changes and commit them (`git commit -m 'Add some feature'`).
 4. Push to the branch (`git push origin feature/your-feature-name`).
 5. Open a Pull Request.
-
 
 ## License
 
