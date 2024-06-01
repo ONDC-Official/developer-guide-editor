@@ -61,6 +61,7 @@ const FormTextInput = ({
   cols = 100,
   strip = false,
   disable = false,
+  onChange,
   labelInfo = "",
 }: any) => {
   const handleChange = (e: any) => {
@@ -70,6 +71,7 @@ const FormTextInput = ({
       value = value.replace(/\s+/g, "");
     }
     e.target.value = value; // Set the input field's value
+    onChange && onChange(e);
   };
   const handleFocus = (e: any) => {
     e.stopPropagation();

@@ -46,7 +46,6 @@ export function FlowFolderContent({ flowFolder }: { flowFolder: Editable }) {
     "flow",
     "steps",
   ]);
-
   // console.log(selectedFolder)
   const reRender = useRef(false);
   async function getflowFolder() {
@@ -327,12 +326,12 @@ export function StepsContent({
                         })}
                       </tbody>
                     </table>
-                    <p>
+                    {/* <p>
                       <MermaidDiagram
                         keys={index}
                         chartDefinition={element.mermaid}
                       />
-                    </p>
+                    </p> */}
                   </div>
                 </Disclosure.Panel>
               </DropTransition>

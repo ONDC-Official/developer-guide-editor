@@ -234,8 +234,12 @@ app.delete("/sessions", async (req, res, next) => {
 
 app.post("/build", async (req: Request, res: Response, next: NextFunction) => {
   try {
-    await buildWrapper("components");
-    res.send("build triggered");
+   const result:any =  await buildWrapper("components");
+   if(!result){
+    return res.status(500).json(result);
+    
+   }
+    res.send(result);
   } catch (e) {
     res.status(500).json({
       error: "Internal Server Error",

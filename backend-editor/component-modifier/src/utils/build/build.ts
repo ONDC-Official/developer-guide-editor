@@ -325,18 +325,18 @@ async function getSwaggerYaml(example_set, outputPath) {
     // }
 
     // // move to separate files
-    // if (!process.argv.includes(SKIP_VALIDATION.enums) && !hasTrueResult) {
-    //   hasTrueResult = await validateEnumsTags(enums, schemaMap);
-    // }
+    if (!process.argv.includes(SKIP_VALIDATION.enums) && !hasTrueResult) {
+      hasTrueResult = await validateEnumsTags(enums, schemaMap);
+    }
 
-    // if (!process.argv.includes(SKIP_VALIDATION.tags) && !hasTrueResult) {
-    //   //@ts-ignore
-    //   hasTrueResult = await validateTags(tags, schemaMap);
-    // }
+    if (!process.argv.includes(SKIP_VALIDATION.tags) && !hasTrueResult) {
+      //@ts-ignore
+      hasTrueResult = await validateTags(tags, schemaMap);
+    }
 
-    // if (!process.argv.includes(SKIP_VALIDATION.attributes) && !hasTrueResult) {
-    //   hasTrueResult = await validateAttributes(attributes, schemaMap);
-    // }
+    if (!process.argv.includes(SKIP_VALIDATION.attributes) && !hasTrueResult) {
+      hasTrueResult = await validateAttributes(attributes, schemaMap);
+    }
 
     if (hasTrueResult) return;
 
@@ -345,14 +345,19 @@ async function getSwaggerYaml(example_set, outputPath) {
       let examples = schema["examples"];
       examples = examples[example_set];
       buildSwagger(base_yaml, tempPath);
-      const spec_file = fs.readFileSync(tempPath);
+      const spec_file =  fs.readFileSync(tempPath);
       const spec = yaml.load(spec_file);
       addEnumTag(spec, schema);
-      GenerateYaml(spec, examples, outputPath);
+      const result = await GenerateYaml(spec, examples, outputPath);
       cleanup();
+      if(result){
+        return true
+      }
+        return false
     }
   } catch (error) {
     console.log("Error generating build file", error);
+    return false;
   }
 }
 
@@ -398,17 +403,23 @@ function addEnumTag(base, layer) {
   base["x-sandboxui"] = layer["sandbox-ui"];
 }
 
-function GenerateYaml(base, layer, output_yaml) {
-  const output = yaml.dump(base);
-  fs.writeFileSync(output_yaml, output, "utf8");
-  console.log(output_yaml,"build output")
-  const baseData = base["x-examples"];
-  for (const examplesKey of Object.keys(baseData)) {
-    let { example_set: exampleSet } = baseData[examplesKey] || {};
-    // delete exampleSet.form;
+async function GenerateYaml(base, layer, output_yaml) {
+  try{
+    const output = yaml.dump(base);
+    fs.writeFileSync(output_yaml, output, "utf8");
+    console.log(output_yaml,"build output")
+    const baseData = base["x-examples"];
+    for (const examplesKey of Object.keys(baseData)) {
+      let { example_set: exampleSet } = baseData[examplesKey] || {};
+      // delete exampleSet.form;
+    }
+    const jsonDump = "let build_spec = " + JSON.stringify(base);
+    await fs.writeFileSync(uiPath, jsonDump, "utf8");
+    return true;
+  }catch(e){
+    console.log(e);
+    return false;
   }
-  const jsonDump = "let build_spec = " + JSON.stringify(base);
-  fs.writeFileSync(uiPath, jsonDump, "utf8");
 }
 
 function checkMDFiles() {
@@ -457,8 +468,11 @@ export async function buildWrapper(folderName) {
     if(folderName){
       var example_yaml = isBinary? path.join(path.dirname(process.execPath),`./FORKED_REPO/api/${folderName}/index.yaml`):`../FORKED_REPO/api/${folderName}/index.yaml`; //args[1]; //  main file of the yamls
     }
-
-    await getSwaggerYaml("example_set", outputPath);
+      const result = await getSwaggerYaml("example_set", outputPath);
+      if(!result){
+        return false
+      }
+      return true;
   } catch (e) {
     console.log(e);
   }
