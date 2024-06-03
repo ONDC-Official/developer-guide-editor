@@ -65,18 +65,14 @@ export class EditableRegistry {
     compFiles = await fs_p.readdir(comp.folderPath, {
       withFileTypes: true,
     });
-    try {
-      for (const file of compFiles) {
-        if (!file.isDirectory()) continue;
-        await EditableRegistry.loadAttributes(file, comp);
-        await EditableRegistry.loadEnums(file, comp);
-        await EditableRegistry.loadTags(file, comp);
-        await EditableRegistry.loadFlows(file, comp);
-        await EditableRegistry.loadExamples(file, comp);
-        await EditableRegistry.loadExamplesNew(file, comp);
-      }
-    } catch (e) {
-      console.log("Error in loading component", e);
+    for (const file of compFiles) {
+      if (!file.isDirectory()) continue;
+      await EditableRegistry.loadAttributes(file, comp);
+      await EditableRegistry.loadEnums(file, comp);
+      await EditableRegistry.loadTags(file, comp);
+      await EditableRegistry.loadFlows(file, comp);
+      // await EditableRegistry.loadExamples(file, comp);
+      await EditableRegistry.loadExamplesNew(file, comp);
     }
 
     return comp;
