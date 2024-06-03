@@ -54,7 +54,7 @@ export function FlowFolderContent({ flowFolder }: { flowFolder: Editable }) {
       const data = await getData(flowFolder.path);
       // console.log("myworld")
       setFolderData(data);
-      if (data.length > 0) {
+      if (data.length > 0 && !selectedFolder) {
         setSelectedFolder(data[0]);
       }
       reRender.current = !reRender.current;

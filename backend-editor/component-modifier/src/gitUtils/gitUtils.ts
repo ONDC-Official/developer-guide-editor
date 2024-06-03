@@ -214,7 +214,7 @@ export const changeBranch = async (
 export const getBranches = async (repoPath: string) => {
   const git = simpleGit(repoPath);
   const branches = await git.branch();
-  console.log(branches);
+  // console.log(branches);
   let allBranches = branches.all;
   allBranches = allBranches.filter((b) => b.includes("remotes/origin"));
 
@@ -324,7 +324,7 @@ const getRepoName = async (git: SimpleGit) => {
  */
 export const resetCurrentBranch = async (repoPath: string): Promise<void> => {
   const git = simpleGit(repoPath);
-  console.log(await printAllRemotes(git));
+  // console.log(await printAllRemotes(git));
   try {
     // Get the current branch name
     const currentBranchSummary = await git.branch();

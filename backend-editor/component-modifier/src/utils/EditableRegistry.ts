@@ -10,6 +10,8 @@ import {
   ExampleFolderType,
 } from "./ComponentType/examplesType/exampleFolderType";
 import { ExampleDomainFolderType } from "./ComponentType/examplesType/ExampleDomainFolderType";
+import { add } from "lodash";
+import { initRegistry } from "./RegisterList";
 
 type exampleYaml = Record<
   string,
@@ -63,15 +65,20 @@ export class EditableRegistry {
     compFiles = await fs_p.readdir(comp.folderPath, {
       withFileTypes: true,
     });
-    for (const file of compFiles) {
-      if (!file.isDirectory()) continue;
-
-      await EditableRegistry.loadAttributes(file, comp);
-      await EditableRegistry.loadEnums(file, comp);
-      await EditableRegistry.loadTags(file, comp);
-      await EditableRegistry.loadExamples(file, comp);
-      await EditableRegistry.loadFlows(file, comp);
+    try {
+      for (const file of compFiles) {
+        if (!file.isDirectory()) continue;
+        await EditableRegistry.loadAttributes(file, comp);
+        await EditableRegistry.loadEnums(file, comp);
+        await EditableRegistry.loadTags(file, comp);
+        await EditableRegistry.loadFlows(file, comp);
+        await EditableRegistry.loadExamples(file, comp);
+        await EditableRegistry.loadExamplesNew(file, comp);
+      }
+    } catch (e) {
+      console.log("Error in loading component", e);
     }
+
     return comp;
   }
 
@@ -290,8 +297,135 @@ export class EditableRegistry {
       }
     }
   }
-}
 
+  private static async loadExamplesNew(file: fs.Dirent, comp: ComponentsType) {
+    if (file.name !== "examples") return;
+    let existingIndexData = {};
+    let rawIndexData = {};
+    let subYamls: Record<string, any> = {};
+    const indexPath = `${comp.folderPath}/examples/index.yaml`;
+    const sumIndexPath = undefined;
+    if (fs.existsSync(indexPath)) {
+      existingIndexData = await loadYamlWithRefs(indexPath);
+      // rawIndexData = yaml.load(await readYamlFile(indexPath));
+      // for (const key of Object.keys(rawIndexData)) {
+      //   subYamls[key] = await yaml.load(
+      //     path.resolve(
+      //       `${comp.folderPath}/examples`,
+      //       rawIndexData[key].example_set.$ref
+      //     )
+      //   );
+      // }
+      // console.log("sub yamls", subYamls);
+    }
+    console.log("adding example folder");
+    await comp.add({ ID: "EXAMPLE_FOLDER" });
+    const exampleFolder = comp.getTarget(
+      "EXAMPLE_FOLDER",
+      "examples",
+      comp
+    ) as ExampleFolderType;
+    const exampleFolders = await fs_p.readdir(exampleFolder.folderPath, {
+      withFileTypes: true,
+    });
+
+    // iterating domains in Example folder
+    for (const domainFolder of exampleFolders) {
+      if (!domainFolder.isDirectory()) continue;
+
+      let description = "TBD";
+      let summary = "TBD";
+
+      if (existingIndexData[domainFolder.name]) {
+        description = existingIndexData[domainFolder.name].description;
+        summary = existingIndexData[domainFolder.name].summary;
+      }
+
+      await exampleFolder.add({
+        ID: "EXAMPLE_DOMAIN_FOLDER",
+        name: domainFolder.name,
+        description: description,
+        summary: summary,
+      });
+      const domainPath = `${exampleFolder.folderPath}/${domainFolder.name}`;
+      const apiFolders = await fs_p.readdir(domainPath, {
+        withFileTypes: true,
+      });
+      const addedExample = exampleFolder.getTarget(
+        "EXAMPLE_DOMAIN_FOLDER",
+        domainFolder.name,
+        exampleFolder
+      ) as ExampleDomainFolderType;
+
+      for (const apiFolder of apiFolders) {
+        if (!apiFolder.isDirectory()) continue;
+        if (apiFolder.name === "forms") continue;
+        const apiPath = `${domainPath}/${apiFolder.name}`;
+
+        const apiFiles = await fs_p.readdir(apiPath, {
+          withFileTypes: true,
+        });
+        // console.log("apiFiles", apiFiles);
+        for (const exampleYaml of apiFiles) {
+          if (!exampleYaml.isFile()) {
+            console.log("skipping", exampleYaml.name);
+            continue;
+          }
+          console.log("exampleYaml", exampleYaml.name);
+          const examplePath = `${apiPath}/${exampleYaml.name}`;
+          let exampleData = undefined;
+          try {
+            exampleData = yaml.load(await readYamlFile(examplePath));
+          } catch (e) {
+            console.log("cannot load", examplePath);
+          }
+          if (!exampleData) continue;
+
+          // load description and summary:
+          // let des = "TBD",
+          //   sum = exampleYaml.name;
+
+          // if (existingIndexData[domainFolder.name]) {
+          //   if (
+          //     existingIndexData[domainFolder.name].example_set[apiFolder.name]
+          //   ) {
+          //     const apiData: {
+          //       examples: {
+          //         summary: string;
+          //         description: string;
+          //         value: { $ref: string };
+          //       }[];
+          //     } =
+          //       existingIndexData[domainFolder.name].example_set[
+          //         apiFolder.name
+          //       ];
+          //   }
+          // }
+
+          await addedExample.add({
+            ID: "JSON",
+            name: apiFolder.name,
+            examples: {
+              [apiFolder.name]: [
+                {
+                  ID: "JSON",
+                  name: apiFolder.name,
+                  exampleName: exampleYaml.name.split(".")[0],
+                  summary: exampleYaml.name.split(".")[0],
+                  description: "TBD",
+                  exampleValue: exampleData,
+                },
+              ],
+            },
+          });
+        }
+      }
+    }
+  }
+}
+function loadExampleIndexYaml(path: string) {
+  if (!fs.existsSync(path)) return {};
+}
 function ForceUniqueSummary(data: {
   examples: { summary: string; description: string; value: { $ref: string } }[];
 }) {

@@ -40,9 +40,10 @@ export class ExampleDomainFolderType extends folderTypeEditable {
   async add(newExamples: AddNewExamples) {
     for (const key in newExamples.examples) {
       for (const example of newExamples.examples[key]) {
-        const generatedName =
-          key + "_" + example.summary.trim().split(" ").join("_");
-        example.exampleName = generatedName;
+        // const generatedName =
+        //   key + "_" + example.summary.trim().split(" ").join("_");
+        // example.exampleName = generatedName;
+        example.exampleName = example.summary.trim();
         example.name = key;
         await this.addSingleExample(example);
       }
@@ -51,7 +52,9 @@ export class ExampleDomainFolderType extends folderTypeEditable {
 
   async addSingleExample(newEditable: NewExample) {
     if (newEditable.name === "forms" && newEditable.ID !== "FORM") {
-      throw new Error("To use form please select form type");
+      throw new Error(
+        `To use form please select form type : ${JSON.stringify(newEditable)}`
+      );
     }
     if (newEditable.ID === "FORM") {
       await AddForm(
@@ -170,8 +173,9 @@ export class ExampleDomainFolderType extends folderTypeEditable {
     type: string;
   }) {
     if (update.type === "EXAMPLE") {
-      const exName =
-        update.oldName + "_" + update.summary.trim().split(" ").join("_");
+      //update.oldName + "_" +
+      const exName = update.summary.trim();
+      //.split(" ").join("_");
       let exValue = await readYamlFile(
         `${this.folderPath}/${update.oldName}/${exName}.yaml`
       );
