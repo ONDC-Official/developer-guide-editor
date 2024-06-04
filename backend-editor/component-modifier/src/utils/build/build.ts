@@ -1,7 +1,7 @@
 import fs from "fs"
 import yaml from "js-yaml";
 const path = require("path");
-import { isBinary, } from "../fileUtils";
+import { isBinary } from "../fileUtils";
 const unzipper = require('unzipper');
 
 
@@ -66,6 +66,8 @@ async function validateSchema(schema, data) {
 }
 
 async function becknCore(){
+  return new Promise((resolve,reject)=>{
+
 
 // argument example
 var zipFilePath = isBinary? path.join(path.dirname(process.execPath),`./FORKED_REPO/api/components/index.yaml`):`../FORKED_REPO/beckn-core.zip`; //args[1]; //  main file of the yamls
@@ -73,7 +75,12 @@ const outFolderPath = isBinary? path.join(path.dirname(process.execPath),`./FORK
 // const zipFilePath = './beckn-core.zip'; // Path to your ZIP file
 // const outFolderPath = './'; // Directory where you want to extract the files
 
-if(fs.existsSync(zipFilePath) && fs.readdirSync(`${outFolderPath}/beckn-core`).length < 5){
+
+
+if(!fs.existsSync(outFolderPath+"beckn-core") || fs.readdirSync(`${outFolderPath}beckn-core`).length < 5){ // check if files exists in beckn core folder or not
+  if(!fs.existsSync(zipFilePath)){ // use common beckn core if not available in forked folder
+    zipFilePath = isBinary? path.join(path.dirname(process.execPath),`./FORKED_REPO/api/components/index.yaml`):`./beckn-core.zip`; //args[1]; //  main file of the yamls
+  }
   fs.createReadStream(zipFilePath)
   .pipe(unzipper.Parse())
   .on('entry', function (entry) {
@@ -95,12 +102,16 @@ if(fs.existsSync(zipFilePath) && fs.readdirSync(`${outFolderPath}/beckn-core`).l
   })
   .on('close', () => {
     console.log('Beckn-core extraction complete');
+    resolve("")
+
   })
   .on('error', (err) => {
+    reject("")
     console.error('Error extracting ZIP file:', err);
   });
 }
 // console.log(fs.readdirSync(`${outFolderPath}/beckn-core`))
+})
 
 }
 
