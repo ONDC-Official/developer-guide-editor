@@ -1,4 +1,4 @@
-const fs = require("fs");
+import fs from "fs"
 import yaml from "js-yaml";
 const path = require("path");
 import { isBinary, } from "../fileUtils";
@@ -69,11 +69,12 @@ async function becknCore(){
 
 // argument example
 var zipFilePath = isBinary? path.join(path.dirname(process.execPath),`./FORKED_REPO/api/components/index.yaml`):`../FORKED_REPO/beckn-core.zip`; //args[1]; //  main file of the yamls
-const outFolderPath = isBinary? path.join(path.dirname(process.execPath),`./FORKED_REPO/api/components/index.yaml`):`../FORKED_REPO/api/${folderName}/index.yaml`; //args[1]; //  main file of the yamls
+const outFolderPath = isBinary? path.join(path.dirname(process.execPath),`./FORKED_REPO/api/components/index.yaml`):`../FORKED_REPO/`; //args[1]; //  main file of the yamls
 // const zipFilePath = './beckn-core.zip'; // Path to your ZIP file
 // const outFolderPath = './'; // Directory where you want to extract the files
 
-fs.createReadStream(zipFilePath)
+if(fs.existsSync(zipFilePath) && fs.readdirSync(`${outFolderPath}/beckn-core`).length < 5){
+  fs.createReadStream(zipFilePath)
   .pipe(unzipper.Parse())
   .on('entry', function (entry) {
     const fileName = entry.path;
@@ -93,11 +94,13 @@ fs.createReadStream(zipFilePath)
     }
   })
   .on('close', () => {
-    console.log('Extraction complete');
+    console.log('Beckn-core extraction complete');
   })
   .on('error', (err) => {
     console.error('Error extracting ZIP file:', err);
   });
+}
+// console.log(fs.readdirSync(`${outFolderPath}/beckn-core`))
 
 }
 
@@ -384,7 +387,7 @@ async function getSwaggerYaml(example_set, outputPath) {
       examples = examples[example_set];
       buildSwagger(base_yaml, tempPath);
       const spec_file =  fs.readFileSync(tempPath);
-      const spec = yaml.load(spec_file);
+      const spec = yaml.load(spec_file.toString());
       addEnumTag(spec, schema);
       const result = await GenerateYaml(spec, examples, outputPath);
       cleanup();
@@ -499,8 +502,7 @@ function writeFilenamesToYaml(filenames) {
 
 export async function buildWrapper(folderName) {
   try {
-    becknCore()
-    return
+    await  becknCore() // extract beckn core
     const markdownFiles = checkMDFiles();
     writeFilenamesToYaml(markdownFiles);
 
