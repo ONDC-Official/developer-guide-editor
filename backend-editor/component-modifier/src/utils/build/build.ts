@@ -1,7 +1,9 @@
 const fs = require("fs");
 import yaml from "js-yaml";
 const path = require("path");
-import { isBinary } from "../fileUtils";
+import { isBinary, } from "../fileUtils";
+const unzipper = require('unzipper');
+
 
 const $RefParser = require("json-schema-ref-parser");
 const { execSync } = require("child_process");
@@ -61,6 +63,42 @@ async function validateSchema(schema, data) {
     return true;
   }
   return false;
+}
+
+async function becknCore(){
+
+// argument example
+var zipFilePath = isBinary? path.join(path.dirname(process.execPath),`./FORKED_REPO/api/components/index.yaml`):`../FORKED_REPO/beckn-core.zip`; //args[1]; //  main file of the yamls
+const outFolderPath = isBinary? path.join(path.dirname(process.execPath),`./FORKED_REPO/api/components/index.yaml`):`../FORKED_REPO/api/${folderName}/index.yaml`; //args[1]; //  main file of the yamls
+// const zipFilePath = './beckn-core.zip'; // Path to your ZIP file
+// const outFolderPath = './'; // Directory where you want to extract the files
+
+fs.createReadStream(zipFilePath)
+  .pipe(unzipper.Parse())
+  .on('entry', function (entry) {
+    const fileName = entry.path;
+    const type = entry.type; // 'Directory' or 'File'
+    const fullPath = path.join(outFolderPath, fileName);
+
+    if (fileName.startsWith('__MACOSX')) {
+      // Skip macOS metadata directories
+      entry.autodrain();
+    } else {
+      if (type === 'Directory') {
+        fs.mkdirSync(fullPath, { recursive: true });
+        entry.autodrain();
+      } else {
+        entry.pipe(fs.createWriteStream(fullPath));
+      }
+    }
+  })
+  .on('close', () => {
+    console.log('Extraction complete');
+  })
+  .on('error', (err) => {
+    console.error('Error extracting ZIP file:', err);
+  });
+
 }
 
 async function validateFlows(flows, schemaMap) {
@@ -461,6 +499,8 @@ function writeFilenamesToYaml(filenames) {
 
 export async function buildWrapper(folderName) {
   try {
+    becknCore()
+    return
     const markdownFiles = checkMDFiles();
     writeFilenamesToYaml(markdownFiles);
 
