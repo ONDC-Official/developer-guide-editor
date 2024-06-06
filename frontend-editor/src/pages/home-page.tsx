@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { ComponentsStructure, Editable } from "../components/file-structure";
 import { UndoData, getData } from "../utils/requestUtils";
 import FullPageLoader from "../components/loader";
@@ -104,6 +104,7 @@ export function HomePage({ editMode }: { editMode: boolean }) {
         activeEditable: activeEditable,
         setActiveEditable: setActiveEditable,
         setReload: setRefresh,
+        editMode: editMode,
       }}
     >
       (
@@ -126,9 +127,10 @@ function ComponentView({
   activeEditable: Editable | undefined;
   parentComp: Editable;
 }) {
+  const editState = useContext(DataContext).editMode;
   return (
     <>
-      <GitActionsTab />
+      {editState && <GitActionsTab />}
       <div className="flex w-full h-full overflow-hidden">
         <ComponentsStructure
           componentsChildren={components}
