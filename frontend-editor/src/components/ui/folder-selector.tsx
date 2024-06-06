@@ -2,6 +2,7 @@ import React, { ChangeEvent, useContext } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { DataContext } from "../../context/dataContext";
+import FullPageLoader from "../loader";
 
 interface CustomInputAttributes
   extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -10,7 +11,7 @@ interface CustomInputAttributes
 }
 
 function FolderSelector({ afterUpload }: { afterUpload: any }) {
-  const dataContext = useContext(DataContext);
+  const [loading, setLoading] = React.useState(false);
 
   const handleFolderSelect = async (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -23,7 +24,7 @@ function FolderSelector({ afterUpload }: { afterUpload: any }) {
       });
 
       try {
-        dataContext.setLoading(true);
+        setLoading(true);
 
         const response = await axios.post(
           "http://localhost:1000/local/upload",
@@ -35,13 +36,13 @@ function FolderSelector({ afterUpload }: { afterUpload: any }) {
           }
         );
         console.log(response.data);
-        dataContext.setLoading(false);
+        setLoading(false);
         afterUpload({ componentName: "uploads" });
         toast.success("Upload successful!");
       } catch (error: any) {
         console.error("Error uploading files:", error);
         toast.error("Upload failed! " + (error?.message || ""));
-        dataContext.setLoading(false);
+        setLoading(false);
       }
     }
   };
@@ -66,6 +67,7 @@ function FolderSelector({ afterUpload }: { afterUpload: any }) {
           />
         </label>
       </div>
+      {loading && <FullPageLoader />}
     </div>
   );
 }

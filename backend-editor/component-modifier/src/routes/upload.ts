@@ -4,18 +4,20 @@ import path from "path";
 import fs from "fs";
 import { deleteFolderSync } from "../utils/fileUtils";
 import axios from "axios";
-
+import archiver from "archiver";
 export const app = express();
+
+const folderPath = path.resolve(
+  __dirname,
+  "../../../FORKED_REPO/api/components"
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const basePath = path.resolve(
-      __dirname,
-      "../../../ONDC-NTS-Specifications/api/uploads"
-    );
+    const basePath = folderPath;
     const relativePath = path.dirname(file.originalname);
 
     // Split the path into components
@@ -36,9 +38,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage, preservePath: true }).array("files");
 
 app.post("/upload", async (req, res) => {
-  await deleteFolderSync(
-    path.resolve(__dirname, "../../../ONDC-NTS-Specifications/api/uploads")
-  );
+  await deleteFolderSync(path.resolve(__dirname, "../../../FORKED_REPO"));
   console.log("POST /local/upload Request Body:", req.body);
   upload(req, res, (err) => {
     if (err) {
@@ -47,4 +47,32 @@ app.post("/upload", async (req, res) => {
     axios.delete("http://localhost:1000/tree/sessions");
     res.status(200).json({ message: "Files uploaded successfully" });
   });
+});
+
+app.get("/download", (req, res) => {
+  const outPath = path.join(__dirname, "comp.zip");
+  const output = fs.createWriteStream(outPath);
+  const archive = archiver("zip", {
+    zlib: { level: 9 },
+  });
+
+  output.on("close", () => {
+    res.download(outPath, "components.zip", (err) => {
+      if (err) {
+        console.error("Error downloading file:", err);
+        res.status(500).send("Error downloading file");
+      }
+      fs.unlinkSync(outPath);
+    });
+  });
+
+  archive.on("error", (err) => {
+    throw err;
+  });
+
+  archive.pipe(output);
+
+  archive.directory(folderPath, false);
+
+  archive.finalize();
 });

@@ -36,6 +36,7 @@ export function ExampleContent({
   async function getExampleFolder() {
     const data = await getData(exampleEditable.path);
     setFolderData(data);
+    console.log(data);
     if (Object.keys(data).length > 0 && !selectedFolder) {
       setSelectedFolder(Object.keys(data)[0]);
     }
@@ -124,13 +125,14 @@ function ExampleApis({
   const [apiData, setApiData] = React.useState<Record<string, ExampleData[]>>(
     {}
   );
-  async function getExampleApis() {
-    const data = await getData(example.path);
-    setApiData(data);
-  }
+
   useEffect(() => {
+    async function getExampleApis() {
+      const data = await getData(example.path);
+      setApiData(data);
+    }
     getExampleApis();
-  }, [reRender, example.name]);
+  }, [reRender, example.name, example.path]);
   return (
     <div>
       <div className="mt-2 max-w-full">
@@ -210,7 +212,7 @@ function ExampleDisclose({
             <Disclosure.Panel>
               {data.map((t, i) => (
                 <ExampleList
-                  key={i}
+                  key={Math.random()}
                   exampleData={t}
                   index={i}
                   exampleEditable={editable}
@@ -385,6 +387,7 @@ function FormDisclose({
                 name: "form",
                 summary: summary,
                 exampleValue: html,
+                exampleName: formName,
               },
             ],
           },
@@ -394,6 +397,8 @@ function FormDisclose({
     },
   };
   const jsonToolTip = useEditorToolTip([true, false, true]);
+  const jsonToolTip2 = useEditorToolTip([true, false, true]);
+  jsonToolTip2.data.current = formEditable;
   jsonToolTip.data.current = formEditable;
   return (
     <Disclosure>
@@ -409,17 +414,23 @@ function FormDisclose({
         </Tippy>
       </Disclosure.Button>
       <Disclosure.Panel>
-        <div className="ml-6 p-3 shadow-inner bg-gray-100">
-          <div className="p-2 border border-blue-50 mr-2">
-            <div className="text-left flex w-full">
-              <pre className=" text-gray-800 block shadow w-full">{html}</pre>
-              <pre
-                className="content text-gray-800 block shadow w-full"
-                dangerouslySetInnerHTML={{ __html: html }}
-              />
+        <Tippy {...jsonToolTip2.tippyProps}>
+          <div
+            className="ml-6 p-3 shadow-inner bg-gray-100 hover:bg-white"
+            onContextMenu={jsonToolTip2.onContextMenu}
+          >
+            <div className="p-2 border border-blue-50 mr-2">
+              <div className="text-left flex w-full">
+                <div
+                  className="formDisplay content text-gray-800 block shadow w-full "
+                  style={{ pointerEvents: "none" }}
+                  // key={Math.random()}
+                  dangerouslySetInnerHTML={{ __html: html }}
+                />
+              </div>
             </div>
           </div>
-        </div>
+        </Tippy>
       </Disclosure.Panel>
     </Disclosure>
   );
@@ -432,7 +443,13 @@ async function convertFormat(data: Record<string, ExampleData[]>) {
 
   for (const key in data) {
     exampleFormat.examples[key] = data[key].map((e) => {
-      const converted = {
+      const converted: {
+        ID: string;
+        summary: string;
+        description: string;
+        exampleValue: any;
+        exampleName?: string;
+      } = {
         ID: "JSON",
         // name: key,
         // exampleName: e.apiName,
@@ -444,7 +461,7 @@ async function convertFormat(data: Record<string, ExampleData[]>) {
         converted.ID = "FORM";
         converted.exampleValue = e.formHtml;
         converted.summary = e.formName;
-        // converted.exampleName = e.formName;
+        converted.exampleName = e.formName;
       }
       return converted;
     });

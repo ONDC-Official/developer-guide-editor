@@ -10,8 +10,6 @@ import {
   ExampleFolderType,
 } from "./ComponentType/examplesType/exampleFolderType";
 import { ExampleDomainFolderType } from "./ComponentType/examplesType/ExampleDomainFolderType";
-import { add } from "lodash";
-import { initRegistry } from "./RegisterList";
 
 type exampleYaml = Record<
   string,
@@ -71,7 +69,6 @@ export class EditableRegistry {
       await EditableRegistry.loadEnums(file, comp);
       await EditableRegistry.loadTags(file, comp);
       await EditableRegistry.loadFlows(file, comp);
-      // await EditableRegistry.loadExamples(file, comp);
       await EditableRegistry.loadExamplesNew(file, comp);
     }
 
@@ -303,16 +300,18 @@ export class EditableRegistry {
     const sumIndexPath = undefined;
     if (fs.existsSync(indexPath)) {
       existingIndexData = await loadYamlWithRefs(indexPath);
-      // rawIndexData = yaml.load(await readYamlFile(indexPath));
-      // for (const key of Object.keys(rawIndexData)) {
-      //   subYamls[key] = await yaml.load(
-      //     path.resolve(
-      //       `${comp.folderPath}/examples`,
-      //       rawIndexData[key].example_set.$ref
-      //     )
-      //   );
-      // }
-      // console.log("sub yamls", subYamls);
+      existingIndexData = existingIndexData || {};
+      rawIndexData = yaml.load(await readYamlFile(indexPath));
+      rawIndexData = rawIndexData || {};
+      for (const key of Object.keys(rawIndexData)) {
+        subYamls[key] = await yaml.load(
+          path.resolve(
+            `${comp.folderPath}/examples`,
+            rawIndexData[key].example_set.$ref
+          )
+        );
+      }
+      console.log("sub yamls", subYamls);
     }
     console.log("adding example folder");
     await comp.add({ ID: "EXAMPLE_FOLDER" });

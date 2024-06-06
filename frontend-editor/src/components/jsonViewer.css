@@ -31,3 +31,58 @@
 .jsonViewer:hover {
   --w-rjv-background-color: #ffffff; /* Light grey, your specified background */
 }
+
+.formDisplay {
+  padding: 16px;
+  color: #333; /* General text color */
+  line-height: 1.6; /* Improved readability */
+}
+
+.formDisplay input,
+.formDisplay select,
+.formDisplay textarea {
+  width: calc(100% - 32px); /* Full width minus padding */
+  padding: 8px; /* Space inside input elements */
+  margin: 8px 0; /* Space outside input elements */
+  border: 1px solid #ccc; /* Border styling */
+  border-radius: 4px; /* Rounded corners */
+}
+
+.formDisplay div {
+  margin: 8px 0; /* Space outside div elements */
+  padding: 8px; /* Space inside div elements */
+}
+
+.formDisplay h1,
+.formDisplay h2,
+.formDisplay h3,
+.formDisplay h4,
+.formDisplay h5,
+.formDisplay h6 {
+  margin: 16px 0 8px; /* Space outside header elements */
+  padding: 8px 0; /* Space inside header elements */
+  border-bottom: 2px solid #ccc; /* Border styling for headers */
+}
+
+.formDisplay p {
+  margin: 8px 0; /* Space outside paragraph elements */
+}
+
+.formDisplay ul,
+.formDisplay ol {
+  margin: 8px 0; /* Space outside list elements */
+  padding-left: 20px; /* Indent list items */
+}
+
+.formDisplay li {
+  margin: 4px 0; /* Space between list items */
+}
+
+.formDisplay button {
+  padding: 8px 16px; /* Space inside button elements */
+  margin: 8px 0; /* Space outside button elements */
+  border: 1px solid #ccc; /* Border styling */
+  border-radius: 4px; /* Rounded corners */
+  background-color: #fff; /* Button background */
+  cursor: not-allowed; /* Indicate non-interactability */
+}

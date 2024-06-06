@@ -129,7 +129,9 @@ export class ExampleDomainFolderType extends folderTypeEditable {
     console.log(deleteTarget);
     if (deleteTarget.formName) {
       console.log("deleting form", deleteTarget.formName);
-      await deleteFile(this.folderPath + `/form/${deleteTarget.formName}.html`);
+      await deleteFile(
+        this.folderPath + `/forms/${deleteTarget.formName}.html`
+      );
       return;
     }
     if (deleteTarget.exampleName) {

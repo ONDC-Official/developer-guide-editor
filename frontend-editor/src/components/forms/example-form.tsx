@@ -2,7 +2,7 @@ import { on } from "events";
 import { Editable } from "../file-structure";
 import GenericForm from "./generic-form";
 import FormSelect from "./form-select";
-import {FormInput} from "./form-input";
+import { FormInput } from "./form-input";
 import { getData, patchData, postData } from "../../utils/requestUtils";
 import { ExampleData } from "../example-content";
 import JsonField from "./JsonField";
@@ -156,7 +156,7 @@ export function AddNewExampleForm({
           strip={true}
           required={true}
         /> */}
-        <FormInput name="summary" label="Summary" />
+        <FormInput name="summary" label="Summary" strip={true} />
         <FormInput name="description" label="Description" />
       </GenericForm>
     </>
@@ -234,7 +234,7 @@ export function EditExampleCategoryForm({
       defaultValues={defaultValues}
       className="w-full mx-auto my-4 p-4 border rounded-lg shadow-blue-500"
     >
-      <FormInput name="summary" label="Summary" required={true} />
+      <FormInput name="summary" label="Summary" required={true} strip={true} />
       <FormInput name="description" label="Description" required={true} />
     </GenericForm>
   );
@@ -256,15 +256,16 @@ export function EditHtmlForm({
         form: [
           {
             ID: "FORM",
-            name: "forms",
+            name: "form",
             exampleName: data.name,
-            summary: summary,
+            summary: data.name,
             exampleValue: FormData,
           },
         ],
       },
     };
     await postData(data.path, body);
+    console.log(data.query.getData);
     await data.query.getData();
     setIsOpen(false);
   }

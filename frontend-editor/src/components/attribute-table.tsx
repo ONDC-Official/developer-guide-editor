@@ -163,7 +163,9 @@ function DataTable({
   fileData: any;
   editable: Editable;
 }) {
+  const [searchQuery, setSearchQuery] = useState("");
   const data = fileData[activeTable] || [];
+
   const headTooltip = useEditorToolTip([false, true, true]);
   headTooltip.data.current = {
     name: editable.name,
@@ -184,40 +186,55 @@ function DataTable({
     },
   };
 
+  const filteredData = data.filter((row: any) =>
+    Object.values(row).some((val: any) =>
+      String(val).toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  );
+
   return (
-    <table className="w-full mt-2 border-collapse table-auto">
-      <thead
-        onContextMenu={headTooltip.onContextMenu}
-        onMouseOver={headTooltip.onMouseOver}
-        onMouseOut={headTooltip.onMouseOut}
-      >
-        <Tippy {...headTooltip.tippyProps}>
-          <tr className="hover:bg-blue-200">
-            {activeTable != "" &&
-              Object.keys(n.nodes[0]).map((key, index) => (
-                <th
-                  key={index}
-                  className="px-4 py-2 text-left border-b-2 border-gray-200 "
-                  style={{ minWidth: "120px", maxWidth: "200px" }}
-                >
-                  {key.toUpperCase()}
-                </th>
-              ))}
-          </tr>
-        </Tippy>
-      </thead>
-      <tbody>
-        {data.map((row: any, index: any) => (
-          <TableRow
-            index={index}
-            row={row}
-            sheetName={activeTable}
-            editable={editable}
-            key={index}
-          />
-        ))}
-      </tbody>
-    </table>
+    <div className="w-full mt-2">
+      <input
+        type="text"
+        className="w-full p-2 mb-4 border border-gray-400 bg-gray-100 placeholder-gray-500 text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-300 transition duration-200"
+        placeholder="Search..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+      />
+      <table className="w-full border-collapse table-auto">
+        <thead
+          onContextMenu={headTooltip.onContextMenu}
+          onMouseOver={headTooltip.onMouseOver}
+          onMouseOut={headTooltip.onMouseOut}
+        >
+          <Tippy {...headTooltip.tippyProps}>
+            <tr className="hover:bg-blue-200">
+              {activeTable != "" &&
+                Object.keys(data[0] || {}).map((key, index) => (
+                  <th
+                    key={index}
+                    className="px-4 py-2 text-left border-b-2 border-gray-200"
+                    style={{ minWidth: "120px", maxWidth: "200px" }}
+                  >
+                    {key.toUpperCase()}
+                  </th>
+                ))}
+            </tr>
+          </Tippy>
+        </thead>
+        <tbody>
+          {filteredData.map((row: any, index: any) => (
+            <TableRow
+              index={index}
+              row={row}
+              sheetName={activeTable}
+              editable={editable}
+              key={index}
+            />
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 

@@ -15,7 +15,7 @@ import { BiPlayCircle } from "react-icons/bi";
 import LoadingButton from "./components/ui/loadingButton";
 import { sendBuildRequest } from "./utils/requestUtils";
 import { MdEdit, MdEditOff } from "react-icons/md";
-import { GlobalEditMode, ToggleLocalEditMode } from "./utils/config";
+import { GlobalEditMode } from "./utils/config";
 
 function App() {
   const navigate = useNavigate();

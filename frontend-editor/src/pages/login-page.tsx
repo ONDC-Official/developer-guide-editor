@@ -13,6 +13,97 @@ import { FaGithub } from "react-icons/fa";
 import { MdInfoOutline } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import FolderSelector from "../components/ui/folder-selector";
+
+function LoginCard(props: { handleInputChange: any; handleLogin: any }) {
+  return (
+    <Card className="mx-auto max-w-sm bg-white bg-opacity-20 backdrop-blur-md p-6 rounded-lg shadow-lg mt-28">
+      <CardHeader className="space-y-1">
+        <CardTitle className="text-3xl md:text-3xl lg:text-3xl font-bold text-transparent bg-clip-text flex-grow bg-blue-500 mb-4">
+          Login
+        </CardTitle>
+        <CardDescription>
+          Enter git details below to login to your account
+        </CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <label
+              htmlFor="username"
+              className=" text-lg md:text-m lg:text-m font-bold text-transparent bg-clip-text flex-grow bg-blue-500"
+            >
+              GIT USERNAME
+            </label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              className="w-full items-center space-x-2 text-blue-900 font-semibold bg-blue-50 py-2 px-4 rounded border border-blue-200 transition duration-150 ease-in-out focus-within:ring-2 focus-within:ring-blue-700 focus-within:ring-opacity-50 shadow-sm"
+              required
+              onChange={props.handleInputChange}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label
+              htmlFor="token"
+              className="text-lg  md:text-m lg:text-m font-bold text-transparent bg-clip-text flex-grow bg-blue-500"
+            >
+              GIT PAT TOKEN:
+              <button
+                className=" hover:bg-grey-700 text-black font-bold p-1"
+                onClick={() =>
+                  window.open(
+                    "https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens"
+                  )
+                }
+              >
+                <MdInfoOutline
+                  className="inline-block text-sm text-blue-500"
+                  size={20}
+                />
+              </button>
+            </label>
+            <input
+              type="token"
+              id="token"
+              name="token"
+              className="w-full items-center space-x-2 text-blue-900 font-semibold bg-blue-50 py-2 px-4 rounded border border-blue-200 transition duration-150 ease-in-out focus-within:ring-2 focus-within:ring-blue-700 focus-within:ring-opacity-50 shadow-sm"
+              required
+              onChange={props.handleInputChange}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label
+              htmlFor="token"
+              className="text-lg  md:text-m lg:text-m font-bold text-transparent bg-clip-text flex-grow bg-blue-500"
+            >
+              REPO LINK (WITHOUT .GIT):
+            </label>
+            <input
+              type="url"
+              id="repoLink"
+              name="repoLink"
+              className="w-full items-center space-x-2 text-blue-900 font-semibold bg-blue-50 py-2 px-4 rounded border border-blue-200 transition duration-150 ease-in-out focus-within:ring-2 focus-within:ring-blue-700 focus-within:ring-opacity-50 shadow-sm"
+              required
+              onChange={props.handleInputChange}
+            />
+          </div>
+          <button
+            className="flex-auto w-full bg-blue-500 hover:bg-blue-400 text-white font-semibold py-2 px-4 rounded transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-opacity-50 shadow-md flex items-center justify-center"
+            onClick={props.handleLogin}
+          >
+            <FaGithub className="mr-2" size={20} />
+            Submit
+          </button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 function GitLogin() {
   const [username, setUsername] = useState("");
@@ -52,93 +143,29 @@ function GitLogin() {
     setLoading(false);
   };
 
+  const onSubmit = (data: any) => {
+    // dataContext.activePath.current = data.componentName;
+    // dataContext.setActivePath(data.componentName);
+    navigate("/home");
+  };
   return (
     <div className="bg-gray-200 p-4 h-screen">
-      <Card className="mx-auto max-w-sm bg-white bg-opacity-20 backdrop-blur-md p-6 rounded-lg shadow-lg mt-28">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-3xl md:text-3xl lg:text-3xl font-bold text-transparent bg-clip-text flex-grow bg-blue-500 mb-4">
-            Login
-          </CardTitle>
-          <CardDescription>
-            Enter git details below to login to your account
-          </CardDescription>
-        </CardHeader>
-
-        <CardContent>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <label
-                htmlFor="username"
-                className=" text-lg md:text-m lg:text-m font-bold text-transparent bg-clip-text flex-grow bg-blue-500"
-              >
-                GIT USERNAME
-              </label>
-              <input
-                type="text"
-                id="username"
-                name="username"
-                className="w-full items-center space-x-2 text-blue-900 font-semibold bg-blue-50 py-2 px-4 rounded border border-blue-200 transition duration-150 ease-in-out focus-within:ring-2 focus-within:ring-blue-700 focus-within:ring-opacity-50 shadow-sm"
-                required
-                onChange={handleInputChange}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label
-                htmlFor="token"
-                className="text-lg  md:text-m lg:text-m font-bold text-transparent bg-clip-text flex-grow bg-blue-500"
-              >
-                GIT PAT TOKEN:
-                <button
-                  className=" hover:bg-grey-700 text-black font-bold p-1"
-                  onClick={() =>
-                    window.open(
-                      "https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens"
-                    )
-                  }
-                >
-                  <MdInfoOutline
-                    className="inline-block text-sm text-blue-500"
-                    size={20}
-                  />
-                </button>
-              </label>
-              <input
-                type="token"
-                id="token"
-                name="token"
-                className="w-full items-center space-x-2 text-blue-900 font-semibold bg-blue-50 py-2 px-4 rounded border border-blue-200 transition duration-150 ease-in-out focus-within:ring-2 focus-within:ring-blue-700 focus-within:ring-opacity-50 shadow-sm"
-                required
-                onChange={handleInputChange}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label
-                htmlFor="token"
-                className="text-lg  md:text-m lg:text-m font-bold text-transparent bg-clip-text flex-grow bg-blue-500"
-              >
-                REPO LINK (WITHOUT .GIT):
-              </label>
-              <input
-                type="url"
-                id="repoLink"
-                name="repoLink"
-                className="w-full items-center space-x-2 text-blue-900 font-semibold bg-blue-50 py-2 px-4 rounded border border-blue-200 transition duration-150 ease-in-out focus-within:ring-2 focus-within:ring-blue-700 focus-within:ring-opacity-50 shadow-sm"
-                required
-                onChange={handleInputChange}
-              />
-            </div>
-            <button
-              className="flex-auto w-full bg-blue-500 hover:bg-blue-400 text-white font-semibold py-2 px-4 rounded transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-opacity-50 shadow-md flex items-center justify-center"
-              onClick={handleLogin}
-            >
-              <FaGithub className="mr-2" size={20} />
-              Submit
-            </button>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="flex space-x-4 items-center">
+        <LoginCard
+          handleInputChange={handleInputChange}
+          handleLogin={handleLogin}
+        />
+        <div className="flex flex-col items-center space-y-2">
+          <span className="text-gray-600">OR</span>
+          <FolderSelector afterUpload={onSubmit} />
+          <label
+            htmlFor="folderInput"
+            className="flex items-center px-4 py-2 text-indigo-600 text-sm font-medium transition duration-200 border-2 border-indigo-600 hover:bg-indigo-600 hover:text-white cursor-pointer"
+          >
+            Select Folder
+          </label>
+        </div>
+      </div>
       {loading && <FullPageLoader />}
     </div>
   );

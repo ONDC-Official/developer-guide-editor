@@ -3,6 +3,7 @@ import useEditorToolTip from "../hooks/useEditorToolTip";
 import React, { useContext, useState } from "react";
 import { CompFolderID } from "../pages/home-page";
 import { DataContext } from "../context/dataContext";
+import { BsWindowDock } from "react-icons/bs";
 const d = [""]; // Sample data
 
 export interface EditableQuery {
@@ -42,7 +43,7 @@ export const ComponentsStructure = ({
   if (!componentsChildren) return <></>;
   return (
     <div
-      className={`flex flex-col h-screen w-64 hover:bg-blue-100 border-gray-500 border-x-2 fixed left-0 z-50 top-20 mt-14`}
+      className={`flex flex-col h-screen w-64 hover:bg-blue-100 border-gray-500 border-x-2 fixed left-0 top-20 mt-14`}
       onContextMenu={tooltip.onContextMenu}
     >
       <Tippy {...tooltip.tippyProps}>
@@ -80,7 +81,9 @@ function Tab({ item, index, activeTab, handleTabClick }: any) {
             onClick={() => handleTabClick(item)}
             className={tabClass(activeTab?.name === item.name)}
           >
-            {thisItem?.name.toUpperCase()}
+            <span className="flex items-center text-center font-medium px-3 py-1">
+              {thisItem?.name.toUpperCase()}
+            </span>
           </button>
         </li>
       </Tippy>

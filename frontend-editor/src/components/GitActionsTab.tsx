@@ -2,7 +2,7 @@ import axios from "axios";
 import { GlobalEditMode } from "../utils/config";
 import { Listbox, Transition } from "@headlessui/react";
 import React, { useEffect, useRef, useState } from "react";
-import { BiCheck } from "react-icons/bi";
+import { BiCheck, BiDownload } from "react-icons/bi";
 import { FaExclamationCircle, FaGithub, FaUndo } from "react-icons/fa";
 import { RiArrowUpDownFill } from "react-icons/ri";
 import { DataContext } from "../context/dataContext";
@@ -95,22 +95,32 @@ export function GitActionsTab({}) {
     setAction("status");
   }
 
+  const downloadFile = async () => {
+    try {
+      const response = await axios.get("http://localhost:1000/local/download", {
+        responseType: "blob", // important to receive the response as a blob
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "download.zip"); // specify the file name
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast.success("Downloading....");
+    } catch (error) {
+      console.error("Error downloading the file", error);
+      toast.error("Download Failed!");
+    }
+  };
+
   if (!selected) return <>loading</>;
   return (
     <>
       <div className="flex flex-row h-14 w-full bg-slate-200 fixed top-20 z-10 border-b-2 border-t-2 border-gray-500">
         <div className="flex items-center justify-between w-full px-4">
-          <div className="relative inline-block text-left">
-            <a
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-800 underline font-medium"
-            >
-              {url}
-            </a>
-          </div>
-          <div className="flex items-center space-x-2">
+          <div className=" flex items-start">
             <BranchListBox
               branches={branches}
               selected={selected}
@@ -120,6 +130,18 @@ export function GitActionsTab({}) {
                 >
               }
             />
+            <div className="relative inline-block text-left mt-2 ml-2">
+              <a
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:text-blue-800 underline font-medium"
+              >
+                OPEN IN GITHUB
+              </a>
+            </div>
+          </div>
+          <div className="flex items-center space-x-2">
             {GlobalEditMode && (
               <div className="flex items-center space-x-2">
                 <button
@@ -129,14 +151,14 @@ export function GitActionsTab({}) {
                   }}
                   className="flex items-center text-sm font-medium px-4 py-2 text-red-600 transition duration-200 border-2 border-red-600 hover:bg-red-600 hover:text-white"
                 >
-                  <FaUndo className="mr-2" />
+                  <FaUndo className="mr-2" size={20} />
                   RESET
                 </button>
                 <button
                   onClick={handleStatusClick}
                   className="flex items-center px-4 py-2 text-yellow-600 text-sm font-medium transition duration-200 border-2 border-yellow-600 hover:bg-yellow-600 hover:text-white"
                 >
-                  <FaExclamationCircle className="mr-2" />
+                  <FaExclamationCircle className="mr-2" size={20} />
                   STATUS
                 </button>
                 <button
@@ -146,8 +168,15 @@ export function GitActionsTab({}) {
                   }}
                   className="flex items-center px-4 py-2 text-green-600 text-sm font-medium transition duration-200 border-2 border-green-600 hover:bg-green-600 hover:text-white"
                 >
-                  <FaGithub className="mr-2" />
+                  <FaGithub className="mr-2" size={20} />
                   OPEN PR
+                </button>
+                <button
+                  onClick={downloadFile}
+                  className="flex items-center px-4 py-2 text-indigo-600 text-sm font-medium transition duration-200 border-2 border-indigo-600 hover:bg-indigo-600 hover:text-white"
+                >
+                  <BiDownload className="mr-2" size={20} />
+                  DOWNLOAD
                 </button>
               </div>
             )}
@@ -188,8 +217,8 @@ export function BranchListBox({
 }) {
   return (
     <Listbox value={selected} onChange={onChange}>
-      <div className="relative">
-        <Listbox.Button className="relative w-full min-w-72 cursor-default bg-white px-4 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 sm:text-sm font-medium border-2 transition duration-200">
+      <div className="relative z-50">
+        <Listbox.Button className="relative w-full min-w-80 cursor-default bg-white px-4 py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-300 sm:text-sm font-medium border-2 transition duration-200">
           <span className="block truncate">{selected.name}</span>
           <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
             <RiArrowUpDownFill
