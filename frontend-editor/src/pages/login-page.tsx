@@ -155,7 +155,7 @@ function GitLogin() {
           handleInputChange={handleInputChange}
           handleLogin={handleLogin}
         />
-        <div className="flex flex-col items-center space-y-2">
+        {/* <div className="flex flex-col items-center space-y-2">
           <span className="text-gray-600">OR</span>
           <FolderSelector afterUpload={onSubmit} />
           <label
@@ -164,7 +164,7 @@ function GitLogin() {
           >
             Select Folder
           </label>
-        </div>
+        </div> */}
       </div>
       {loading && <FullPageLoader />}
     </div>
