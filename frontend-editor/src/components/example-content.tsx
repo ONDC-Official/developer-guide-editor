@@ -13,7 +13,7 @@ import useEditorToolTip from "../hooks/useEditorToolTip";
 import Tippy from "@tippyjs/react";
 import "./jsonViewer.css";
 import { FaHtml5 } from "react-icons/fa";
-import prettier from "prettier/standalone";
+import beautify from "js-beautify";
 
 export interface ExampleData {
   summary: string;
@@ -129,6 +129,7 @@ function ExampleApis({
   useEffect(() => {
     async function getExampleApis() {
       const data = await getData(example.path);
+
       setApiData(data);
     }
     getExampleApis();
@@ -139,14 +140,16 @@ function ExampleApis({
         <div className="flex w-full">
           <div className="flex-1">
             {apiData &&
-              Object.keys(apiData).map((apiName, index) => (
-                <ExampleDisclose
-                  key={index}
-                  apiName={apiName}
-                  data={apiData[apiName]}
-                  exampleEditable={example}
-                />
-              ))}
+              Object.keys(apiData)
+                .toSorted()
+                .map((apiName, index) => (
+                  <ExampleDisclose
+                    key={apiName + index}
+                    apiName={apiName}
+                    data={apiData[apiName]}
+                    exampleEditable={example}
+                  />
+                ))}
           </div>
         </div>
       </div>
@@ -186,7 +189,7 @@ function ExampleDisclose({
   };
   apiToolTip.data.current = editable;
   return (
-    <Disclosure>
+    <Disclosure as={"div"} key={apiName + apiName}>
       {({ open }) => (
         <>
           <Disclosure.Button
@@ -210,9 +213,9 @@ function ExampleDisclose({
           </Disclosure.Button>
           <DropTransition>
             <Disclosure.Panel>
-              {data.map((t, i) => (
+              {data.toSorted().map((t, i) => (
                 <ExampleList
-                  key={Math.random()}
+                  key={t.apiName + t.formName + i}
                   exampleData={t}
                   index={i}
                   exampleEditable={editable}
@@ -245,6 +248,7 @@ function ExampleList({
         formName={exampleData.formName}
         formHtml={exampleData.formHtml}
         editable={exampleEditable}
+        key={index + exampleData.formName}
       />
     );
   }
@@ -303,7 +307,7 @@ function ExampleList({
   jsonToolTip.data.current = jsonEditable;
 
   return (
-    <Disclosure key={index}>
+    <Disclosure key={exampleData.summary + index}>
       <Disclosure.Button
         className="flex ml-6 mt-3 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-200 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg"
         onContextMenu={tagToolTip.onContextMenu}
@@ -356,10 +360,10 @@ function FormDisclose({
   editable: Editable;
 }) {
   const [html, setHtml] = React.useState(formHtml);
+
   useEffect(() => {
-    prettier.format(formHtml, { parser: "html" }).then((formatted) => {
-      setHtml(formatted);
-    });
+    const formattedHtml = beautify.html(formHtml);
+    setHtml(formattedHtml);
   }, [formHtml]);
 
   const formEditable: Editable = {
@@ -401,7 +405,7 @@ function FormDisclose({
   jsonToolTip2.data.current = formEditable;
   jsonToolTip.data.current = formEditable;
   return (
-    <Disclosure>
+    <Disclosure as={"div"} key={formName + "KEY"}>
       <Disclosure.Button
         onContextMenu={jsonToolTip.onContextMenu}
         className="flex ml-6 mt-3 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-200 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg"
@@ -424,7 +428,6 @@ function FormDisclose({
                 <div
                   className="formDisplay content text-gray-800 block shadow w-full "
                   style={{ pointerEvents: "none" }}
-                  // key={Math.random()}
                   dangerouslySetInnerHTML={{ __html: html }}
                 />
               </div>

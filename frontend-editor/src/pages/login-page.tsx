@@ -13,7 +13,6 @@ import { FaGithub } from "react-icons/fa";
 import { MdInfoOutline } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import FolderSelector from "../components/ui/folder-selector";
 
 function LoginCard(props: { handleInputChange: any; handleLogin: any }) {
   return (

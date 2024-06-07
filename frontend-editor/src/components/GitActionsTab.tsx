@@ -2,7 +2,7 @@ import axios from "axios";
 import { GlobalEditMode } from "../utils/config";
 import { Listbox, Transition } from "@headlessui/react";
 import React, { useEffect, useRef, useState } from "react";
-import { BiCheck, BiDownload } from "react-icons/bi";
+import { BiCheck, BiDownload, BiTerminal } from "react-icons/bi";
 import { FaExclamationCircle, FaGithub, FaUndo } from "react-icons/fa";
 import { RiArrowUpDownFill } from "react-icons/ri";
 import { DataContext } from "../context/dataContext";
@@ -115,6 +115,16 @@ export function GitActionsTab({}) {
     }
   };
 
+  const handleTerminalClick = async () => {
+    try {
+      axios.get("http://localhost:1000/local/terminal");
+      toast.success("Terminal opened successfully");
+    } catch (err) {
+      console.error("Error opening terminal:", err);
+      toast.error("Error opening terminal");
+    }
+  };
+
   if (!selected) return <>loading</>;
   return (
     <>
@@ -144,6 +154,13 @@ export function GitActionsTab({}) {
           <div className="flex items-center space-x-2">
             {GlobalEditMode && (
               <div className="flex items-center space-x-2">
+                <button
+                  onClick={handleTerminalClick}
+                  className="flex items-center text-sm font-medium px-4 py-2 text-black transition duration-200 border-2 border-black hover:bg-black hover:text-white"
+                >
+                  <BiTerminal className="mr-2" size={20} />
+                  CMD
+                </button>
                 <button
                   onClick={() => {
                     setModalOpen(true);

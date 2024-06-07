@@ -26,6 +26,7 @@ const LoadingButton = ({
     setIsSuccess(false);
     setIsError(false);
     try {
+      console.log("waiting click");
       await onClick();
       setIsLoading(false);
       setIsSuccess(true);

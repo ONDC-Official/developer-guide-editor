@@ -5,8 +5,8 @@ import fs from "fs";
 import { deleteFolderSync } from "../utils/fileUtils";
 import axios from "axios";
 import archiver from "archiver";
+import { exec } from "child_process";
 export const app = express();
-
 const folderPath = path.resolve(
   __dirname,
   "../../../FORKED_REPO/api/components"
@@ -75,4 +75,21 @@ app.get("/download", (req, res) => {
   archive.directory(folderPath, false);
 
   archive.finalize();
+});
+
+const predefinedPath = path.resolve(__dirname, "../../../FORKED_REPO");
+
+app.get("/terminal", (req, res) => {
+  exec(`start cmd /K "cd ${predefinedPath}"`, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Error: ${error.message}`);
+      return res.status(500).send(`Error: ${error.message}`);
+    }
+    if (stderr) {
+      console.error(`Stderr: ${stderr}`);
+      return res.status(500).send(`Stderr: ${stderr}`);
+    }
+    console.log(`Stdout: ${stdout}`);
+    res.send("Terminal opened at FORKDED REPO");
+  });
 });

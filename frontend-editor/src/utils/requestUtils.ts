@@ -103,6 +103,7 @@ export async function UndoData(path: string) {
 
 export async function sendBuildRequest() {
   try {
+    console.log("sending build request");
     const url = `http://localhost:1000/tree/build`;
     const response = await axios.post(url);
     return response.data;
