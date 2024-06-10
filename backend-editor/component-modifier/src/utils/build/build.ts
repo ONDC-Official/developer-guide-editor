@@ -110,6 +110,8 @@ if(!fs.existsSync(outFolderPath+"beckn-core") || fs.readdirSync(`${outFolderPath
     console.error('Error extracting ZIP file:', err);
   });
 }
+console.log("Beckn Core is already extracted")
+resolve('')
 // console.log(fs.readdirSync(`${outFolderPath}/beckn-core`))
 })
 
