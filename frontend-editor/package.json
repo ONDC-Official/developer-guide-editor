@@ -23,6 +23,7 @@
     "@types/electron": "^1.6.10",
     "@uiw/react-json-view": "^2.0.0-alpha.24",
     "axios": "^1.6.8",
+    "framer-motion": "^11.2.10",
     "js-beautify": "^1.15.1",
     "mermaid": "^10.9.1",
     "qs": "^6.12.1",

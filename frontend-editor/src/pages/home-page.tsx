@@ -4,11 +4,10 @@ import { UndoData, getData } from "../utils/requestUtils";
 import FullPageLoader from "../components/loader";
 import { MainContent } from "../components/main-content";
 import { DataContext } from "../context/dataContext";
-import LoadComponent from "../components/LoadComponent";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { GitActionsTab } from "../components/GitActionsTab";
-
+import { useNavigate } from "react-router-dom";
 interface FetchedComponents {
   name: string;
   registerID: string;
@@ -33,6 +32,15 @@ export function HomePage({ editMode }: { editMode: boolean }) {
   const [pathState, setPathState] = useState<string>("");
   const [activeEditable, setActiveEditable] = React.useState<Editable>();
   const [refresh, setRefresh] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const url = localStorage.getItem("repoLink");
+    if (!url) {
+      navigate("/login");
+    }
+  });
+
   useEffect(() => {
     fetchData();
   }, [pathState, refresh]);

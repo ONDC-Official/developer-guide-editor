@@ -11,6 +11,8 @@ import JsonView from "@uiw/react-json-view";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
+const baseUrl = "http://localhost:1000";
+
 export function GitActionsTab({}) {
   const [branches, setBranches] = useState<{ id: number; name: string }[]>([]);
   const [selected, setSelected] = useState<{ id: number; name: string }>();
@@ -21,7 +23,7 @@ export function GitActionsTab({}) {
 
   const [jsonValue, setJsonValue] = useState({ loading: "loading...." });
   useEffect(() => {
-    axios.get("http://localhost:1000/git/branches").then((res) => {
+    axios.get(`${baseUrl}/git/branches`).then((res) => {
       console.log(res);
       const data: { allBranches: string[]; currentBranch: string } = res.data;
       const branchList = data.allBranches.map(
@@ -51,7 +53,7 @@ export function GitActionsTab({}) {
       if (!selected) return;
       try {
         dataContext.setLoading(true);
-        await axios.post("http://localhost:1000/git/changeBranch", {
+        await axios.post(`${baseUrl}/git/changeBranch`, {
           branchName: selected.name,
         });
         dataContext.setLoading(false);
@@ -77,7 +79,7 @@ export function GitActionsTab({}) {
     try {
       setModalOpen(false);
       dataContext.setLoading(true);
-      await axios.delete("http://localhost:1000/git/reset");
+      await axios.delete(`${baseUrl}/git/reset`);
       dataContext.setLoading(false);
       dataContext.setReload((s) => !s);
     } catch (err) {
@@ -88,7 +90,7 @@ export function GitActionsTab({}) {
 
   async function handleStatusClick() {
     dataContext.setLoading(true);
-    const value = await axios.get("http://localhost:1000/git/status");
+    const value = await axios.get(`${baseUrl}/git/status`);
     setJsonValue(value.data);
     dataContext.setLoading(false);
     setModalOpen(true);
@@ -97,7 +99,7 @@ export function GitActionsTab({}) {
 
   const downloadFile = async () => {
     try {
-      const response = await axios.get("http://localhost:1000/local/download", {
+      const response = await axios.get(`${baseUrl}/local/download`, {
         responseType: "blob", // important to receive the response as a blob
       });
 
@@ -117,7 +119,7 @@ export function GitActionsTab({}) {
 
   const handleTerminalClick = async () => {
     try {
-      axios.get("http://localhost:1000/local/terminal");
+      axios.get(`${baseUrl}/local/terminal`);
       toast.success("Terminal opened successfully");
     } catch (err) {
       console.error("Error opening terminal:", err);
@@ -300,7 +302,7 @@ const PrForm = ({ setIsOpen }: any) => {
         ...data,
         url: localStorage.getItem("orignalRepoLink") as string,
       };
-      const prLink = await axios.post("http://localhost:1000/git/openPR", body);
+      const prLink = await axios.post(`${baseUrl}/git/openPR`, body);
       dataContext.setLoading(false);
       setIsOpen(false);
       window.open(prLink.data, "_blank");

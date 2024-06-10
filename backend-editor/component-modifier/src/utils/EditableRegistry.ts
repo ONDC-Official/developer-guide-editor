@@ -10,6 +10,7 @@ import {
   ExampleFolderType,
 } from "./ComponentType/examplesType/exampleFolderType";
 import { ExampleDomainFolderType } from "./ComponentType/examplesType/ExampleDomainFolderType";
+import { initRegistry } from "./RegisterList";
 
 type exampleYaml = Record<
   string,
@@ -63,6 +64,8 @@ export class EditableRegistry {
     compFiles = await fs_p.readdir(comp.folderPath, {
       withFileTypes: true,
     });
+    // console.log(await EditableRegistry.extractExampleDescripitons(comp));
+
     for (const file of compFiles) {
       if (!file.isDirectory()) continue;
       await EditableRegistry.loadAttributes(file, comp);
@@ -294,24 +297,13 @@ export class EditableRegistry {
   private static async loadExamplesNew(file: fs.Dirent, comp: ComponentsType) {
     if (file.name !== "examples") return;
     let existingIndexData = {};
-    let rawIndexData = {};
-    let subYamls: Record<string, any> = {};
+    const descriptionData = await EditableRegistry.extractExampleDescripitons(
+      comp
+    );
     const indexPath = `${comp.folderPath}/examples/index.yaml`;
-    const sumIndexPath = undefined;
     if (fs.existsSync(indexPath)) {
       existingIndexData = await loadYamlWithRefs(indexPath);
       existingIndexData = existingIndexData || {};
-      rawIndexData = yaml.load(await readYamlFile(indexPath));
-      rawIndexData = rawIndexData || {};
-      for (const key of Object.keys(rawIndexData)) {
-        subYamls[key] = await yaml.load(
-          path.resolve(
-            `${comp.folderPath}/examples`,
-            rawIndexData[key].example_set.$ref
-          )
-        );
-      }
-      console.log("sub yamls", subYamls);
     }
     console.log("adding example folder");
     await comp.add({ ID: "EXAMPLE_FOLDER" });
@@ -376,26 +368,15 @@ export class EditableRegistry {
           }
           if (!exampleData) continue;
 
-          // load description and summary:
-          // let des = "TBD",
-          //   sum = exampleYaml.name;
-
-          // if (existingIndexData[domainFolder.name]) {
-          //   if (
-          //     existingIndexData[domainFolder.name].example_set[apiFolder.name]
-          //   ) {
-          //     const apiData: {
-          //       examples: {
-          //         summary: string;
-          //         description: string;
-          //         value: { $ref: string };
-          //       }[];
-          //     } =
-          //       existingIndexData[domainFolder.name].example_set[
-          //         apiFolder.name
-          //       ];
-          //   }
-          // }
+          let description = "TBD";
+          let summary = exampleYaml.name.split(".")[0];
+          const entryKey =
+            domainFolder.name + `./${apiFolder.name}/${exampleYaml.name}`;
+          if (descriptionData[entryKey]) {
+            console.log("found description", entryKey);
+            description = descriptionData[entryKey].description;
+            summary = descriptionData[entryKey].summary;
+          }
 
           await addedExample.add({
             ID: "JSON",
@@ -406,8 +387,8 @@ export class EditableRegistry {
                   ID: "JSON",
                   name: apiFolder.name,
                   exampleName: exampleYaml.name.split(".")[0],
-                  summary: exampleYaml.name.split(".")[0],
-                  description: "TBD",
+                  summary: summary,
+                  description: description,
                   exampleValue: exampleData,
                 },
               ],
@@ -417,7 +398,46 @@ export class EditableRegistry {
       }
     }
   }
+
+  private static async extractExampleDescripitons(comp: ComponentsType) {
+    const examplePath = `${comp.folderPath}/examples`;
+    const indexPath = `${comp.folderPath}/examples/index.yaml`;
+    const returnData: Record<string, { summary; description }> = {};
+    if (!fs.existsSync(indexPath)) return {};
+
+    let rawIndexData: Record<string, { example_set: { $ref: string } }>;
+    rawIndexData = yaml.load(await readYamlFile(indexPath)) as any;
+    if (!rawIndexData) return {};
+
+    for (const key in rawIndexData) {
+      const ref = rawIndexData[key].example_set.$ref;
+      if (!ref) continue;
+      const subPath = path.resolve(examplePath, ref);
+      const fileData = await readYamlFile(subPath);
+      const subYamlData: Record<
+        string,
+        {
+          examples: {
+            summary: string;
+            description: string;
+            value: { $ref: string };
+          }[];
+        }
+      > = yaml.load(fileData) as any;
+      if (!subYamlData) continue;
+      for (const subKey in subYamlData) {
+        for (const example of subYamlData[subKey].examples) {
+          returnData[key + example.value.$ref] = {
+            summary: example.summary,
+            description: example.description,
+          };
+        }
+      }
+    }
+    return returnData;
+  }
 }
+
 function loadExampleIndexYaml(path: string) {
   if (!fs.existsSync(path)) return {};
 }
@@ -443,11 +463,13 @@ function ForceUniqueSummary(data: {
   });
 }
 
-// initRegistry();
-// EditableRegistry.loadComponent(
-//   "../../../ONDC-NTS-Specifications/api/components",
-//   "components"
-// );
+// (async () => {
+//   initRegistry();
+//   await EditableRegistry.loadComponent(
+//     "../../../FORKED_REPO/api/components",
+//     "components"
+//   );
+// })();
 
 // renameFolder(
 //   path.resolve(

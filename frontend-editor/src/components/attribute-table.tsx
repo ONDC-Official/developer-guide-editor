@@ -6,7 +6,7 @@ import { deleteData, getData } from "../utils/requestUtils";
 import { Editable } from "./file-structure";
 import useEditorToolTip from "../hooks/useEditorToolTip";
 import Tippy from "@tippyjs/react";
-
+import { AnimatePresence, motion } from "framer-motion";
 const n = {
   nodes: [
     {
@@ -138,16 +138,24 @@ const AttributesTable = ({ attribute }: { attribute: Editable }) => {
           />
         </div>
       </div>
-      <div style={{ overflowX: "auto" }}>
-        {" "}
-        {/* This div will handle horizontal scrolling if necessary */}
-        <DataTable
-          activeFile={activeFile}
-          activeTable={activeTable}
-          fileData={fileData}
-          editable={tableEditable}
-        />
-      </div>
+      <AnimatePresence>
+        <motion.div
+          key={activeTable + activeFile}
+          style={{ overflowX: "auto" }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <DataTable
+            key={activeTable}
+            activeFile={activeFile}
+            activeTable={activeTable}
+            fileData={fileData}
+            editable={tableEditable}
+          />
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 };

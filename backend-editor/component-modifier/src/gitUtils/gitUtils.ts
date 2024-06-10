@@ -163,52 +163,56 @@ export const changeBranch = async (
   repoPath: string,
   branchName: string
 ): Promise<void> => {
-  const git = simpleGit(repoPath);
+  return new Promise(async (resolve, reject) => {
+    const git = simpleGit(repoPath);
 
-  const currentBranchSummary = await git.branch();
-  let currentBranch = "remotes/" + currentBranchSummary.current;
-  currentBranch = extractBranchName(currentBranch);
-  console.log(`Current branch is ${currentBranch}`);
-  // console.log(git.stashList)
+    const currentBranchSummary = await git.branch();
+    let currentBranch = "remotes/" + currentBranchSummary.current;
+    currentBranch = extractBranchName(currentBranch);
+    console.log(`Current branch is ${currentBranch}`);
+    console.log(`Switching to branch ${extractBranchName(branchName)}`);
+    // console.log(git.stashList)
 
-  if (currentBranch === branchName) {
-    console.log(`Already on branch ${branchName}`);
-    return;
-  }
-
-  const stashMessage = `stash@${currentBranch}`;
-
-  try {
-    // Stash any current changes with a specific message
-    await git.stash(["push", "-u", "-m", stashMessage]);
-    console.log(`Stashed changes for branch ${currentBranch}`);
-
-    // Check if the branch exists locally
-    const branchSummary = await git.branch();
-    if (!branchSummary.all.includes(branchName)) {
-      // Fetch the branch from the remote if it does not exist locally
-      await git.fetch("origin", branchName);
+    if (currentBranch === extractBranchName(branchName)) {
+      console.log(`Already on branch ${branchName}`);
+      reject(new Error(`Already on branch ${branchName}`));
     }
-    // Checkout the branch
-    console.log("Checking out branch", branchName);
-    await git.checkout(branchName);
-    // await git.checkoutBranch(branchName, "origin");
-    console.log(`Switched to branch ${branchName}`);
 
-    // Check if there are stashes for the new branch and apply the most recent one
-    const stashList = await git.stashList();
-    // console.log(stashList.all);
-    const branchStashIndex = stashList.all.findIndex((stash) =>
-      stash.message.includes(`stash@${extractBranchName(branchName)}`)
-    );
-    if (branchStashIndex !== -1) {
-      await git.stash(["pop", `stash@{${branchStashIndex}}`]);
-      console.log(`Applied stash for branch ${branchName}`);
+    const stashMessage = `stash@${currentBranch}`;
+
+    try {
+      // Stash any current changes with a specific message
+      await git.stash(["push", "-u", "-m", stashMessage]);
+      console.log(`Stashed changes for branch ${currentBranch}`);
+
+      // Check if the branch exists locally
+      const branchSummary = await git.branch();
+      if (!branchSummary.all.includes(branchName)) {
+        // Fetch the branch from the remote if it does not exist locally
+        await git.fetch("origin", branchName);
+      }
+      // Checkout the branch
+      console.log("Checking out branch", branchName);
+      await git.checkout(branchName);
+      // await git.checkoutBranch(branchName, "origin");
+      console.log(`Switched to branch ${branchName}`);
+
+      // Check if there are stashes for the new branch and apply the most recent one
+      const stashList = await git.stashList();
+      // console.log(stashList.all);
+      const branchStashIndex = stashList.all.findIndex((stash) =>
+        stash.message.includes(`stash@${extractBranchName(branchName)}`)
+      );
+      if (branchStashIndex !== -1) {
+        await git.stash(["pop", `stash@{${branchStashIndex}}`]);
+        console.log(`Applied stash for branch ${branchName}`);
+      }
+      resolve();
+    } catch (error) {
+      console.error("Error switching branches:", error.message);
+      reject(error);
     }
-  } catch (error) {
-    console.error("Error switching branches:", error.message);
-    throw error;
-  }
+  });
 };
 
 export const getBranches = async (repoPath: string) => {

@@ -6,13 +6,12 @@ import {
   EnumFolderID,
   ExampleFolderID,
   TagFolderID,
-  flowFolderID
-  
+  flowFolderID,
 } from "../pages/home-page";
 
 import { EnumContent, EnumFolderContent } from "./EnumContent";
 import { TagsFolderContent } from "./tag-content";
-import {FlowFolderContent} from "./flow-content"
+import { FlowFolderContent } from "./flow-content";
 import { ExampleContent } from "./example-content";
 
 export function MainContent({
@@ -20,7 +19,7 @@ export function MainContent({
 }: {
   activeEditable: Editable | undefined;
 }) {
-  console.log(activeEditable,"activeEditable")
+  console.log(activeEditable, "activeEditable");
 
   if (!activeEditable) return <></>;
   return (
