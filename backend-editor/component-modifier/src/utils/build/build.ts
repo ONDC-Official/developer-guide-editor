@@ -2,11 +2,13 @@ const path = require("path");
 const fs = require("fs")
 import { isBinary } from "../fileUtils";
 const unzipper = require('unzipper');
+
+//paths
 const base_yaml = isBinary? path.join(path.dirname(process.execPath),"./FORKED_REPO/api/components/beckn_yaml.yaml"): "../FORKED_REPO/api/components/beckn_yaml.yaml"; //beckn yaml
-const example_yaml = isBinary? path.join(path.dirname(process.execPath),"./FORKED_REPO/api/components/index.yaml"):"../FORKED_REPO/api/components/index.yaml"; //args[1]; //  main file of the yamls
-const outputPath = isBinary? path.join(path.dirname(process.execPath), "./FORKED_REPO/api/build/build.yaml") : "../FORKED_REPO/api/build/build.yaml";
-const uiPath = isBinary? path.join(path.dirname(process.execPath), "./FORKED_REPO/ui/build.js") : "../FORKED_REPO/ui/build.js";
-const docs = isBinary? path.join(path.dirname(process.execPath), "./FORKED_REPO/api/components/docs") : "../FORKED_REPO/api/components/docs";
+const example_yaml = isBinary? path.join(path.dirname(process.execPath),"./FORKED_REPO/api/components/index.yaml"):"../FORKED_REPO/api/components/index.yaml"; //  main file of the yamls
+const outputPath = isBinary? path.join(path.dirname(process.execPath), "./FORKED_REPO/api/build/build.yaml") : "../FORKED_REPO/api/build/build.yaml"; // build.yaml output
+const uiPath = isBinary? path.join(path.dirname(process.execPath), "./FORKED_REPO/ui/build.js") : "../FORKED_REPO/ui/build.js"; // build.js output
+const docs = isBinary? path.join(path.dirname(process.execPath), "./FORKED_REPO/api/components/docs") : "../FORKED_REPO/api/components/docs"; // docs folder path
 
 const tempPath = `./temp.yaml`;
 const {ondc_build} = require("ondc-build-utility")
@@ -16,7 +18,6 @@ export async function buildWrapper(folderName) {
   try {
     await  becknCore() // extract beckn core
     const result = await ondc_build(base_yaml,example_yaml,outputPath,uiPath,docs)
-    console.log(result)
       if(!result){
         return false
       }
