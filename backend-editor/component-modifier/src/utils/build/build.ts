@@ -14,7 +14,7 @@ const tempPath = `./temp.yaml`;
 const {ondc_build} = require("ondc-build-utility")
 
 
-export async function buildWrapper(folderName) {
+export async function buildWrapper() {
   try {
     await  becknCore() // extract beckn core
     const result = await ondc_build(base_yaml,example_yaml,outputPath,uiPath,docs)

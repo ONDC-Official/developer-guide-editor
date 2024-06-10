@@ -238,7 +238,7 @@ app.post("/build", async (req: Request, res: Response, next: NextFunction) => {
   console.log("BUILDING....");
   try {
     console.log("inside try...");
-    const result: any = await buildWrapper("components");
+    const result: any = await buildWrapper();
     if (!result) {
       return res.status(500).json(result);
     }
