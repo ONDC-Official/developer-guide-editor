@@ -1,6 +1,6 @@
-# DevGuideEditor
+# developer-guide-editor
 
-DevGuideEditor is a comprehensive tool designed to help developers create, manage, and edit development guides with ease. This tool provides a user-friendly interface and various features to enhance the documentation process.
+developer-guide-editor is a comprehensive tool designed to help developers create, manage, and edit development guides with ease. This tool provides a user-friendly interface and various features to enhance the documentation process.
 
 ## Features
 
@@ -30,7 +30,7 @@ To use this project, you need to generate a GitHub Personal Access Token (PAT) w
 
 - Go to [GitHub's Personal Access Tokens page](https://github.com/settings/tokens).
 - Click on the "Generate new token" button.
-- Give your token a descriptive name, such as "DevGuideEditor Token".
+- Give your token a descriptive name, such as "developer-guide-editor Token".
 - Select the following scopes:
   - `repo` (control of private repositories is **NOT** required)
 - Click the "Generate token" button at the bottom of the page.
@@ -38,19 +38,19 @@ To use this project, you need to generate a GitHub Personal Access Token (PAT) w
 
 ## Installation
 
-Follow these steps to set up and run the DevGuideEditor project:
+Follow these steps to set up and run the developer-guide-editor project:
 
 1. **Clone the repository:**
 
    ```sh
-   git clone https://github.com/extedcouD/DevGuideEditor.git
+   git clone https://github.com/ONDC-Official/developer-guide-editor.git
    ```
 
 2. **Run the backend:**
 
    - Navigate to the backend directory:
      ```sh
-     cd DevGuideEditor/backend-editor/component-modifier
+     cd developer-guide-editor/backend-editor/component-modifier
      ```
    - Install the necessary dependencies:
      ```sh
@@ -65,7 +65,7 @@ Follow these steps to set up and run the DevGuideEditor project:
 3. **Run the frontend(in a different terminal):**
    - Navigate to the frontend directory:
      ```sh
-     cd DevGuideEditor/frontend-editor
+     cd developer-guide-editor/frontend-editor
      ```
    - Install the necessary dependencies:
      ```sh
@@ -99,4 +99,4 @@ If you have any questions or need further assistance, feel free to open an issue
 
 ---
 
-Thank you for using DevGuideEditor! We hope this tool makes your development guide creation process smoother and more efficient.
+Thank you for using developer-guide-editor! We hope this tool makes your development guide creation process smoother and more efficient.
