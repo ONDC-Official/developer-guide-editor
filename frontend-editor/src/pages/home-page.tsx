@@ -138,7 +138,7 @@ function ComponentView({
   const editState = useContext(DataContext).editMode;
   return (
     <>
-      {editState && <GitActionsTab />}
+      <GitActionsTab />
       <div className="flex w-full h-full overflow-hidden">
         <ComponentsStructure
           componentsChildren={components}

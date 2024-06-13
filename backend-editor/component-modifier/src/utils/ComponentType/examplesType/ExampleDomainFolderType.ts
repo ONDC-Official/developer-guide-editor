@@ -68,9 +68,14 @@ export class ExampleDomainFolderType extends folderTypeEditable {
     if (newEditable.ID === "JSON") {
       // console.log("validating json", newEditable.exampleValue);
       if (typeof newEditable.exampleValue === "string") {
-        newEditable.exampleValue = JSON.parse(
-          newEditable.exampleValue
-        ) as Record<string, any>;
+        try {
+          newEditable.exampleValue = JSON.parse(
+            newEditable.exampleValue
+          ) as Record<string, any>;
+        } catch {
+          console.error("Invalid JSON");
+          newEditable.exampleValue = {};
+        }
       }
       const validExample = await ValidateJsonSchema(newEditable.exampleValue);
       if (!validExample) {

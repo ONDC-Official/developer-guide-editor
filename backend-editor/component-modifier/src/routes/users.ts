@@ -54,10 +54,19 @@ app.all("/guide/*", async (req: any, res, next) => {
   currentSessionID = pathSegments[0];
   if (!sessionInstances[currentSessionID] && req.method !== "DELETE") {
     // const oldPath = `../../../ONDC-NTS-Specifications/api/${currentSessionID}`;
-    sessionInstances[currentSessionID] = await EditableRegistry.loadComponent(
-      forkedCompPath,
-      currentSessionID
-    );
+    try {
+      sessionInstances[currentSessionID] = await EditableRegistry.loadComponent(
+        forkedCompPath,
+        currentSessionID
+      );
+    } catch (e) {
+      console.log(e);
+      res.status(404).json({
+        error: "Could not Load Component",
+        errorMessage: "Could not Load Component",
+      });
+      return;
+    }
   }
   next();
 });

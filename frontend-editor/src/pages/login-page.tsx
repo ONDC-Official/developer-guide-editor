@@ -13,12 +13,13 @@ import { FaGithub } from "react-icons/fa";
 import { MdInfoOutline } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import FolderSelector from "../components/ui/folder-selector";
 
 function LoginCard(props: { handleInputChange: any; handleLogin: any }) {
   return (
     <Card className="mx-auto max-w-sm bg-white bg-opacity-20 backdrop-blur-md p-6 rounded-lg shadow-lg mt-28">
       <CardHeader className="space-y-1">
-        <CardTitle className="text-3xl md:text-3xl lg:text-3xl font-bold text-transparent bg-clip-text flex-grow bg-blue-500 mb-4">
+        <CardTitle className="text-2xl md:text-2xl lg:text-2xl font-bold text-transparent bg-clip-text flex-grow bg-blue-500 mb-4">
           Login
         </CardTitle>
         <CardDescription>
@@ -149,21 +150,21 @@ function GitLogin() {
   };
   return (
     <div className="bg-gray-200 p-4 h-screen">
-      <div className="flex space-x-4 items-center">
-        <LoginCard
-          handleInputChange={handleInputChange}
-          handleLogin={handleLogin}
-        />
-        {/* <div className="flex flex-col items-center space-y-2">
-          <span className="text-gray-600">OR</span>
-          <FolderSelector afterUpload={onSubmit} />
-          <label
-            htmlFor="folderInput"
-            className="flex items-center px-4 py-2 text-indigo-600 text-sm font-medium transition duration-200 border-2 border-indigo-600 hover:bg-indigo-600 hover:text-white cursor-pointer"
-          >
-            Select Folder
-          </label>
-        </div> */}
+      <div className="flex items-center">
+        <div className="w-1/2 flex justify-center">
+          <LoginCard
+            handleInputChange={handleInputChange}
+            handleLogin={handleLogin}
+          />
+        </div>
+        <div className="flex flex-col items-center mx-4">
+          <div className="border-l border-blue-600 h-40"></div>
+          <span className="text-2xl font-bold text-blue-500 mx-2">OR</span>
+          <div className="border-l border-blue-600 h-40"></div>
+        </div>
+        <div className="w-1/2 flex justify-center">
+          <LocalSelector onSubmit={onSubmit} />
+        </div>
       </div>
       {loading && <FullPageLoader />}
     </div>
@@ -171,3 +172,11 @@ function GitLogin() {
 }
 
 export default GitLogin;
+
+function LocalSelector({ onSubmit }: { onSubmit: any }) {
+  return (
+    <div className="flex flex-col items-center space-y-2 ">
+      <FolderSelector afterUpload={onSubmit} />
+    </div>
+  );
+}

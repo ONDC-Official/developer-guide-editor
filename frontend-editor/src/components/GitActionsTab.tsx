@@ -14,15 +14,18 @@ import { toast } from "react-toastify";
 const baseUrl = "http://localhost:1000";
 
 export function GitActionsTab({}) {
+  const ActiveState = (localStorage.getItem("repoLink") as string) !== "-1";
   const [branches, setBranches] = useState<{ id: number; name: string }[]>([]);
   const [selected, setSelected] = useState<{ id: number; name: string }>();
   const [action, setAction] = useState("status"); // ["status","reset","openPR"
   const [url, setUrl] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const dataContext = React.useContext(DataContext);
-
   const [jsonValue, setJsonValue] = useState({ loading: "loading...." });
   useEffect(() => {
+    if (!ActiveState) {
+      return;
+    }
     axios.get(`${baseUrl}/git/branches`).then((res) => {
       console.log(res);
       const data: { allBranches: string[]; currentBranch: string } = res.data;
@@ -49,6 +52,7 @@ export function GitActionsTab({}) {
   }, []);
 
   useEffect(() => {
+    if (!ActiveState) return;
     async function changeBranch() {
       if (!selected) return;
       try {
@@ -127,32 +131,41 @@ export function GitActionsTab({}) {
     }
   };
 
-  if (!selected) return <>loading</>;
+  if (!selected && ActiveState) return <>loading</>;
   return (
     <>
       <div className="flex flex-row h-14 w-full bg-slate-200 fixed top-20 z-10 border-b-2 border-t-2 border-gray-500">
         <div className="flex items-center justify-between w-full px-4">
-          <div className=" flex items-start">
-            <BranchListBox
-              branches={branches}
-              selected={selected}
-              onChange={
-                setSelected as React.Dispatch<
-                  React.SetStateAction<{ id: number; name: string }>
+          {ActiveState && (
+            <div className=" flex items-start">
+              <BranchListBox
+                branches={branches}
+                selected={selected ? selected : { id: 1, name: "loading" }}
+                onChange={
+                  setSelected as React.Dispatch<
+                    React.SetStateAction<{ id: number; name: string }>
+                  >
+                }
+              />
+              <div className="relative inline-block text-left mt-2 ml-2">
+                <a
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 underline font-medium"
                 >
-              }
-            />
-            <div className="relative inline-block text-left mt-2 ml-2">
-              <a
-                href={url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 underline font-medium"
-              >
-                OPEN IN GITHUB
-              </a>
+                  OPEN IN GITHUB
+                </a>
+              </div>
             </div>
-          </div>
+          )}
+          {!ActiveState && (
+            <div className="flex items-start w-full">
+              <h1 className="text-xl font-bold">
+                Editing Uploaded Component Folder
+              </h1>
+            </div>
+          )}
           <div className="flex items-center space-x-2">
             {GlobalEditMode && (
               <div className="flex items-center space-x-2">
@@ -163,33 +176,37 @@ export function GitActionsTab({}) {
                   <BiTerminal className="mr-2" size={20} />
                   CMD
                 </button>
-                <button
-                  onClick={() => {
-                    setModalOpen(true);
-                    setAction("reset");
-                  }}
-                  className="flex items-center text-sm font-medium px-4 py-2 text-red-600 transition duration-200 border-2 border-red-600 hover:bg-red-600 hover:text-white"
-                >
-                  <FaUndo className="mr-2" size={20} />
-                  RESET
-                </button>
-                <button
-                  onClick={handleStatusClick}
-                  className="flex items-center px-4 py-2 text-yellow-600 text-sm font-medium transition duration-200 border-2 border-yellow-600 hover:bg-yellow-600 hover:text-white"
-                >
-                  <FaExclamationCircle className="mr-2" size={20} />
-                  STATUS
-                </button>
-                <button
-                  onClick={() => {
-                    setModalOpen(true);
-                    setAction("OPEN PR");
-                  }}
-                  className="flex items-center px-4 py-2 text-green-600 text-sm font-medium transition duration-200 border-2 border-green-600 hover:bg-green-600 hover:text-white"
-                >
-                  <FaGithub className="mr-2" size={20} />
-                  OPEN PR
-                </button>
+                {ActiveState && (
+                  <>
+                    <button
+                      onClick={() => {
+                        setModalOpen(true);
+                        setAction("reset");
+                      }}
+                      className="flex items-center text-sm font-medium px-4 py-2 text-red-600 transition duration-200 border-2 border-red-600 hover:bg-red-600 hover:text-white"
+                    >
+                      <FaUndo className="mr-2" size={20} />
+                      RESET
+                    </button>
+                    <button
+                      onClick={handleStatusClick}
+                      className="flex items-center px-4 py-2 text-yellow-600 text-sm font-medium transition duration-200 border-2 border-yellow-600 hover:bg-yellow-600 hover:text-white"
+                    >
+                      <FaExclamationCircle className="mr-2" size={20} />
+                      STATUS
+                    </button>
+                    <button
+                      onClick={() => {
+                        setModalOpen(true);
+                        setAction("OPEN PR");
+                      }}
+                      className="flex items-center px-4 py-2 text-green-600 text-sm font-medium transition duration-200 border-2 border-green-600 hover:bg-green-600 hover:text-white"
+                    >
+                      <FaGithub className="mr-2" size={20} />
+                      OPEN_PR
+                    </button>
+                  </>
+                )}
                 <button
                   onClick={downloadFile}
                   className="flex items-center px-4 py-2 text-indigo-600 text-sm font-medium transition duration-200 border-2 border-indigo-600 hover:bg-indigo-600 hover:text-white"
@@ -265,7 +282,9 @@ export function BranchListBox({
                 {({ selected }) => (
                   <>
                     <span
-                      className={`block truncate ${selected ? "font-medium" : "font-normal"}`}
+                      className={`block truncate ${
+                        selected ? "font-medium" : "font-normal"
+                      }`}
                     >
                       {person.name}
                     </span>
