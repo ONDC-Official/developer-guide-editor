@@ -7,7 +7,9 @@ import axios from "axios";
 import archiver from "archiver";
 import { exec } from "child_process";
 export const app = express();
-const folderPath = path.resolve(
+
+const BASE_PATH = path.resolve(__dirname, "../../../FORKED_REPO");
+const COMP_FOL_PATH = path.resolve(
   __dirname,
   "../../../FORKED_REPO/api/components"
 );
@@ -17,7 +19,6 @@ app.use(express.urlencoded({ extended: true }));
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const basePath = folderPath;
     const relativePath = path.dirname(file.originalname);
 
     // Split the path into components
@@ -25,7 +26,8 @@ const storage = multer.diskStorage({
     const modifiedPathComponents = pathComponents.slice(1);
 
     const modifiedPath = path.join(...modifiedPathComponents);
-    const uploadPath = path.join(basePath, modifiedPath);
+
+    const uploadPath = path.join(BASE_PATH, modifiedPath);
 
     fs.mkdirSync(uploadPath, { recursive: true });
     cb(null, uploadPath);
@@ -72,7 +74,7 @@ app.get("/download", (req, res) => {
 
   archive.pipe(output);
 
-  archive.directory(folderPath, false);
+  archive.directory(COMP_FOL_PATH, false);
 
   archive.finalize();
 });

@@ -212,7 +212,7 @@ export function GitActionsTab({}) {
                   className="flex items-center px-4 py-2 text-indigo-600 text-sm font-medium transition duration-200 border-2 border-indigo-600 hover:bg-indigo-600 hover:text-white"
                 >
                   <BiDownload className="mr-2" size={20} />
-                  DOWNLOAD
+                  EXPORT
                 </button>
               </div>
             )}
