@@ -62,7 +62,7 @@ function FolderSelector({ afterUpload }: { afterUpload: any }) {
           Upload
         </CardTitle>
         <CardDescription>
-          upload a components folder from you machine
+          upload a ondc-specification folder from your machine
         </CardDescription>
       </CardHeader>
       <CardContent>
