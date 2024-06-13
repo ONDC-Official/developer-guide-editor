@@ -6,12 +6,22 @@ import { deleteFolderSync } from "../utils/fileUtils";
 import axios from "axios";
 import archiver from "archiver";
 import { exec } from "child_process";
+import { isBinary } from "../utils/fileUtils";
+
+const forkedRepoFolderPath = isBinary
+  ? path.join(path.dirname(process.execPath), "./FORKED_REPO")
+  : `../../../FORKED_REPO`;
+
+  const forkedRepoFullPath = isBinary
+  ? path.join(path.dirname(process.execPath), "./FORKED_REPO/api/components")
+  : `../../../FORKED_REPO/api/components`;
+
 export const app = express();
 
-const BASE_PATH = path.resolve(__dirname, "../../../FORKED_REPO");
+const BASE_PATH = path.resolve(__dirname, forkedRepoFolderPath);
 const COMP_FOL_PATH = path.resolve(
   __dirname,
-  "../../../FORKED_REPO/api/components"
+  forkedRepoFullPath
 );
 
 app.use(express.json());
@@ -40,7 +50,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage, preservePath: true }).array("files");
 
 app.post("/upload", async (req, res) => {
-  await deleteFolderSync(path.resolve(__dirname, "../../../FORKED_REPO"));
+  await deleteFolderSync(path.resolve(__dirname, forkedRepoFolderPath));
   console.log("POST /local/upload Request Body:", req.body);
   upload(req, res, (err) => {
     if (err) {
@@ -79,7 +89,7 @@ app.get("/download", (req, res) => {
   archive.finalize();
 });
 
-const predefinedPath = path.resolve(__dirname, "../../../FORKED_REPO");
+const predefinedPath = path.resolve(__dirname, forkedRepoFolderPath);
 
 app.get("/terminal", (req, res) => {
   exec(`start cmd /K "cd ${predefinedPath}"`, (error, stdout, stderr) => {
