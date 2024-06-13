@@ -1,0 +1,7 @@
+#this will serve as base schema file
+openapi: 3.0.0
+info:
+  title: ONDC Specification
+  description: ONDC Specification
+  version: 1.0.0
+

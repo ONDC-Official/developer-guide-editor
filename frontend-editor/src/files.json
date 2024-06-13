@@ -1,0 +1,355 @@
+{
+  "struct": [
+    {
+      "type": "directory",
+      "name": "attributes",
+      "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\attributes",
+      "children": [
+        {
+          "type": "directory",
+          "name": "CREDIT",
+          "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\attributes\\CREDIT",
+          "children": [
+            {
+              "type": "file",
+              "name": "index.yaml",
+              "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\attributes\\CREDIT\\index.yaml"
+            }
+          ]
+        },
+        {
+          "type": "file",
+          "name": "index.yaml",
+          "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\attributes\\index.yaml"
+        },
+        {
+          "type": "directory",
+          "name": "INSURANCE",
+          "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\attributes\\INSURANCE",
+          "children": [
+            {
+              "type": "file",
+              "name": "index.yaml",
+              "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\attributes\\INSURANCE\\index.yaml"
+            }
+          ]
+        },
+        {
+          "type": "directory",
+          "name": "RETAIL",
+          "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\attributes\\RETAIL",
+          "children": [
+            {
+              "type": "file",
+              "name": "index.yaml",
+              "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\attributes\\RETAIL\\index.yaml"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "directory",
+      "name": "docs",
+      "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\docs",
+      "children": [
+        {
+          "type": "file",
+          "name": "index.yaml",
+          "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\docs\\index.yaml"
+        }
+      ]
+    },
+    {
+      "type": "directory",
+      "name": "enums",
+      "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\enums",
+      "children": [
+        {
+          "type": "file",
+          "name": "index.yaml",
+          "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\enums\\index.yaml"
+        },
+        {
+          "type": "file",
+          "name": "issue.yaml",
+          "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\enums\\issue.yaml"
+        }
+      ]
+    },
+    {
+      "type": "directory",
+      "name": "examples",
+      "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples",
+      "children": [
+        {
+          "type": "directory",
+          "name": "Credit",
+          "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\Credit",
+          "children": [
+            {
+              "type": "file",
+              "name": "index.yaml",
+              "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\Credit\\index.yaml"
+            },
+            {
+              "type": "directory",
+              "name": "issue",
+              "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\Credit\\issue",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "issue.yaml",
+                  "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\Credit\\issue\\issue.yaml"
+                }
+              ]
+            },
+            {
+              "type": "directory",
+              "name": "issue_status",
+              "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\Credit\\issue_status",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "issue_status.yaml",
+                  "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\Credit\\issue_status\\issue_status.yaml"
+                }
+              ]
+            },
+            {
+              "type": "directory",
+              "name": "on_issue",
+              "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\Credit\\on_issue",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "on_issue.yaml",
+                  "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\Credit\\on_issue\\on_issue.yaml"
+                }
+              ]
+            },
+            {
+              "type": "directory",
+              "name": "on_issue_status",
+              "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\Credit\\on_issue_status",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "on_issue_status.yaml",
+                  "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\Credit\\on_issue_status\\on_issue_status.yaml"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "file",
+          "name": "index.yaml",
+          "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\index.yaml"
+        },
+        {
+          "type": "directory",
+          "name": "Insurance",
+          "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\Insurance",
+          "children": [
+            {
+              "type": "file",
+              "name": "index.yaml",
+              "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\Insurance\\index.yaml"
+            },
+            {
+              "type": "directory",
+              "name": "issue",
+              "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\Insurance\\issue",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "issue.yaml",
+                  "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\Insurance\\issue\\issue.yaml"
+                }
+              ]
+            },
+            {
+              "type": "directory",
+              "name": "issue_closed",
+              "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\Insurance\\issue_closed",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "issue_closed.yaml",
+                  "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\Insurance\\issue_closed\\issue_closed.yaml"
+                }
+              ]
+            },
+            {
+              "type": "directory",
+              "name": "issue_status",
+              "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\Insurance\\issue_status",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "issue_status.yaml",
+                  "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\Insurance\\issue_status\\issue_status.yaml"
+                }
+              ]
+            },
+            {
+              "type": "directory",
+              "name": "on_issue",
+              "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\Insurance\\on_issue",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "on_issue.yaml",
+                  "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\Insurance\\on_issue\\on_issue.yaml"
+                }
+              ]
+            },
+            {
+              "type": "directory",
+              "name": "on_issue_status",
+              "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\Insurance\\on_issue_status",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "on_issue_status.yaml",
+                  "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\Insurance\\on_issue_status\\on_issue_status.yaml"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "directory",
+          "name": "Retail",
+          "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\Retail",
+          "children": [
+            {
+              "type": "file",
+              "name": "index.yaml",
+              "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\Retail\\index.yaml"
+            },
+            {
+              "type": "directory",
+              "name": "issue",
+              "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\Retail\\issue",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "issue.yaml",
+                  "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\Retail\\issue\\issue.yaml"
+                }
+              ]
+            },
+            {
+              "type": "directory",
+              "name": "issue_status",
+              "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\Retail\\issue_status",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "issue_status.yaml",
+                  "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\Retail\\issue_status\\issue_status.yaml"
+                }
+              ]
+            },
+            {
+              "type": "directory",
+              "name": "on_issue",
+              "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\Retail\\on_issue",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "on_issue.yaml",
+                  "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\Retail\\on_issue\\on_issue.yaml"
+                }
+              ]
+            },
+            {
+              "type": "directory",
+              "name": "on_issue_status",
+              "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\Retail\\on_issue_status",
+              "children": [
+                {
+                  "type": "file",
+                  "name": "on_issue_status.yaml",
+                  "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\examples\\Retail\\on_issue_status\\on_issue_status.yaml"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "directory",
+      "name": "flows",
+      "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\flows",
+      "children": [
+        {
+          "type": "directory",
+          "name": "Credit",
+          "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\flows\\Credit",
+          "children": [
+            {
+              "type": "file",
+              "name": "index.yaml",
+              "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\flows\\Credit\\index.yaml"
+            }
+          ]
+        },
+        {
+          "type": "file",
+          "name": "index.yaml",
+          "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\flows\\index.yaml"
+        },
+        {
+          "type": "directory",
+          "name": "Insurance",
+          "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\flows\\Insurance",
+          "children": [
+            {
+              "type": "file",
+              "name": "index.yaml",
+              "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\flows\\Insurance\\index.yaml"
+            }
+          ]
+        },
+        {
+          "type": "directory",
+          "name": "Retail",
+          "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\flows\\Retail",
+          "children": [
+            {
+              "type": "file",
+              "name": "index.yaml",
+              "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\flows\\Retail\\index.yaml"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "igm_yaml.yaml",
+      "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\igm_yaml.yaml"
+    },
+    {
+      "type": "file",
+      "name": "index.yaml",
+      "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\index.yaml"
+    },
+    {
+      "type": "directory",
+      "name": "tags",
+      "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\tags",
+      "children": [
+        {
+          "type": "file",
+          "name": "index.yaml",
+          "path": "..\\..\\ONDC-NTS-Specifications\\api\\components\\tags\\index.yaml"
+        }
+      ]
+    }
+  ]
+}

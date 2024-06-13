@@ -1,0 +1,15 @@
+issue:
+  message: &message
+    issue:
+      catagory:
+        - code: FULFILMENT
+          description: Issues related to the timely and accurate disbursement of the loan.
+          reference: <PR/Issue/Discussion Links md format text
+        - code: ORDER
+          description: Issues concerning the loan order and overall loan servicing issues.
+          reference: <PR/Issue/Discussion Links md format text
+        - code: PAYMENT
+          description: Issues pertaining to payments, interest, and charges associated with the loan provided to the borrower.
+          reference: <PR/Issue/Discussion Links md format text
+
+on_issue:

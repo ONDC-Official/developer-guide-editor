@@ -1,0 +1,88 @@
+.jsonViewer {
+  --w-rjv-color: #2c3e50; /* Deep navy blue for general text */
+  --w-rjv-key-number: #e74c3c; /* Bright red for numbers, good contrast */
+  --w-rjv-key-string: #2980b9; /* Vibrant blue for string keys */
+  --w-rjv-background-color: #f3f4f6; /* Light grey, your specified background */
+  --w-rjv-line-color: #bdc3c7; /* Soft grey for lines, subtle */
+  --w-rjv-arrow-color: #3498db; /* Bright blue for arrows, eye-catching */
+  --w-rjv-edit-color: #3498db; /* Same blue for edit interactions */
+  --w-rjv-info-color: #95a5a6; /* Soft grey for informational text, unobtrusive */
+  --w-rjv-update-color: #2980b9; /* Consistent blue for updates */
+  --w-rjv-copied-color: #3498db; /* Blue for the copy action, noticeable */
+  --w-rjv-copied-success-color: #27ae60; /* Vivid green for success */
+  --w-rjv-curlybraces-color: #34495e; /* Darker grey-blue for structure characters */
+  --w-rjv-colon-color: #34495e; /* Same as curly braces for consistency */
+  --w-rjv-brackets-color: #34495e; /* Matches curly braces and colons */
+  --w-rjv-ellipsis-color: #95a5a6; /* Light grey for ellipsis, not too prominent */
+  --w-rjv-quotes-color: #3498db; /* Blue for quotes, matching arrows */
+  --w-rjv-quotes-string-color: #e67e22; /* Orange for string values, distinct */
+  --w-rjv-type-string-color: #e67e22; /* Orange for string types, very distinct */
+  --w-rjv-type-int-color: #c0392b; /* Strong red for integers, stands out */
+  --w-rjv-type-float-color: #c0392b; /* Same red for floats, consistency */
+  --w-rjv-type-bigint-color: #c0392b; /* Red for big integers, uniform look */
+  --w-rjv-type-boolean-color: #3498db; /* Blue for booleans, matches key themes */
+  --w-rjv-type-date-color: #2980b9; /* Blue for dates, easily recognizable */
+  --w-rjv-type-url-color: #2980b9; /* Consistent blue for URLs */
+  --w-rjv-type-null-color: #95a5a6; /* Grey for null, neutral and soft */
+  --w-rjv-type-nan-color: #e67e22; /* Orange for NaN, unique and distinct */
+  --w-rjv-type-undefined-color: #95a5a6; /* Grey for undefined, matching null */
+}
+
+.jsonViewer:hover {
+  --w-rjv-background-color: #ffffff; /* Light grey, your specified background */
+}
+
+.formDisplay {
+  padding: 16px;
+  color: #333; /* General text color */
+  line-height: 1.6; /* Improved readability */
+}
+
+.formDisplay input,
+.formDisplay select,
+.formDisplay textarea {
+  width: calc(100% - 32px); /* Full width minus padding */
+  padding: 8px; /* Space inside input elements */
+  margin: 8px 0; /* Space outside input elements */
+  border: 1px solid #ccc; /* Border styling */
+  border-radius: 4px; /* Rounded corners */
+}
+
+.formDisplay div {
+  margin: 8px 0; /* Space outside div elements */
+  padding: 8px; /* Space inside div elements */
+}
+
+.formDisplay h1,
+.formDisplay h2,
+.formDisplay h3,
+.formDisplay h4,
+.formDisplay h5,
+.formDisplay h6 {
+  margin: 16px 0 8px; /* Space outside header elements */
+  padding: 8px 0; /* Space inside header elements */
+  border-bottom: 2px solid #ccc; /* Border styling for headers */
+}
+
+.formDisplay p {
+  margin: 8px 0; /* Space outside paragraph elements */
+}
+
+.formDisplay ul,
+.formDisplay ol {
+  margin: 8px 0; /* Space outside list elements */
+  padding-left: 20px; /* Indent list items */
+}
+
+.formDisplay li {
+  margin: 4px 0; /* Space between list items */
+}
+
+.formDisplay button {
+  padding: 8px 16px; /* Space inside button elements */
+  margin: 8px 0; /* Space outside button elements */
+  border: 1px solid #ccc; /* Border styling */
+  border-radius: 4px; /* Rounded corners */
+  background-color: #fff; /* Button background */
+  cursor: not-allowed; /* Indicate non-interactability */
+}

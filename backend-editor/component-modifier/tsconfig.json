@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "es5", // Target ECMAScript version
+    "module": "commonjs",
+    "allowJs": true, // Allow JavaScript files to be compiled
+    "outDir": "./dist", // Output directory for compiled files
+    "rootDir": "./src", // Root directory of source files
+    "strict": false, // Enable all strict type-checking options
+    "esModuleInterop": true, // Enables compatibility with Babel imports
+    "skipLibCheck": true, // Skip type checking of declaration files
+    "forceConsistentCasingInFileNames": true,
+    "lib": ["es6"]
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "**/*.spec.ts"]
+}
