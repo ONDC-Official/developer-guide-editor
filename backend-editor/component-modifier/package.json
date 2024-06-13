@@ -2,10 +2,11 @@
   "name": "component-modifier-binary",
   "version": "0.0.0",
   "private": true,
-  "bin": "src/app.ts",
+  "bin": "dist/app.js",
   "scripts": {
     "start": "nodemon --exec ts-node src/app.ts",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "binary": "npx tsc && pkg ."
   },
   "dependencies": {
     "@octokit/rest": "^20.1.1",
@@ -58,6 +59,11 @@
     "assets": [
       "./react-build/**/*",
       "views/**/*"
+    ],
+    "targets": [
+      "node18-macos-x64",
+      "node18-win-x64",
+      "node18-linux-x64"
     ]
   }
 }

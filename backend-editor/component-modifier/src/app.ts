@@ -9,6 +9,7 @@ import { app as pathRouter } from "./routes/users";
 import { app as gitRouter } from "./routes/git";
 import { app as uploadRouter } from "./routes/upload";
 import { isBinary } from "./utils/fileUtils";
+import fs from "fs"
 
 const app = express();
 app.use(cors());
@@ -32,8 +33,7 @@ app.use("/local", uploadRouter);
 
 // If no Express routes match, serve React app's index.html
 if(isBinary){
-  app.use(express.static(path.join(__dirname, "react-build")));
-
+  app.use(express.static(path.join(__dirname, "../react-build")));
   app.get("*", (req, res) => {
     console.log("Serving React build");
     res.sendFile(path.join(__dirname, "react-build", "index.html"));
