@@ -5,7 +5,6 @@ import {
   CardContent,
   Card,
 } from "./mini-ui/card";
-import { Label } from "./mini-ui/label";
 import { useEffect, useRef, useState } from "react";
 import FullPageLoader from "../loader";
 export function LoginCard() {
@@ -54,7 +53,7 @@ export function LoginCard() {
         <CardContent>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label
+              <label
                 htmlFor="email"
                 className=" text-lg md:text-m lg:text-m font-bold text-transparent bg-clip-text flex-grow"
                 style={{
@@ -63,7 +62,7 @@ export function LoginCard() {
                 }}
               >
                 Username
-              </Label>
+              </label>
               <input
                 id="email"
                 className="w-full items-center space-x-2 text-blue-900 font-semibold bg-blue-50 py-2 px-4 rounded border border-blue-200 transition duration-150 ease-in-out focus-within:ring-2 focus-within:ring-blue-700 focus-within:ring-opacity-50 shadow-sm"
@@ -74,7 +73,7 @@ export function LoginCard() {
             </div>
             <div className="relative space-y-2">
               <div className="flex items-center">
-                <Label
+                <label
                   htmlFor="password"
                   className="text-lg  md:text-m lg:text-m font-bold text-transparent bg-clip-text flex-grow"
                   style={{
@@ -83,7 +82,7 @@ export function LoginCard() {
                   }}
                 >
                   Password
-                </Label>
+                </label>
               </div>
               <input
                 id="password"
@@ -95,7 +94,7 @@ export function LoginCard() {
             </div>
             <div className="relative space-y-2">
               <div className="flex items-center">
-                <Label
+                <label
                   htmlFor="password"
                   className="text-lg  md:text-m lg:text-m font-bold text-transparent bg-clip-text flex-grow"
                   style={{
@@ -104,7 +103,7 @@ export function LoginCard() {
                   }}
                 >
                   Environment
-                </Label>
+                </label>
               </div>
             </div>
             <button
