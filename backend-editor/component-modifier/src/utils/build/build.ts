@@ -31,7 +31,6 @@ export async function buildWrapper() {
 async function becknCore(){
   return new Promise((resolve,reject)=>{
 
-
 // argument example
 var zipFilePath = isBinary? path.join(path.dirname(process.execPath),`./FORKED_REPO/api/components/index.yaml`):`../FORKED_REPO/beckn-core.zip`; //args[1]; //  main file of the yamls
 const outFolderPath = isBinary? path.join(path.dirname(process.execPath),`./FORKED_REPO/api/components/index.yaml`):`../FORKED_REPO/`; //args[1]; //  main file of the yamls
@@ -72,8 +71,9 @@ if(!fs.existsSync(outFolderPath+"beckn-core") || fs.readdirSync(`${outFolderPath
     reject("")
     console.error('Error extracting ZIP file:', err);
   });
+}else{
+  console.log("Beckn Core is already extracted")
+  resolve('')
 }
-console.log("Beckn Core is already extracted")
-resolve('')
 })
 }
