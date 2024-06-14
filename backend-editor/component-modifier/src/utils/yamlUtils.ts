@@ -32,13 +32,13 @@ export async function updateYamlRefAttr(filePath, section, del = false) {
 }
 
 export async function updateYamlRefFlow(filePath, section, del = false) {
-  // await updateYamlRef(
-  //   filePath,
-  //   section,
-  //   { $ref: `./${section}/index.yaml` },
-  //   del,
-  //   "array"
-  // );
+  await updateYamlRef(
+    filePath,
+    section,
+    { $ref: `./${section}/index.yaml` },
+    del,
+    "array"
+  );
 }
 
 export async function updateYamlRefEnum(filePath, section, del = false) {
@@ -145,9 +145,14 @@ async function updateYamlRef(
 
     let data: any = yaml.load(fileContents) ?? {};
     if (type == "array") {
-      if (del) {
-        data = updateLike;
-      } else {
+      if (del) {// remove
+        data= data.filter((element)=>{
+          if(element["$ref"]!=updateLike["$ref"]){
+            return element
+          }
+      })
+        // data = updateLike;
+      } else {// add new
         data = !data.length ? [] : data;
         data.push(updateLike);
       }

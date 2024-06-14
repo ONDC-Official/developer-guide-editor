@@ -40,7 +40,8 @@ export class FlowFolderType extends folderTypeEditable {
 
   async remove(deleteTarget: { folderName: string }) {
     await super.remove(deleteTarget);
-    await updateYamlRefFlow(this.yamlPathLong, deleteTarget.folderName, true);
+    // await updateYamlRefFlow(this.yamlPathLong, deleteTarget.folderName);
+    await updateYamlRefFlow(this.yamlPathLong, deleteTarget.folderName,true);
   }
 
   async update(update: UpdateObj) {
