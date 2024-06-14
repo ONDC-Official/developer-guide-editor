@@ -7,7 +7,7 @@ import { Editable } from "./file-structure";
 import useEditorToolTip from "../hooks/useEditorToolTip";
 import Tippy from "@tippyjs/react";
 import { AnimatePresence, motion } from "framer-motion";
-const n = {
+const EXAMPLE_DATA_FORMAT = {
   nodes: [
     {
       path: "message.issue.id",
@@ -202,13 +202,13 @@ function DataTable({
 
   return (
     <div className="w-full mt-2">
-      <input
+      {/* <input
         type="text"
         className="w-full p-2 mb-4 border border-gray-400 bg-gray-100 placeholder-gray-500 text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-300 transition duration-200"
         placeholder="Search..."
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-      />
+      /> */}
       <table className="w-full border-collapse table-auto">
         <thead
           onContextMenu={headTooltip.onContextMenu}
@@ -218,7 +218,7 @@ function DataTable({
           <Tippy {...headTooltip.tippyProps}>
             <tr className="hover:bg-blue-200">
               {activeTable != "" &&
-                Object.keys(data[0] || {}).map((key, index) => (
+                Object.keys(EXAMPLE_DATA_FORMAT.nodes[0]).map((key, index) => (
                   <th
                     key={index}
                     className="px-4 py-2 text-left border-b-2 border-gray-200"

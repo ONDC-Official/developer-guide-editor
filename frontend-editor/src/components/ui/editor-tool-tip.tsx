@@ -1,5 +1,5 @@
 import { IoAddCircleOutline } from "react-icons/io5";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { MdModeEditOutline } from "react-icons/md";
 import { RiDeleteBin6Fill } from "react-icons/ri";
 import { BsFiletypeRaw } from "react-icons/bs";
@@ -9,7 +9,8 @@ import { Editable } from "../file-structure";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import RawModal from "./raw-modal";
-
+import { GlobalEditMode } from "../../utils/config";
+import { AppContext } from "../../context/AppContext";
 export default function EditorToolTip({
   data,
   showAdd = true,
@@ -29,6 +30,11 @@ export default function EditorToolTip({
   const [editModalState, setEditModalState] = useState(false);
   const [rawModalState, setRawModalState] = useState(false);
   const editState = useRef(false);
+  const appEditMode = useContext(AppContext).editMode;
+  const editMode = GlobalEditMode && appEditMode;
+  if (!editMode) {
+    showEdit = showAdd = showDelete = false;
+  }
   if (!data) {
     return (
       <div className="p-2 max-w-xs rounded-lg shadow-lg bg-white/30 backdrop-blur-lg text-black text-sm font-semibold text-center border border-white/20">

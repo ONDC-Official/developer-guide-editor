@@ -1,7 +1,7 @@
 import axios from "axios";
 import { GlobalEditMode } from "../utils/config";
 import { Listbox, Transition } from "@headlessui/react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { BiCheck, BiDownload, BiTerminal } from "react-icons/bi";
 import { FaExclamationCircle, FaGithub, FaUndo } from "react-icons/fa";
 import { RiArrowUpDownFill } from "react-icons/ri";
@@ -10,10 +10,13 @@ import ReusableModal from "./ui/generic-modal";
 import JsonView from "@uiw/react-json-view";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import { AppContext } from "../context/AppContext";
 
 const baseUrl = "http://localhost:1000";
 
 export function GitActionsTab({}) {
+  const appEditMode = useContext(AppContext).editMode;
+  const editMode = GlobalEditMode && appEditMode;
   const ActiveState = (localStorage.getItem("repoLink") as string) !== "-1";
   const [branches, setBranches] = useState<{ id: number; name: string }[]>([]);
   const [selected, setSelected] = useState<{ id: number; name: string }>();
@@ -167,7 +170,7 @@ export function GitActionsTab({}) {
             </div>
           )}
           <div className="flex items-center space-x-2">
-            {GlobalEditMode && (
+            {editMode && (
               <div className="flex items-center space-x-2">
                 <button
                   onClick={handleTerminalClick}

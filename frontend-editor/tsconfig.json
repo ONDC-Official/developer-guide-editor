@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "lib": ["dom", "dom.iterable", "esnext"],
+    "outDir": "./react-build",
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,

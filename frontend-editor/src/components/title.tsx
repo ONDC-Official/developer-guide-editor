@@ -1,6 +1,10 @@
+import { useContext } from "react";
 import { GlobalEditMode } from "../utils/config";
+import { AppContext } from "../context/AppContext";
 
 export function OndcTitle({ children }: any) {
+  const appEditMode = useContext(AppContext).editMode;
+  const editMode = GlobalEditMode && appEditMode;
   return (
     <>
       <div className="flex items-center justify-between mx-auto px-4 py-2 shadow-lg fixed top-0 left-0 right-0 z-20 bg-slate-200">
@@ -11,7 +15,7 @@ export function OndcTitle({ children }: any) {
         />
         <GradientText>
           DEVELOPER GUIDE{" "}
-          {GlobalEditMode && <span className=" text-black">~EDIT_MODE</span>}
+          {editMode && <span className=" text-black">~EDIT_MODE</span>}
         </GradientText>
         {children}
       </div>
