@@ -12,17 +12,14 @@ const forkedRepoFolderPath = isBinary
   ? path.join(path.dirname(process.execPath), "./FORKED_REPO")
   : `../../../FORKED_REPO`;
 
-  const forkedRepoFullPath = isBinary
+const forkedRepoFullPath = isBinary
   ? path.join(path.dirname(process.execPath), "./FORKED_REPO/api/components")
   : `../../../FORKED_REPO/api/components`;
 
 export const app = express();
 
 const BASE_PATH = path.resolve(__dirname, forkedRepoFolderPath);
-const COMP_FOL_PATH = path.resolve(
-  __dirname,
-  forkedRepoFullPath
-);
+const COMP_FOL_PATH = path.resolve(__dirname, forkedRepoFullPath);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -32,14 +29,20 @@ const storage = multer.diskStorage({
     const relativePath = path.dirname(file.originalname);
 
     // Split the path into components
+    console.log("Relative Path:", relativePath);
     const pathComponents = relativePath.split("/");
     const modifiedPathComponents = pathComponents.slice(1);
 
     const modifiedPath = path.join(...modifiedPathComponents);
+    let uploadPath;
 
-    const uploadPath = path.join(BASE_PATH, modifiedPath);
-
-    fs.mkdirSync(uploadPath, { recursive: true });
+    try {
+      uploadPath = path.join(BASE_PATH, modifiedPath);
+      fs.mkdirSync(uploadPath, { recursive: true });
+    } catch {
+      console.log("printing error", path.join(BASE_PATH, modifiedPath));
+    }
+    console.log("Upload Path:", uploadPath);
     cb(null, uploadPath);
   },
   filename: (req, file, cb) => {

@@ -23,16 +23,15 @@ export class FlowFileType extends FileTypeEditable {
 
   async getData(): Promise<Record<string, FlowObject[]>> {
     const response = flowFromApi(await readYamlFile(this.yamlPathLong));
-    console.log("ahsan")
-    return response
+    return response;
   }
 
   async add(dataToAdd: Record<string, FlowObject[]>) {
     // this.setMissingReferences(dataToAdd);
     let data = await this.getData();
-    data = data==undefined?{}:data
-    for(const key in dataToAdd){
-        data[key]= dataToAdd[key]
+    data = data == undefined ? {} : data;
+    for (const key in dataToAdd) {
+      data[key] = dataToAdd[key];
     }
 
     // const newData = mergeFlowObjectRecords(data, dataToAdd);
@@ -64,11 +63,10 @@ export class FlowFileType extends FileTypeEditable {
     dataToUpdate: RecordOfFlowArrays | { oldName: string; newName: string }
   ) {
     const data = await this.getData();
-    for(const key in dataToUpdate){
-        data[key]= dataToUpdate[key]
+    for (const key in dataToUpdate) {
+      data[key] = dataToUpdate[key];
     }
     await overrideYaml(this.yamlPathLong, convertToYamlWithRefs(data));
-
   }
 
   private setMissingReferences(dataToAdd: Record<string, FlowObject[]>) {

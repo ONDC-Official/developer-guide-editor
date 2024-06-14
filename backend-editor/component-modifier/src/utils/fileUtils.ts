@@ -21,18 +21,20 @@ export async function createIndexYaml(
   removeContent = true
 ) {
   try {
-  const folderPath = isBinary? relativeFolderPath : path.join(__dirname, relativeFolderPath);
-  console.log("Resolved folder path:", folderPath);
-  const indexYamlPath = path.join(folderPath, "index.yaml");
-  const structure = "";
+    const folderPath = isBinary
+      ? relativeFolderPath
+      : path.join(__dirname, relativeFolderPath);
+    console.log("Resolved folder path:", folderPath);
+    const indexYamlPath = path.join(folderPath, "index.yaml");
+    const structure = "";
 
-  if (fs.existsSync(indexYamlPath) && removeContent) {
-    console.log("index.yaml already exists, deleting it...");
-    fs.unlinkSync(indexYamlPath);
-  } else if (fs.existsSync(indexYamlPath)) {
-    console.log("index.yaml already exists, not deleting it...");
-    return [indexYamlPath, folderPath];
-  }
+    if (fs.existsSync(indexYamlPath) && removeContent) {
+      console.log("index.yaml already exists, deleting it...");
+      fs.unlinkSync(indexYamlPath);
+    } else if (fs.existsSync(indexYamlPath)) {
+      console.log("index.yaml already exists, not deleting it...");
+      return [indexYamlPath, folderPath];
+    }
     if (!fs.existsSync(folderPath)) {
       console.log("Folder does not exist, creating it...");
       await fs_p.mkdir(folderPath, { recursive: true, mode: 0o700 });
@@ -74,6 +76,7 @@ export async function deleteFile(filePath) {
 // Function to delete a folder synchronously at a given path
 export async function deleteFolderSync(folderPath) {
   try {
+    if (!fs.existsSync(folderPath)) return;
     await fs.promises.rm(folderPath, { recursive: true, force: true });
     console.log("Folder successfully deleted");
   } catch (error) {

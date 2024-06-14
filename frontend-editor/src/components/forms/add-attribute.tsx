@@ -199,7 +199,7 @@ export const AddRowForm = ({
         name="required"
         label="Required"
         labelInfo="This field indicates whether the attribute is optional or required."
-        options={["REQUIRED", "OPTIONAL"]}
+        options={["MANDATORY", "OPTIONAL"]}
       />
       <FormSelect
         name="type"

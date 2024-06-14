@@ -32,13 +32,13 @@ export async function updateYamlRefAttr(filePath, section, del = false) {
 }
 
 export async function updateYamlRefFlow(filePath, section, del = false) {
-  await updateYamlRef(
-    filePath,
-    section,
-    { $ref: `./${section}/index.yaml` },
-    del,
-    "array"
-  );
+  // await updateYamlRef(
+  //   filePath,
+  //   section,
+  //   { $ref: `./${section}/index.yaml` },
+  //   del,
+  //   "array"
+  // );
 }
 
 export async function updateYamlRefEnum(filePath, section, del = false) {
