@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import LoadingButton from "../ui/loadingButton";
 
@@ -11,16 +11,33 @@ const GenericForm = ({
   defaultValues?: any;
   children: any;
   onSubmit: any;
-  className: string;
+  className?: string;
 }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({ defaultValues });
+
   const handleFocus = (e: any) => {
     e.stopPropagation();
   };
+
+  // Prevent form submission on Enter key press
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === "Enter" && e.target instanceof HTMLInputElement) {
+        e.preventDefault();
+      }
+    };
+
+    document.addEventListener("keypress", handleKeyPress);
+
+    return () => {
+      document.removeEventListener("keypress", handleKeyPress);
+    };
+  }, []);
+
   return (
     <>
       <form
@@ -31,12 +48,6 @@ const GenericForm = ({
         {React.Children.map(children, (child) => {
           return React.cloneElement(child, { register, errors });
         })}
-        {/* <button
-        type="submit"
-        className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold shadow-md transition duration-300 ease-in-out transform hover:-translate-y-1"
-        >
-        Submit
-      </button> */}
       </form>
       <LoadingButton onClick={handleSubmit(onSubmit)} buttonText="Submit" />
     </>
