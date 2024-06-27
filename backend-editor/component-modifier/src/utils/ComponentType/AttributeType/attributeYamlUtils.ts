@@ -154,10 +154,16 @@ function exploreObject(subObj, currentPath, detailedPaths) {
             subObj[key].hasOwnProperty(prop)
           )
         ) {
+          let req = null;
+          try {
+            req = subObj[key].required.toUpperCase();
+          } catch {
+            console.log("Error in required field");
+          }
           // Store the detailed information about the path and properties
           detailedPaths.push({
             path: newPath,
-            required: subObj[key].required,
+            required: req ? req : subObj[key].required,
             type: subObj[key].type,
             owner: subObj[key].owner,
             usage: subObj[key].usage,

@@ -43,7 +43,7 @@ export class ExampleDomainFolderType extends folderTypeEditable {
         // const generatedName =
         //   key + "_" + example.summary.trim().split(" ").join("_");
         // example.exampleName = generatedName;
-        example.exampleName = example.summary.trim();
+        example.exampleName = example.summary.split(".yaml")[0].trim();
         example.name = key;
         await this.addSingleExample(example);
       }

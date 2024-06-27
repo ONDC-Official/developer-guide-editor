@@ -202,13 +202,13 @@ function DataTable({
 
   return (
     <div className="w-full mt-2">
-      {/* <input
+      <input
         type="text"
         className="w-full p-2 mb-4 border border-gray-400 bg-gray-100 placeholder-gray-500 text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-300 transition duration-200"
         placeholder="Search..."
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-      /> */}
+      />
       <table className="w-full border-collapse table-auto">
         <thead
           onContextMenu={headTooltip.onContextMenu}
