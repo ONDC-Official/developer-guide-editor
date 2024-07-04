@@ -18,7 +18,6 @@ function extractPaths(data: any, parentKey = ""): void {
           usage: value,
         };
         obj_list.push(obj);
-        // console.log(currentKey, ":", value);
       }
     }
   }

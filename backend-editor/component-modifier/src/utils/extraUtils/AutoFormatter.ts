@@ -202,9 +202,9 @@ async function formatExampleFolder(examplePath: string) {
   //     "../../../../FORKED_REPO/api/components/examples/personal-loans/purchase-finance.yaml"
   //   )
   // );
-  await formatExampleFolder(
-    path.resolve(__dirname, "../../../../FORKED_REPO/api/components/examples")
-  );
+  // await formatExampleFolder(
+  //   path.resolve(__dirname, "../../../../FORKED_REPO/api/components/examples")
+  // );
   // const str =
   //   "../../examples/personal-loans/on_search/on_search-request-pf_1.yaml";
   // console.log(str.split("../../"));
