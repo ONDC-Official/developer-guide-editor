@@ -7,6 +7,7 @@ import axios from "axios";
 import archiver from "archiver";
 import { exec } from "child_process";
 import { isBinary } from "../utils/fileUtils";
+import os from "os";
 
 const forkedRepoFolderPath = isBinary
   ? path.join(path.dirname(process.execPath), "./FORKED_REPO")
@@ -15,6 +16,10 @@ const forkedRepoFolderPath = isBinary
 const forkedRepoFullPath = isBinary
   ? path.join(path.dirname(process.execPath), "./FORKED_REPO/api/components")
   : `../../../FORKED_REPO/api/components`;
+
+const outPath = isBinary
+  ? path.join(path.dirname(process.execPath), "comp.zip")
+  : path.join(__dirname, "comp.zip");
 
 export const app = express();
 
@@ -64,32 +69,62 @@ app.post("/upload", async (req, res) => {
   });
 });
 
-app.get("/download", (req, res) => {
-  const outPath = path.join(__dirname, "comp.zip");
+// Helper function to delete a folder recursively
+const deleteFolderRecursive = async (folderPath) => {
+  if (fs.existsSync(folderPath)) {
+    for (const file of await fs.promises.readdir(folderPath)) {
+      const curPath = path.join(folderPath, file);
+      if ((await fs.promises.lstat(curPath)).isDirectory()) {
+        await deleteFolderRecursive(curPath);
+      } else {
+        await fs.promises.unlink(curPath);
+      }
+    }
+    await fs.promises.rmdir(folderPath);
+  }
+};
+
+app.get("/download", async (req, res) => {
+  // Create a temporary directory for the zip file
+  const tempDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "comp-"));
+  const outPath = path.join(tempDir, "comp.zip");
+
   const output = fs.createWriteStream(outPath);
   const archive = archiver("zip", {
     zlib: { level: 9 },
   });
 
-  output.on("close", () => {
-    res.download(outPath, "components.zip", (err) => {
+  output.on("close", async () => {
+    res.download(outPath, "components.zip", async (err) => {
       if (err) {
         console.error("Error downloading file:", err);
         res.status(500).send("Error downloading file");
+      } else {
+        try {
+          await fs.promises.unlink(outPath); // Clean up the zip file after download
+          await deleteFolderRecursive(tempDir); // Clean up the temporary directory
+        } catch (err) {
+          console.error("Error cleaning up:", err);
+        }
       }
-      fs.unlinkSync(outPath);
     });
   });
 
   archive.on("error", (err) => {
-    throw err;
+    console.error("Archive error:", err);
+    res.status(500).send("Error creating archive");
   });
 
   archive.pipe(output);
 
-  archive.directory(COMP_FOL_PATH, false);
-
-  archive.finalize();
+  // Ensure COMP_FOL_PATH exists and is accessible
+  if (fs.existsSync(COMP_FOL_PATH)) {
+    archive.directory(COMP_FOL_PATH, false);
+    archive.finalize();
+  } else {
+    console.error("Components folder path does not exist:", COMP_FOL_PATH);
+    res.status(500).send("Components folder path does not exist");
+  }
 });
 
 const predefinedPath = path.resolve(__dirname, forkedRepoFolderPath);
