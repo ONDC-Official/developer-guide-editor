@@ -1,30 +1,54 @@
 import fs from "fs";
 import path from "path";
 let obj_list = [];
-function extractPaths(data: any, parentKey = ""): void {
+
+interface ExtractedPath {
+  path: string;
+  required: boolean;
+  type: string;
+  Owner: string;
+  usage: any;
+}
+
+export function ExtractAttributesFromExample(
+  data: any,
+  parentKey = "",
+  objList: ExtractedPath[] = []
+): ExtractedPath[] {
   if (typeof data === "object" && data !== null) {
     for (const key in data) {
       const currentKey = parentKey ? `${parentKey}.${key}` : key;
       const value = data[key];
 
       if (typeof value === "object" && value !== null) {
-        extractPaths(value, currentKey);
+        ExtractAttributesFromExample(value, currentKey, objList);
       } else {
-        const obj = {
+        const obj: ExtractedPath = {
           path: removeNumbersFromString(currentKey),
           required: false,
           type: "string",
           Owner: "any",
           usage: value,
         };
-        obj_list.push(obj);
+        if (obj.path.split(".").includes("tags")) {
+          continue;
+        }
+        objList.push(obj);
       }
     }
   }
+  return objList;
 }
 
 function removeNumbersFromString(str: string): string {
-  return str.replace(/\d+\./g, "");
+  // Regex to match number between dots
+  const regex = /\.(\d+)\b/g;
+
+  // Replace numbers with empty string
+  const result = str.replace(regex, "");
+
+  // Remove trailing dot if any
+  return result.replace(/\.$/, "");
 }
 
 (async () => {

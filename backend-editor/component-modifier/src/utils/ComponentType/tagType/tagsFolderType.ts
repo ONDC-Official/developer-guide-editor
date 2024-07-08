@@ -13,7 +13,7 @@ export class TagsFolderType extends folderTypeEditable {
 
   async add(newEditable: { ID: string; name: string }) {
     if (!this.allowedList.includes(newEditable.ID)) {
-      throw new Error(`Enums only allow ${this.allowedList} as children.`);
+      throw new Error(`Tags only allow ${this.allowedList} as children.`);
     }
     await super.add(newEditable);
     const addedChild = this.childrenEditables.find(

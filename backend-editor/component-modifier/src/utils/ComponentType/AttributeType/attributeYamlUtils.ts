@@ -2,12 +2,24 @@ import fs from "fs";
 import yaml from "js-yaml";
 import path from "path";
 import { readYamlFile } from "../../fileUtils";
-import { AttributeRow } from "./AttributeRow";
+import { AttributeRow, AttributeType } from "./AttributeRow";
 
-export function getSheets(yamlData) {
-  let sheets = {};
+export function getSheets(yamlData: any) {
   const obj: any = yaml.load(yamlData);
+  return getSheetsObj(obj);
+  // let sheets: AttributeType = {};
+  // for (const key in obj) {
+  //   if (obj.hasOwnProperty(key)) {
+  //     const element = obj[key];
+  //     const list = listDetailedPaths(yaml.dump(element));
+  //     sheets[key] = list;
+  //   }
+  // }
+  // return sheets;
+}
 
+export function getSheetsObj(obj: any) {
+  let sheets: AttributeType = {};
   for (const key in obj) {
     if (obj.hasOwnProperty(key)) {
       const element = obj[key];
@@ -105,12 +117,12 @@ export function updateRows(
 
 export function sheetsToYAML(sheets) {
   let obj = {};
-  console.log(sheets);
+  // console.log(sheets);
   for (const key in sheets) {
     const element = sheets[key];
     obj[key] = convertDetailedPathsToNestedObjects(element);
   }
-  console.log("test ", obj);
+  // console.log("test ", obj);
   return yaml.dump(obj);
 }
 

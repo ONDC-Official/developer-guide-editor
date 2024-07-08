@@ -15,12 +15,6 @@ export abstract class folderTypeEditable extends Editable {
     super(path, name);
     this.childrenEditables = [];
   }
-  /**
-   * Adds a new editable to the childrenEditables array.
-   * @param {Object} newEditable - The new editable object to add.
-   * @param {string} newEditable.ID - The unique identifier for the editable.
-   * @param {string} newEditable.name - The name of the editable.
-   */
   async add(newEditable: { ID: string; name: string }) {
     console.log(this.childrenEditables.map((s) => s.name));
     if (this.childrenEditables.map((s) => s.name).includes(newEditable.name)) {

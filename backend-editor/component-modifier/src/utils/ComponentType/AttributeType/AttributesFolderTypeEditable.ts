@@ -15,7 +15,7 @@ export class AttributesFolderTypeEditable extends folderTypeEditable {
     this.allowedList = [AttributeFile.REGISTER_ID];
   }
 
-  async add(new_editable) {
+  async add(new_editable: { ID: string; name: string }) {
     if (!this.allowedList.includes(new_editable.ID)) {
       console.log(new_editable);
       throw new Error(

@@ -8,8 +8,9 @@ import { app as indexRouter } from "./routes/index";
 import { app as pathRouter } from "./routes/users";
 import { app as gitRouter } from "./routes/git";
 import { app as uploadRouter } from "./routes/upload";
+import { app as helperRouter } from "./routes/helpers";
 import { isBinary } from "./utils/fileUtils";
-import fs from "fs"
+import fs from "fs";
 
 const app = express();
 app.use(cors());
@@ -30,9 +31,10 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/tree", pathRouter);
 app.use("/git", gitRouter);
 app.use("/local", uploadRouter);
+app.use("/helper", helperRouter);
 
 // If no Express routes match, serve React app's index.html
-if(isBinary){
+if (isBinary) {
   app.use(express.static(path.join(__dirname, "../react-build")));
   app.get("*", (req, res) => {
     console.log("Serving React build");

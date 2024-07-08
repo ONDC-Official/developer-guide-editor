@@ -97,11 +97,11 @@ export class TagFileType extends FileTypeEditable {
   private setMissingReferences(dataToAdd: Record<string, TagObject[]>) {
     for (const key in dataToAdd) {
       for (const data of dataToAdd[key]) {
-        data.tag.forEach((e) => {
+        data?.tag.forEach((e) => {
           if (!e.reference) {
             e.reference = "<PR/Issue/Discussion Links md format text";
           }
-          e.list.forEach((l) => {
+          e?.list?.forEach((l) => {
             if (!l.reference) {
               l.reference = "<PR/Issue/Discussion Links md format text";
             }

@@ -2,11 +2,11 @@ import axios from "axios";
 
 const baseURL = "http://localhost:1000/tree/guide";
 
-export async function getData(path: string, query = {}) {
+export async function getData(path: string, query = {}, providedUrl?: string) {
   // console.log("path", path);
   try {
     console.log("getting data from", path);
-    const url = `${baseURL}/${path}`;
+    const url = providedUrl ? providedUrl : `${baseURL}/${path}`;
     const response = await axios.get(url, { params: query });
     return response.data;
   } catch (error: any) {
@@ -21,9 +21,9 @@ export async function getData(path: string, query = {}) {
   }
 }
 
-export async function postData(path: string, data: any) {
+export async function postData(path: string, data: any, providedUrl?: string) {
   try {
-    const url = `${baseURL}/${path}`;
+    const url = providedUrl ? providedUrl : `${baseURL}/${path}`;
     const response = await axios.post(url, data);
     return response.data;
   } catch (error: any) {

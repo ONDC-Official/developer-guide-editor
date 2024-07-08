@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Editable } from "./file-structure";
 import Dropdown from "./horizontal-tab";
-import { getData } from "../utils/requestUtils";
+import { getData, postData } from "../utils/requestUtils";
 import { Disclosure } from "@headlessui/react";
 import { CgMenuMotion } from "react-icons/cg";
 import { IoIosArrowDropdown, IoIosArrowDropright } from "react-icons/io";
@@ -14,6 +14,9 @@ import Tippy from "@tippyjs/react";
 import "./jsonViewer.css";
 import { FaHtml5 } from "react-icons/fa";
 import beautify from "js-beautify";
+import { set } from "react-hook-form";
+import ReusableModal from "./ui/generic-modal";
+import { AiOutlineLoading } from "react-icons/ai";
 
 export interface ExampleData {
   summary: string;
@@ -241,6 +244,33 @@ function ExampleList({
 }) {
   const tagToolTip = useEditorToolTip([true, false, true]);
   const jsonToolTip = useEditorToolTip([true, false, false]);
+  const [modalOpen, setModalOpen] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const [errorCount, setErrorCount] = React.useState<{
+    missingNumber: number;
+    missingAttributes: string[];
+  }>({ missingNumber: 0, missingAttributes: [] });
+  useEffect(() => {
+    if (!exampleData.exampleJson) return;
+    setLoading(true);
+    postData(
+      "",
+      { exampleString: JSON.stringify(exampleData.exampleJson) },
+      `http://localhost:1000/helper/compareExample`
+    )
+      .then((res) => {
+        const error = res as {
+          missingNumber: number;
+          missingAttributes: string[];
+        };
+        setErrorCount(error);
+        setLoading(false);
+      })
+      .catch((e) => {
+        console.log(e);
+        setLoading(false);
+      });
+  }, [exampleData.exampleJson]);
 
   if (exampleData.formName && exampleData.formHtml) {
     return (
@@ -307,46 +337,80 @@ function ExampleList({
   jsonToolTip.data.current = jsonEditable;
 
   return (
-    <Disclosure key={exampleData.summary + index}>
-      <Disclosure.Button
-        className="flex ml-6 mt-3 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-200 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg"
-        onContextMenu={tagToolTip.onContextMenu}
-      >
-        <Tippy {...tagToolTip.tippyProps}>
-          <div className="flex items-center">
-            <VscJson size={20} className="mr-2" />
-            <span>{exampleData.apiName}</span>
-          </div>
-        </Tippy>
-      </Disclosure.Button>
-      <Disclosure.Panel>
-        <div className="ml-6 p-3 shadow-inner bg-gray-200">
-          <div className="p-2 border border-blue-50 mr-2 ">
-            <div className="text-left">
-              <h2 className="mb-1">
-                <span>Summary: {exampleData.summary}</span>
-              </h2>
-              <p>Description: {exampleData.description}</p>
-              <span
-                className="bg-gray-100m p-3 text-gray-800 font-mono block whitespace-pre-wrap shadow 
-              "
-                style={{ maxHeight: "400px", overflow: "auto" }}
+    <>
+      <Disclosure key={exampleData.summary + index}>
+        <Disclosure.Button
+          className="flex ml-6 mt-3 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-200 hover:bg-blue-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg"
+          onContextMenu={tagToolTip.onContextMenu}
+        >
+          <Tippy {...tagToolTip.tippyProps}>
+            <div className="flex items-center w-full">
+              <div className="flex items-center">
+                <VscJson size={20} className="mr-2" />
+                <span>{exampleData.apiName}</span>
+              </div>
+              <button
+                onClick={() => setModalOpen(true)}
+                className={`ml-auto rounded-full h-8 w-8 flex items-center justify-center mr-5 text-white ${
+                  loading
+                    ? "bg-gray-400"
+                    : errorCount.missingNumber === 0
+                    ? "bg-green-500"
+                    : "bg-red-500"
+                } p-2 border-2 border-transparent shadow-lg transition-all duration-300 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-opacity-50`}
               >
-                <Tippy {...jsonToolTip.tippyProps}>
-                  <JsonView
-                    onContextMenu={jsonToolTip.onContextMenu}
-                    value={exampleData.exampleJson as Record<string, any>}
-                    displayDataTypes={false}
-                    className="jsonViewer text-xl"
-                    style={{ fontSize: "15px" }}
-                  />
-                </Tippy>
-              </span>
+                {loading && (
+                  <div className="animate-spin">
+                    <AiOutlineLoading size={25} />
+                  </div>
+                )}
+                {!loading && errorCount.missingNumber}
+              </button>
+            </div>
+          </Tippy>
+        </Disclosure.Button>
+        <Disclosure.Panel>
+          <div className="ml-6 p-3 shadow-inner bg-gray-200">
+            <div className="p-2 border border-blue-50 mr-2 ">
+              <div className="text-left">
+                <h2 className="mb-1">
+                  <span>Summary: {exampleData.summary}</span>
+                </h2>
+                <p>Description: {exampleData.description}</p>
+                <span
+                  className="bg-gray-100m p-3 text-gray-800 font-mono block whitespace-pre-wrap shadow 
+              "
+                  style={{ maxHeight: "400px", overflow: "auto" }}
+                >
+                  <Tippy {...jsonToolTip.tippyProps}>
+                    <JsonView
+                      onContextMenu={jsonToolTip.onContextMenu}
+                      value={exampleData.exampleJson as Record<string, any>}
+                      displayDataTypes={false}
+                      className="jsonViewer text-xl"
+                      style={{ fontSize: "15px" }}
+                    />
+                  </Tippy>
+                </span>
+              </div>
             </div>
           </div>
+        </Disclosure.Panel>
+      </Disclosure>
+      <ReusableModal
+        isOpen={modalOpen}
+        closeModal={() => setModalOpen(false)}
+        title="Missing Attributes"
+      >
+        <div>
+          {errorCount.missingAttributes.map((s) => (
+            <span key={s} className="block">
+              {s}
+            </span>
+          ))}
         </div>
-      </Disclosure.Panel>
-    </Disclosure>
+      </ReusableModal>
+    </>
   );
 }
 

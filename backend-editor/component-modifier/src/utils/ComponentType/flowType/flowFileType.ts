@@ -31,6 +31,7 @@ export class FlowFileType extends FileTypeEditable {
     let data = await this.getData();
     data = data == undefined ? {} : data;
     for (const key in dataToAdd) {
+      console.log("key", key);
       data[key] = dataToAdd[key];
     }
 

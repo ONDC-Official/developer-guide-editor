@@ -42,6 +42,10 @@ export function mergeEnumObjectRecords(
 
 export function enumsFromApi(yamlData: string) {
   const obj: any = yaml.load(yamlData);
+  return enumsFromObj(obj);
+}
+
+export function enumsFromObj(obj: any) {
   let data = {};
   for (const key in obj) {
     data[key] = listDetailedPaths(obj[key]);

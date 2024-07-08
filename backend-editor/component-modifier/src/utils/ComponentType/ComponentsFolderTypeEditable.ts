@@ -6,6 +6,8 @@ import { EnumFolderType } from "./enumType/enumFolderType";
 import { TagsFolderType } from "./tagType/tagsFolderType";
 import { FlowFolderType } from "./flowType/flowFolderType";
 import { ExampleFolderType } from "./examplesType/exampleFolderType";
+import { BuildCompenetsWithRawBuild } from "./componentsUtils";
+import { build } from "node-xlsx";
 
 export class ComponentsType extends folderTypeEditable {
   getRegisterID(): string {
@@ -22,7 +24,12 @@ export class ComponentsType extends folderTypeEditable {
       ExampleFolderType.REGISTER_ID,
     ];
   }
-  async add(new_editable: { ID: string }) {
+  async add(new_editable: { ID: string; build?: any }) {
+    if (new_editable.build) {
+      await BuildCompenetsWithRawBuild(new_editable.build, this);
+      return;
+    }
+    if (!new_editable.ID) throw new Error("ID is required");
     if (!this.allowedList.includes(new_editable.ID)) {
       throw new Error(
         `${new_editable.ID} TYPE IS NOT ALLOWED IN ` + this.getRegisterID()

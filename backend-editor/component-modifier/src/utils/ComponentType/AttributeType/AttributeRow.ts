@@ -23,7 +23,7 @@ export interface AttributeOperation {
   attributes?: AttributeRow[];
 }
 
-type AttributeType = Record<string, AttributeRow[]>;
+export type AttributeType = Record<string, AttributeRow[]>;
 
 export interface PatchAttributes {
   type: "sheetName" | "rowData";

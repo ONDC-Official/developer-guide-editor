@@ -80,6 +80,10 @@ export function mergeTagObjectRecords(
 
 export function tagsFromApi(yamlData: string) {
   const obj: any = yaml.load(yamlData);
+  return tagsFromApiObj(obj);
+}
+
+export function tagsFromApiObj(obj: any) {
   let data = {};
   for (const key in obj) {
     data[key] = listDetailedPaths(obj[key]);

@@ -11,6 +11,7 @@ import {
 } from "./ComponentType/examplesType/exampleFolderType";
 import { ExampleDomainFolderType } from "./ComponentType/examplesType/ExampleDomainFolderType";
 import { initRegistry } from "./RegisterList";
+import { AttributesFolderTypeEditable } from "./ComponentType/AttributeType/AttributesFolderTypeEditable";
 
 type exampleYaml = Record<
   string,
