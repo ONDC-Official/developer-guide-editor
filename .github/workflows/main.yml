@@ -36,7 +36,7 @@ jobs:
           cd ${{  env.BACKEND_EDITOR_PATH}} && npm install
 
       - name: Create binary
-        run: node create-binary.js
+        run: node create-build.js
 
       - name: Archive Windows binary
         uses: actions/upload-artifact@v3
