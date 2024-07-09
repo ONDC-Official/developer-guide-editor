@@ -64,22 +64,22 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: backend-editor/component-modifier/my-binary-file-windows.exe
-          asset_name: my-binary-file-windows.exe
+          asset_path: backend-editor/component-modifier/component-modifier-binary-win.exe
+          asset_name: component-modifier-binary-win.exe
           asset_content_type: application/octet-stream
 
       - name: Upload Linux binary to release
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: backend-editor/component-modifier/my-binary-file-linux
-          asset_name: my-binary-file-linux
+          asset_path: backend-editor/component-modifier/component-modifier-binary-linux
+          asset_name: component-modifier-binary-linux
           asset_content_type: application/octet-stream
 
       - name: Upload Mac binary to release
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: backend-editor/component-modifier/my-binary-file-macos
-          asset_name: my-binary-file-macos
+          asset_path: backend-editor/component-modifier/component-modifier-binary-macos
+          asset_name: component-modifier-binary-macos
           asset_content_type: application/octet-stream
