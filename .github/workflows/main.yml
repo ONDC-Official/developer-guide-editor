@@ -1,0 +1,39 @@
+name: Build Binary
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install root dependencies
+        run: npm install
+
+      - name: Install subfolder dependencies
+        run: |
+          cd ./frontend-editor && npm install
+          cd ./backend-editor/component-modifier && npm install
+
+      - name: Create binary
+        run: node create-binary.js
+
+      - name: Archive binary
+        uses: actions/upload-artifact@v3
+        with:
+          name: binary
+          path: path/to/your/binary/file  # Replace with the actual path to your binary file
