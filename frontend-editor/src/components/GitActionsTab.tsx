@@ -2,7 +2,13 @@ import axios from "axios";
 import { GlobalEditMode } from "../utils/config";
 import { Listbox, Transition } from "@headlessui/react";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { BiCheck, BiDownload, BiTerminal } from "react-icons/bi";
+import {
+  BiCheck,
+  BiDownload,
+  BiExport,
+  BiImport,
+  BiTerminal,
+} from "react-icons/bi";
 import { FaExclamationCircle, FaGithub, FaUndo } from "react-icons/fa";
 import { RiArrowUpDownFill } from "react-icons/ri";
 import { DataContext } from "../context/dataContext";
@@ -11,6 +17,7 @@ import JsonView from "@uiw/react-json-view";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { AppContext } from "../context/AppContext";
+import ImportYamlButton from "./ui/import-yaml";
 
 const baseUrl = "http://localhost:1000";
 
@@ -123,6 +130,7 @@ export function GitActionsTab({}) {
       toast.error("Download Failed!");
     }
   };
+  const handleImport = async () => {};
 
   const handleTerminalClick = async () => {
     try {
@@ -210,11 +218,12 @@ export function GitActionsTab({}) {
                     </button>
                   </>
                 )}
+                <ImportYamlButton />
                 <button
                   onClick={downloadFile}
                   className="flex items-center px-4 py-2 text-indigo-600 text-sm font-medium transition duration-200 border-2 border-indigo-600 hover:bg-indigo-600 hover:text-white"
                 >
-                  <BiDownload className="mr-2" size={20} />
+                  <BiExport className="mr-2" size={20} />
                   EXPORT
                 </button>
               </div>

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Editable } from "./file-structure";
 import { getData } from "../utils/requestUtils";
 import React from "react";
@@ -13,6 +13,8 @@ import { GoRelFilePath } from "react-icons/go";
 import { DropTransition } from "./helper-components";
 import HorizontalTabBar from "./horizontal-tab";
 import { MermaidDiagram } from "../components/ui/mermaid";
+import JsonView from "@uiw/react-json-view";
+import "./jsonViewer.css";
 
 //ignore
 interface Flow {
@@ -210,7 +212,9 @@ export function GenericContent({
 
   return (
     <div
-      className={`flex ml-6 mt-1 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-200 ${hover && "hover:bg-blue-200"} focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg`}
+      className={`flex ml-6 mt-1 w-full px-4 py-2 text-base font-medium text-left text-black bg-gray-200 ${
+        hover && "hover:bg-blue-200"
+      } focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 shadow-md hover:shadow-lg`}
     >
       <p> {data}</p>
     </div>
@@ -224,7 +228,15 @@ export function StepsContent({
   element,
   index,
   editable,
-}: any) {
+  examples,
+}: {
+  detailData: any;
+  apiName: string;
+  element: any;
+  index: number;
+  editable: Editable;
+  examples: { $ref: string; value: Record<string, any> }[];
+}) {
   const apiToolTip = useEditorToolTip([true, false, true]);
 
   const apiEditable = { ...editable };
@@ -236,7 +248,7 @@ export function StepsContent({
     addParams: { type: "flow" },
     deleteParams: {},
     updateParams: { data: detailData, type: "edit", index },
-    Params: {},
+    // Params: {},
     copyData: async () => {
       const copyData: Record<string, FlowData[]> = {};
       copyData[apiName] = detailData;
@@ -280,9 +292,82 @@ export function StepsContent({
                 <Disclosure.Panel>
                   <div className="ml-6 p-2 shadow-inner">
                     <table className="w-full border-collapse table-auto">
-                      <tbody>
+                      <tbody className="w-full">
                         {Object.keys(element).map(function (key, index) {
-                          return key != "details" ? (
+                          if (key == "example") {
+                            console.log(element[key], "HELLOOO");
+                            const example = examples.find((ex) => {
+                              console.log(ex.$ref, element[key].value.$ref);
+                              return ex.$ref === element[key].value.$ref;
+                            });
+
+                            return (
+                              <>
+                                <tr>
+                                  <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
+                                    {key}
+                                  </td>
+                                  <div className="p-2 bg-gray-50 rounded-xl shadow-lg border border-gray-200 hover:shadow-xl transition-shadow duration-200 w-full">
+                                    <span>
+                                      {element[key]?.summary ?? "example"}
+                                    </span>
+                                    <span
+                                      className="bg-gray-100m p-3 text-gray-800 font-mono block whitespace-pre-wrap shadow 
+              "
+                                      style={{
+                                        maxHeight: "400px",
+                                        overflow: "auto",
+                                      }}
+                                    >
+                                      <JsonView
+                                        value={
+                                          example?.value ?? {
+                                            "NOT FOUND": "NOT FOUND",
+                                          }
+                                        }
+                                        displayDataTypes={false}
+                                        className="jsonViewer text-xl"
+                                        style={{ fontSize: "15px" }}
+                                      />
+                                    </span>
+                                  </div>
+                                </tr>
+                              </>
+                            );
+                          }
+                          if (key == "details") {
+                            return (
+                              <>
+                                <tr>
+                                  <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
+                                    {key}
+                                  </td>
+                                  <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
+                                    {element[key][0] &&
+                                      JSON.stringify(
+                                        element[key][0]["description"]
+                                      )}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
+                                    {"diagram"}
+                                  </td>
+                                  <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
+                                    {element[key][0] && (
+                                      <MermaidDiagram
+                                        chartDefinition={
+                                          element[key][0]["mermaid"]
+                                        }
+                                        keys={index.toString()}
+                                      />
+                                    )}
+                                  </td>
+                                </tr>
+                              </>
+                            );
+                          }
+                          return (
                             <tr>
                               <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
                                 {key}
@@ -291,38 +376,48 @@ export function StepsContent({
                                 {JSON.stringify(element[key])}
                               </td>
                             </tr>
-                          ) : key == "details" ? (
-                            <>
-                              <tr>
-                                <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
-                                  {key}
-                                </td>
-                                <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
-                                  {element[key][0] &&
-                                    JSON.stringify(
-                                      element[key][0]["description"]
-                                    )}
-                                </td>
-                              </tr>
-                              <tr>
-                                <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
-                                  {"diagram"}
-                                </td>
-                                <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
-                                  {element[key][0] && (
-                                    <MermaidDiagram
-                                      chartDefinition={
-                                        element[key][0]["mermaid"]
-                                      }
-                                      keys={index.toString()}
-                                    />
-                                  )}
-                                </td>
-                              </tr>
-                            </>
-                          ) : (
-                            <></>
                           );
+                          // return key != "details" ? (
+                          //   <tr>
+                          //     <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
+                          //       {key}
+                          //     </td>
+                          //     <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
+                          //       {JSON.stringify(element[key])}
+                          //     </td>
+                          //   </tr>
+                          // ) : key == "details" ? (
+                          //   <>
+                          //     <tr>
+                          //       <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
+                          //         {key}
+                          //       </td>
+                          //       <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
+                          //         {element[key][0] &&
+                          //           JSON.stringify(
+                          //             element[key][0]["description"]
+                          //           )}
+                          //       </td>
+                          //     </tr>
+                          //     <tr>
+                          //       <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
+                          //         {"diagram"}
+                          //       </td>
+                          //       <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
+                          //         {element[key][0] && (
+                          //           <MermaidDiagram
+                          //             chartDefinition={
+                          //               element[key][0]["mermaid"]
+                          //             }
+                          //             keys={index.toString()}
+                          //           />
+                          //         )}
+                          //       </td>
+                          //     </tr>
+                          //   </>
+                          // ) : (
+                          //   <></>
+                          // );
                         })}
                       </tbody>
                     </table>
@@ -432,6 +527,21 @@ function FlowDisclose({
   apiToolTip2.data.current = apiEditable;
   apiToolTip.data.current = apiEditable;
 
+  const [examples, setExamples] = useState<
+    { $ref: string; value: Record<string, any> }[]
+  >([]);
+  async function fetchExamples() {
+    const path = flowEditable.path?.replace("flows", "examples").split("/");
+    path.pop();
+    let newPath = path.join("/");
+    const ex = await getData(newPath, { type: "reference" });
+    console.log(ex.refs);
+    setExamples(ex.refs);
+  }
+  useEffect(() => {
+    fetchExamples();
+  }, []);
+
   return (
     <Disclosure>
       {({ open }) => (
@@ -513,6 +623,7 @@ function FlowDisclose({
                     index={index}
                     apiName={apiName}
                     editable={flowEditable}
+                    examples={examples}
                   />
                 ))}
             </Disclosure.Panel>

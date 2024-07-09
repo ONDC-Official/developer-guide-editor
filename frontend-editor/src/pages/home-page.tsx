@@ -112,6 +112,7 @@ export function HomePage({ editMode }: { editMode: boolean }) {
         activeEditable: activeEditable,
         setActiveEditable: setActiveEditable,
         setReload: setRefresh,
+        components: compEditable,
         editMode: editMode,
       }}
     >

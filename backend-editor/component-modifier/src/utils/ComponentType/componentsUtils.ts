@@ -170,7 +170,7 @@ async function createExamples(
       if (example.includes("form")) continue;
       for (const set of yamlData.example_set[example].examples) {
         example_cache.push({
-          $ref: `../../examples/${example}/${set.summary
+          $ref: `../../examples/${domain}/${example}/${set.summary
             .trim()
             .split(" ")
             .join("_")}.yaml`,
@@ -185,7 +185,7 @@ async function createExamples(
                 ID: "JSON",
                 name: example,
                 exampleName: set.summary.trim().split(" ").join("_"),
-                summary: set.summary,
+                summary: set.summary.trim().split(" ").join("_"),
                 description: set.description,
                 exampleValue: set.value,
               },

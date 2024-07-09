@@ -7,7 +7,6 @@ import { TagsFolderType } from "./tagType/tagsFolderType";
 import { FlowFolderType } from "./flowType/flowFolderType";
 import { ExampleFolderType } from "./examplesType/exampleFolderType";
 import { BuildCompenetsWithRawBuild } from "./componentsUtils";
-import { build } from "node-xlsx";
 
 export class ComponentsType extends folderTypeEditable {
   getRegisterID(): string {

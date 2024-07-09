@@ -2,13 +2,7 @@ import { FileTypeEditable } from "../../FileTypeEditable";
 import { readYamlFile } from "../../fileUtils";
 import { convertToYamlWithRefs } from "../../extraUtils/yamlRefConvert";
 import { overrideYaml } from "../../yamlUtils";
-import {
-  mergeFlowObjectRecords,
-  RecordOfFlowArrays,
-  FlowObject,
-  flowFromApi,
-  flowToNested,
-} from "./flowUtils";
+import { RecordOfFlowArrays, FlowObject, flowFromApi } from "./flowUtils";
 
 type FlowDel = Record<string, FlowObject[] | string>;
 
@@ -68,22 +62,5 @@ export class FlowFileType extends FileTypeEditable {
       data[key] = dataToUpdate[key];
     }
     await overrideYaml(this.yamlPathLong, convertToYamlWithRefs(data));
-  }
-
-  private setMissingReferences(dataToAdd: Record<string, FlowObject[]>) {
-    for (const key in dataToAdd) {
-      for (const data of dataToAdd[key]) {
-        data.Flow.forEach((e) => {
-          if (!e.reference) {
-            e.reference = "<PR/Issue/Discussion Links md format text";
-          }
-          e.list.forEach((l) => {
-            if (!l.reference) {
-              l.reference = "<PR/Issue/Discussion Links md format text";
-            }
-          });
-        });
-      }
-    }
   }
 }
