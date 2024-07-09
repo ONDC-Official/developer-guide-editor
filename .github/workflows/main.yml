@@ -46,19 +46,19 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: component-modifier-binary-win
-          path: backend-editor/component-modifier/my-binary-file-windows.exe
+          path: backend-editor/component-modifier/component-modifier-binary-win.exe
 
       - name: Archive Linux binary
         uses: actions/upload-artifact@v3
         with:
           name: component-modifier-binary-linux
-          path: backend-editor/component-modifier/my-binary-file-linux
+          path: backend-editor/component-modifier/component-modifier-binary-linux
 
       - name: Archive Mac binary
         uses: actions/upload-artifact@v3
         with:
           name: component-modifier-binary-macos
-          path: backend-editor/component-modifier/my-binary-file-macos
+          path: backend-editor/component-modifier/component-modifier-binary-macos
 
       - name: Upload Windows binary to release
         uses: actions/upload-release-asset@v1
