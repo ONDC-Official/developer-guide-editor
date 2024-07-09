@@ -57,7 +57,9 @@ export class FlowFileType extends FileTypeEditable {
   async update(
     dataToUpdate: RecordOfFlowArrays | { oldName: string; newName: string }
   ) {
-    const data = await this.getData();
+    let data = await this.getData();
+    data = data ? data : {};
+    console.log("EDITING", dataToUpdate, data);
     for (const key in dataToUpdate) {
       data[key] = dataToUpdate[key];
     }

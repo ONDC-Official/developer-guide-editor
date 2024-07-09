@@ -112,8 +112,8 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
         },
       ],
     };
-    // delete payload?.description;
-    // delete payload?.mermaid;
+    delete payload?.description;
+    delete payload?.mermaid;
     delete payload?.dropDown;
 
     if (
@@ -162,7 +162,6 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
             defaultValues={defaultValue}
           >
             <FormInput name={`summary`} label={`Summary`} strip={false} />
-            <FormInput name={`reference`} label={`Reference`} strip={false} />
             <FormInput name={`api`} label={`Api`} strip={false} />
             <FormInput
               name={`description`}
@@ -175,6 +174,7 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
               label={`Mermaid`}
               strip={false}
             />
+
             <button
               type="button"
               onClick={handleMermaidPreviewButtonClick}
@@ -183,6 +183,7 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
               Mermaid Preview
             </button>
             {/* <FormInput name={`example`} label={`Example`} strip={false} /> */}
+            <FormInput name={`reference`} label={`Reference`} strip={false} />
             <FormSelect
               name={"dropDown"}
               label={"Example Dropdown"}
