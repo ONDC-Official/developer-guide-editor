@@ -23,7 +23,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "20"
+          node-version: "14" # Adjust the version as per your project requirements
 
       - name: Install root dependencies
         run: npm install
@@ -61,6 +61,7 @@ jobs:
           path: backend-editor/component-modifier/component-modifier-binary-macos
 
       - name: Upload Windows binary to release
+        id: upload-windows
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ github.event.release.upload_url }}
@@ -69,6 +70,7 @@ jobs:
           asset_content_type: application/octet-stream
 
       - name: Upload Linux binary to release
+        id: upload-linux
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ github.event.release.upload_url }}
@@ -77,6 +79,7 @@ jobs:
           asset_content_type: application/octet-stream
 
       - name: Upload Mac binary to release
+        id: upload-macos
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ github.event.release.upload_url }}
