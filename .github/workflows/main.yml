@@ -23,7 +23,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "14" # Adjust the version as per your project requirements
+          node-version: "20"
 
       - name: Install root dependencies
         run: npm install
@@ -33,15 +33,15 @@ jobs:
           cd ${{ env.FRONTEND_EDITOR_PATH }} && npm install
           cd ${{ env.ROOT_PATH }}
           cd ${{ env.BACKEND_EDITOR_PATH }} && npm install
-
       - name: Create binary
         run: node create-build.js
-
+      - name: url print
+        run: |
+          echo "Listing ${{github.event.release.upload_url}}"
       - name: List files for debugging
         run: |
           echo "Listing files in backend-editor/component-modifier directory:"
           ls -la backend-editor/component-modifier
-
       - name: Archive Windows binary
         uses: actions/upload-artifact@v3
         with:
@@ -61,7 +61,6 @@ jobs:
           path: backend-editor/component-modifier/component-modifier-binary-macos
 
       - name: Upload Windows binary to release
-        id: upload-windows
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ github.event.release.upload_url }}
@@ -70,7 +69,6 @@ jobs:
           asset_content_type: application/octet-stream
 
       - name: Upload Linux binary to release
-        id: upload-linux
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ github.event.release.upload_url }}
@@ -79,7 +77,6 @@ jobs:
           asset_content_type: application/octet-stream
 
       - name: Upload Mac binary to release
-        id: upload-macos
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ github.event.release.upload_url }}
