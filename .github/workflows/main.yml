@@ -37,6 +37,11 @@ jobs:
       - name: Create binary
         run: node create-build.js
 
+      - name: List files for debugging
+        run: |
+          echo "Listing files in backend-editor/component-modifier directory:"
+          ls -la backend-editor/component-modifier
+
       - name: Archive Windows binary
         uses: actions/upload-artifact@v3
         with:
