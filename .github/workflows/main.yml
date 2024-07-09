@@ -12,6 +12,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      ROOT_PATH: ${{ github.workspace }}
+      FRONTEND_EDITOR_PATH: frontend-editor
+      BACKEND_EDITOR_PATH: backend-editor/component-modifier
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -26,8 +31,9 @@ jobs:
 
       - name: Install subfolder dependencies
         run: |
-          cd ./frontend-editor && npm install
-          cd ./backend-editor/component-modifier && npm install
+          cd ${{ env.FRONTEND_EDITOR_PATH }} && npm install
+          cd ${{  env.ROOT_PATH}}
+          cd ${{  env.BACKEND_EDITOR_PATH}} && npm install
 
       - name: Create binary
         run: node create-binary.js
