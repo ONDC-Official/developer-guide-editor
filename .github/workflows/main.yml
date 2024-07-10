@@ -64,8 +64,20 @@ jobs:
       - name: Download build artifact
         uses: actions/download-artifact@v2
         with:
-          name: build-artifact
-          path: ./build
+          name: component-modifier-binary-win
+          path: backend-editor/component-modifier/component-modifier-binary-win.exe
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: component-modifier-binary-linux
+          path: backend-editor/component-modifier/component-modifier-binary-linux
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: component-modifier-binary-macos
+          path: backend-editor/component-modifier/component-modifier-binary-macos
 
       - name: Create GitHub Release
         id: create_release
