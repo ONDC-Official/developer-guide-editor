@@ -65,7 +65,7 @@ jobs:
         run: sudo apt-get install gh -y
 
       - name: Authenticate GitHub CLI
-        run: gh auth login --with-token <<< ${{ secrets.GITHUB_TOKEN }}
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
 
       - name: Get Artifacts List
         id: get_artifacts
@@ -73,12 +73,12 @@ jobs:
           gh api -H "Accept: application/vnd.github+json" /repos/${{ github.repository }}/actions/artifacts > artifacts.json
           cat artifacts.json
 
-      - name: Extract Artifact IDs
+      - name: Extract Latest Artifact IDs
         id: extract_ids
         run: |
-          ARTIFACT_WIN=$(jq -r '.artifacts[] | select(.name == "component-modifier-binary-win") | .id' artifacts.json)
-          ARTIFACT_LINUX=$(jq -r '.artifacts[] | select(.name == "component-modifier-binary-linux") | .id' artifacts.json)
-          ARTIFACT_MACOS=$(jq -r '.artifacts[] | select(.name == "component-modifier-binary-macos") | .id' artifacts.json)
+          ARTIFACT_WIN=$(jq -r '[.artifacts[] | select(.name == "component-modifier-binary-win")] | sort_by(.created_at) | last | .id' artifacts.json)
+          ARTIFACT_LINUX=$(jq -r '[.artifacts[] | select(.name == "component-modifier-binary-linux")] | sort_by(.created_at) | last | .id' artifacts.json)
+          ARTIFACT_MACOS=$(jq -r '[.artifacts[] | select(.name == "component-modifier-binary-macos")] | sort_by(.created_at) | last | .id' artifacts.json)
           echo "::set-output name=artifact_win::$ARTIFACT_WIN"
           echo "::set-output name=artifact_linux::$ARTIFACT_LINUX"
           echo "::set-output name=artifact_macos::$ARTIFACT_MACOS"
