@@ -1,11 +1,9 @@
-name: Build Binary
+name: Create Release on Tag
 
 on:
   push:
     tags:
-      - "*" # Runs on any new tag push
-  release:
-    types: [created]
+      - "*"
 
 jobs:
   build:
@@ -17,7 +15,7 @@ jobs:
       BACKEND_EDITOR_PATH: backend-editor/component-modifier
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Set up Node.js
@@ -33,15 +31,10 @@ jobs:
           cd ${{ env.FRONTEND_EDITOR_PATH }} && npm install
           cd ${{ env.ROOT_PATH }}
           cd ${{ env.BACKEND_EDITOR_PATH }} && npm install
+
       - name: Create binary
         run: node create-build.js
-      - name: url print
-        run: |
-          echo "Listing ${{github.event.release.upload_url}}"
-      - name: List files for debugging
-        run: |
-          echo "Listing files in backend-editor/component-modifier directory:"
-          ls -la backend-editor/component-modifier
+
       - name: Archive Windows binary
         uses: actions/upload-artifact@v3
         with:
@@ -60,7 +53,21 @@ jobs:
           name: component-modifier-binary-macos
           path: backend-editor/component-modifier/component-modifier-binary-macos
 
-      - name: Create Release
+  create_release:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: build-artifact
+          path: ./build
+
+      - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -69,29 +76,36 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
           body: |
-            Changes in this release:
-            - AUTO RELEASE WITH TAG CREATION ${{ github.ref }}
+            Release for ${{ github.ref }}
+          draft: false
+          prerelease: false
 
-      # - name: Upload Windows binary to release
-      #   uses: actions/upload-release-asset@v1
-      #   with:
-      #     upload_url: ${{ github.event.release.upload_url }}
-      #     asset_path: backend-editor/component-modifier/component-modifier-binary-win.exe
-      #     asset_name: component-modifier-binary-win.exe
-      #     asset_content_type: application/octet-stream
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: backend-editor/component-modifier/component-modifier-binary-win.exe
+          asset_name: component-modifier-binary-win
+          asset_content_type: application/octet-stream
 
-      # - name: Upload Linux binary to release
-      #   uses: actions/upload-release-asset@v1
-      #   with:
-      #     upload_url: ${{ github.event.release.upload_url }}
-      #     asset_path: backend-editor/component-modifier/component-modifier-binary-linux
-      #     asset_name: component-modifier-binary-linux
-      #     asset_content_type: application/octet-stream
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: backend-editor/component-modifier/component-modifier-binary-linux
+          asset_name: component-modifier-binary-linux
+          asset_content_type: application/octet-stream
 
-      # - name: Upload Mac binary to release
-      #   uses: actions/upload-release-asset@v1
-      #   with:
-      #     upload_url: ${{ github.event.release.upload_url }}
-      #     asset_path: backend-editor/component-modifier/component-modifier-binary-macos
-      #     asset_name: component-modifier-binary-macos
-      #     asset_content_type: application/octet-stream
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: backend-editor/component-modifier/component-modifier-binary-macos
+          asset_name: component-modifier-binary-macos
+          asset_content_type: application/octet-stream
