@@ -1,7 +1,8 @@
 import express from "express";
 import axios from "axios";
 import { ExtractAttributesFromExample } from "../utils/extraUtils/ExToAtt";
-
+import fs from "fs";
+import path from "path";
 export const app = express();
 app.use(express.json());
 
@@ -54,4 +55,9 @@ app.post("/compareExample", async (req, res) => {
       errorMessage: e.message,
     });
   }
+});
+
+app.get("/userGuide", async (req, res) => {
+  const data = fs.readFileSync(path.resolve(__dirname, "../../userGuide.md"));
+  res.status(200).send(data);
 });

@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { GitActionsTab } from "../components/GitActionsTab";
 import { useNavigate } from "react-router-dom";
+
 interface FetchedComponents {
   name: string;
   registerID: string;
@@ -35,14 +36,12 @@ export function HomePage({ editMode }: { editMode: boolean }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const url = localStorage.getItem("repoLink");
-    if (!url) {
+    console.log("use effect");
+    fetchData().catch((error) => {
+      console.log("nvagating to login page");
+      toast.error("Session expired, please login again");
       navigate("/login");
-    }
-  });
-
-  useEffect(() => {
-    fetchData();
+    });
   }, [pathState, refresh]);
 
   useEffect(() => {
@@ -82,7 +81,9 @@ export function HomePage({ editMode }: { editMode: boolean }) {
   async function fetchData() {
     console.log("fetching data");
     setLoading(true);
-    let getComp: FetchedComponents[] = await getData(activePath.current);
+    let getComp: FetchedComponents[] = [];
+
+    getComp = await getData(activePath.current);
     let compsList: Editable[] = [];
     for (let comp of getComp) {
       const editable: Editable = {

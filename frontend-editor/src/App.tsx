@@ -17,6 +17,7 @@ import { sendBuildRequest } from "./utils/requestUtils";
 import { MdEdit, MdEditOff } from "react-icons/md";
 import { GlobalEditMode } from "./utils/config";
 import { AppContext } from "./context/AppContext";
+import GuidePage from "./pages/guide-page";
 
 function App() {
   const navigate = useNavigate();
@@ -32,11 +33,10 @@ function App() {
   };
   function GetToggleIcon() {
     if (editState) {
-      return <MdEdit size={30} />;
+      return <MdEdit size={25} />;
     }
-    return <MdEditOff size={30} />;
+    return <MdEditOff size={25} />;
   }
-
   return (
     <>
       <AppContext.Provider
@@ -48,14 +48,23 @@ function App() {
         <div className={darkMode ? "dark" : ""}>
           <OndcTitle>
             <LoadingButton onClick={buildGuide} buttonText="BUILD" />
+
             <span style={{ marginRight: "10px" }}></span>
             {GlobalEditMode && (
-              <button
-                onClick={() => setEditState((s) => !s)}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold w-20 h-20 p-2 flex items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-              >
-                <GetToggleIcon />
-              </button>
+              <>
+                <button
+                  onClick={async () => navigate("/guide")}
+                  className="text-white bg-gray-800 hover:bg-gray-900 font-semibold p-2"
+                >
+                  GUIDE
+                </button>
+                <button
+                  onClick={() => setEditState((s) => !s)}
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-semibold p-2 ml-2"
+                >
+                  <GetToggleIcon />
+                </button>
+              </>
             )}
             {/* <LoadingButton onClick={waitOneSecond} buttonText="RAISE PR" /> */}
           </OndcTitle>
@@ -63,6 +72,7 @@ function App() {
           <Routes>
             <Route path="/login" element={<GitLogin />} />
             <Route path="/home" element={<HomePage editMode={editState} />} />
+            <Route path="/guide" element={<GuidePage />} />
             <Route path="/*" element={<GitLogin />} />
           </Routes>
           <ToastContainer

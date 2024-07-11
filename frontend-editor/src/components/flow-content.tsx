@@ -95,7 +95,7 @@ export function FlowFolderContent({ flowFolder }: { flowFolder: Editable }) {
     query: {
       Parent: flowFolder,
       getData: async () => {
-        console.log("hello");
+        // console.log("hello");
       },
     },
   };
@@ -300,9 +300,7 @@ export function StepsContent({
                         <tbody className="w-full">
                           {Object.keys(element).map(function (key, index) {
                             if (key == "example") {
-                              console.log(element[key], "HELLOOO");
                               const example = examples.find((ex) => {
-                                console.log(ex.$ref, element[key].value.$ref);
                                 return ex.$ref === element[key].value.$ref;
                               });
 
@@ -466,7 +464,7 @@ function FlowDisclose({
 
   const apiEditable = { ...flowEditable };
   apiEditable.name = apiName;
-  console.log(apiName, "ahsan-->");
+  // console.log(apiName, "ahsan-->");
   apiEditable.registerID = FlowFileID;
   apiEditable.query = {
     getData: flowEditable.query.getData,
@@ -498,7 +496,7 @@ function FlowDisclose({
     path.pop();
     let newPath = path.join("/");
     const ex = await getData(newPath, { type: "reference" });
-    console.log(ex.refs);
+    // console.log(ex.refs);
     setExamples(ex.refs);
   }
   useEffect(() => {

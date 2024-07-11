@@ -7,15 +7,6 @@ import { AttributeRow, AttributeType } from "./AttributeRow";
 export function getSheets(yamlData: any) {
   const obj: any = yaml.load(yamlData);
   return getSheetsObj(obj);
-  // let sheets: AttributeType = {};
-  // for (const key in obj) {
-  //   if (obj.hasOwnProperty(key)) {
-  //     const element = obj[key];
-  //     const list = listDetailedPaths(yaml.dump(element));
-  //     sheets[key] = list;
-  //   }
-  // }
-  // return sheets;
 }
 
 export function getSheetsObj(obj: any) {
@@ -162,7 +153,7 @@ function exploreObject(subObj, currentPath, detailedPaths) {
       ) {
         // Check if the object at this path has the specific properties
         if (
-          ["required", "type", "owner", "usage", "description"].every((prop) =>
+          ["required", "type", "owner", "usage"].every((prop) =>
             subObj[key].hasOwnProperty(prop)
           )
         ) {
@@ -179,7 +170,7 @@ function exploreObject(subObj, currentPath, detailedPaths) {
             type: subObj[key].type,
             owner: subObj[key].owner,
             usage: subObj[key].usage,
-            description: subObj[key].description,
+            description: subObj[key].description ?? "TBD",
           });
         }
         // Recurse into the sub-object
