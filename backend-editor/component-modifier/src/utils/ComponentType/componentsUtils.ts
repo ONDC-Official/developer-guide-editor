@@ -169,6 +169,7 @@ async function createExamples(
     for (const example in yamlData.example_set) {
       if (example.includes("form")) continue;
       for (const set of yamlData.example_set[example].examples) {
+        set.summary = set.summary ? set.summary : example + set.description;
         example_cache.push({
           $ref: `../../examples/${domain}/${example}/${set.summary
             .trim()

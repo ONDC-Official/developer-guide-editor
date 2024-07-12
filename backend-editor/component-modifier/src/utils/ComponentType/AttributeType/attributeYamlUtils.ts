@@ -153,7 +153,7 @@ function exploreObject(subObj, currentPath, detailedPaths) {
       ) {
         // Check if the object at this path has the specific properties
         if (
-          ["required", "type", "owner", "usage"].every((prop) =>
+          ["required", "usage"].every((prop) =>
             subObj[key].hasOwnProperty(prop)
           )
         ) {
@@ -167,9 +167,9 @@ function exploreObject(subObj, currentPath, detailedPaths) {
           detailedPaths.push({
             path: newPath,
             required: req ? req : subObj[key].required,
-            type: subObj[key].type,
-            owner: subObj[key].owner,
-            usage: subObj[key].usage,
+            type: subObj[key].type ?? "String",
+            owner: subObj[key].owner ?? "BAP/BPP",
+            usage: subObj[key].usage ?? "General",
             description: subObj[key].description ?? "TBD",
           });
         }
