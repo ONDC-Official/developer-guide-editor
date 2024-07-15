@@ -7,6 +7,7 @@ on:
 
 jobs:
   build:
+    name: create-build
     runs-on: ubuntu-latest
 
     env:
@@ -67,42 +68,23 @@ jobs:
       - name: Authenticate GitHub CLI
         run: echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
 
-      - name: Get Artifacts List
-        id: get_artifacts
-        run: |
-          gh api -H "Accept: application/vnd.github+json" /repos/${{ github.repository }}/actions/artifacts > artifacts.json
-          cat artifacts.json
-
-      - name: Extract Latest Artifact IDs
-        id: extract_ids
-        run: |
-          ARTIFACT_WIN=$(jq -r '[.artifacts[] | select(.name == "component-modifier-binary-win")] | sort_by(.created_at) | last | .id' artifacts.json)
-          ARTIFACT_LINUX=$(jq -r '[.artifacts[] | select(.name == "component-modifier-binary-linux")] | sort_by(.created_at) | last | .id' artifacts.json)
-          ARTIFACT_MACOS=$(jq -r '[.artifacts[] | select(.name == "component-modifier-binary-macos")] | sort_by(.created_at) | last | .id' artifacts.json)
-          echo "::set-output name=artifact_win::$ARTIFACT_WIN"
-          echo "::set-output name=artifact_linux::$ARTIFACT_LINUX"
-          echo "::set-output name=artifact_macos::$ARTIFACT_MACOS"
-
       - name: Download Windows Artifact
-        run: |
-          gh api -H "Accept: application/vnd.github+json" \
-            /repos/${{ github.repository }}/actions/artifacts/${{ steps.extract_ids.outputs.artifact_win }}/zip \
-            > component-modifier-binary-win.zip
-          unzip component-modifier-binary-win.zip -d ./
+        uses: actions/download-artifact@v3
+        with:
+          name: component-modifier-binary-win
+          path: ./
 
       - name: Download Linux Artifact
-        run: |
-          gh api -H "Accept: application/vnd.github+json" \
-            /repos/${{ github.repository }}/actions/artifacts/${{ steps.extract_ids.outputs.artifact_linux }}/zip \
-            > component-modifier-binary-linux.zip
-          unzip component-modifier-binary-linux.zip -d ./
+        uses: actions/download-artifact@v3
+        with:
+          name: component-modifier-binary-linux
+          path: ./
 
       - name: Download MacOS Artifact
-        run: |
-          gh api -H "Accept: application/vnd.github+json" \
-            /repos/${{ github.repository }}/actions/artifacts/${{ steps.extract_ids.outputs.artifact_macos }}/zip \
-            > component-modifier-binary-macos.zip
-          unzip component-modifier-binary-macos.zip -d ./
+        uses: actions/download-artifact@v3
+        with:
+          name: component-modifier-binary-macos
+          path: ./
 
       - name: Create GitHub Release
         id: create_release
@@ -123,7 +105,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: component-modifier-binary-win.exe
+          asset_path: component-modifier-binary-win/component-modifier-binary-win.exe
           asset_name: component-modifier-binary-win
           asset_content_type: application/octet-stream
 
@@ -133,7 +115,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: component-modifier-binary-linux
+          asset_path: component-modifier-binary-linux/component-modifier-binary-linux
           asset_name: component-modifier-binary-linux
           asset_content_type: application/octet-stream
 
@@ -143,6 +125,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: component-modifier-binary-macos
+          asset_path: component-modifier-binary-macos/component-modifier-binary-macos
           asset_name: component-modifier-binary-macos
           asset_content_type: application/octet-stream
