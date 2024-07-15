@@ -3,6 +3,8 @@ import axios from "axios";
 import { ExtractAttributesFromExample } from "../utils/extraUtils/ExToAtt";
 import fs from "fs";
 import path from "path";
+import { isBinary } from "../utils/fileUtils";
+
 export const app = express();
 app.use(express.json());
 
@@ -10,6 +12,10 @@ type compareResponse = {
   missingNumber: number;
   missingAttributes: string[];
 };
+
+const guidePath = isBinary
+  ? path.join(path.dirname(process.execPath), "./userGuide.md")
+  : path.resolve(__dirname, "../../userGuide.md");
 
 app.post("/compareExample", async (req, res) => {
   try {
@@ -58,6 +64,13 @@ app.post("/compareExample", async (req, res) => {
 });
 
 app.get("/userGuide", async (req, res) => {
-  const data = fs.readFileSync(path.resolve(__dirname, "../../userGuide.md"));
-  res.status(200).send(data);
+  try {
+    const data = fs.readFileSync(guidePath);
+    res.status(200).send(data);
+  } catch (e) {
+    res.status(500).json({
+      error: "Internal Server Error",
+      errorMessage: e.message,
+    });
+  }
 });

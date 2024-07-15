@@ -38,6 +38,14 @@ const GenericForm = ({
     };
   }, []);
 
+  async function submit() {
+    await handleSubmit(onSubmit)();
+    console.log(errors);
+    if (Object.keys(errors).length > 0) {
+      throw new Error("check the form details!");
+    }
+  }
+
   return (
     <>
       <form
@@ -49,7 +57,7 @@ const GenericForm = ({
           return React.cloneElement(child, { register, errors });
         })}
       </form>
-      <LoadingButton onClick={handleSubmit(onSubmit)} buttonText="Submit" />
+      <LoadingButton onClick={submit} buttonText="Submit" />
     </>
   );
 };

@@ -45,7 +45,6 @@ export function mergeFlowObjectRecords(
 
 export function flowFromApi(yamlData: string) {
   const obj: any = yaml.load(yamlData);
-
   // let data = {};
   // for (const key in obj) {
   //   data[key] = listDetailedPaths(obj[key]);

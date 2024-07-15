@@ -110,7 +110,10 @@ export class ExampleFolderType extends folderTypeEditable {
     description: string;
     summary: string;
   }) {
-    await super.update(update);
+    if (update.oldName !== update.newName) {
+      await super.update(update);
+    }
+
     await updateYamlRefExamples(
       {
         section: update.oldName,

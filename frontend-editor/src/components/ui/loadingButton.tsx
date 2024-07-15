@@ -35,7 +35,7 @@ const LoadingButton = ({
     } catch (error: any) {
       setIsLoading(false);
       setIsError(true);
-      setErrorText(error.message);
+      setErrorText(error?.message);
       toast.error("Error: in " + buttonText);
       //   setTimeout(() => setIsError(false), 2000); // Reset error state after 2 seconds
     }
@@ -49,8 +49,8 @@ const LoadingButton = ({
         isSuccess
           ? "bg-green-500 hover:bg-green-600"
           : isError
-            ? "bg-red-500 hover:bg-red-600"
-            : "bg-blue-500 hover:bg-blue-600"
+          ? "bg-red-500 hover:bg-red-600"
+          : "bg-blue-500 hover:bg-blue-600"
       }`}
     >
       {isLoading ? (

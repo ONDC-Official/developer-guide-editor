@@ -261,6 +261,14 @@ export function StepsContent({
   }
   apiToolTip.data.current = apiEditable;
   bodyToolTip.data.current = apiEditable;
+  const printOrder = [
+    "summary",
+    "api",
+    "details",
+    "diagram",
+    "reference",
+    "example",
+  ];
   return (
     <>
       {apiName == "steps" && (
@@ -298,93 +306,95 @@ export function StepsContent({
                     >
                       <table className="w-full border-collapse table-auto">
                         <tbody className="w-full">
-                          {Object.keys(element).map(function (key, index) {
-                            if (key == "example") {
-                              const example = examples.find((ex) => {
-                                return ex.$ref === element[key].value.$ref;
-                              });
+                          {printOrder
+                            .filter((key) => element.hasOwnProperty(key))
+                            .map(function (key, index) {
+                              if (key == "example") {
+                                const example = examples.find((ex) => {
+                                  return ex.$ref === element[key].value.$ref;
+                                });
 
-                              return (
-                                <>
-                                  <tr>
-                                    <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
-                                      {key}
-                                    </td>
-                                    <div className="p-2 bg-gray-50 shadow-lg border border-gray-200 hover:shadow-xl transition-shadow duration-200 w-full">
-                                      <span>
-                                        {element[key]?.summary ?? "example"}
-                                      </span>
-                                      <span
-                                        className="bg-gray-100m p-3 text-gray-800 font-mono block whitespace-pre-wrap shadow 
+                                return (
+                                  <>
+                                    <tr>
+                                      <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
+                                        {key}
+                                      </td>
+                                      <div className="p-2 bg-gray-50 shadow-lg border border-gray-200 hover:shadow-xl transition-shadow duration-200 w-full">
+                                        <span>
+                                          {element[key]?.summary ?? "example"}
+                                        </span>
+                                        <span
+                                          className="bg-gray-100m p-3 text-gray-800 font-mono block whitespace-pre-wrap shadow 
               "
-                                        style={{
-                                          maxHeight: "400px",
-                                          overflow: "auto",
-                                        }}
-                                      >
-                                        <JsonView
-                                          value={
-                                            example?.value ?? {
-                                              "NOT FOUND": "NOT FOUND",
+                                          style={{
+                                            maxHeight: "400px",
+                                            overflow: "auto",
+                                          }}
+                                        >
+                                          <JsonView
+                                            value={
+                                              example?.value ?? {
+                                                "NOT FOUND": "NOT FOUND",
+                                              }
                                             }
-                                          }
-                                          displayDataTypes={false}
-                                          className="jsonViewer text-xl"
-                                          style={{ fontSize: "15px" }}
-                                        />
-                                      </span>
-                                    </div>
-                                  </tr>
-                                </>
-                              );
-                            }
-                            if (key == "details") {
-                              return (
-                                <>
-                                  <tr>
-                                    <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
-                                      {key}
-                                    </td>
-                                    <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
-                                      {element[key][0] &&
-                                        JSON.stringify(
-                                          element[key][0]["description"]
-                                        )}
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
-                                      {"diagram"}
-                                    </td>
-                                    <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
-                                      {element[key][0] && (
-                                        <div className="relative w-full max-w-3xl overflow-hidden">
-                                          {/* <div> */}
-                                          <MermaidDiagram
-                                            chartDefinition={
-                                              element[key][0]["mermaid"]
-                                            }
-                                            keys={index.toString()}
+                                            displayDataTypes={false}
+                                            className="jsonViewer text-xl"
+                                            style={{ fontSize: "15px" }}
                                           />
-                                          {/* </div> */}
-                                        </div>
-                                      )}
-                                    </td>
-                                  </tr>
-                                </>
+                                        </span>
+                                      </div>
+                                    </tr>
+                                  </>
+                                );
+                              }
+                              if (key == "details") {
+                                return (
+                                  <>
+                                    <tr>
+                                      <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
+                                        {key}
+                                      </td>
+                                      <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
+                                        {element[key][0] &&
+                                          JSON.stringify(
+                                            element[key][0]["description"]
+                                          )}
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
+                                        {"diagram"}
+                                      </td>
+                                      <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
+                                        {element[key][0] && (
+                                          <div className="relative w-full max-w-3xl overflow-hidden">
+                                            {/* <div> */}
+                                            <MermaidDiagram
+                                              chartDefinition={
+                                                element[key][0]["mermaid"]
+                                              }
+                                              keys={index.toString()}
+                                            />
+                                            {/* </div> */}
+                                          </div>
+                                        )}
+                                      </td>
+                                    </tr>
+                                  </>
+                                );
+                              }
+                              return (
+                                <tr>
+                                  <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
+                                    {key}
+                                  </td>
+                                  <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
+                                    {JSON.stringify(element[key])}
+                                  </td>
+                                </tr>
                               );
-                            }
-                            return (
-                              <tr>
-                                <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
-                                  {key}
-                                </td>
-                                <td className="px-4 py-2 text-left border-b border-gray-200 align-top break-words text-base">
-                                  {JSON.stringify(element[key])}
-                                </td>
-                              </tr>
-                            );
-                          })}
+                            })}
                         </tbody>
                       </table>
                     </div>

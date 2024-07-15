@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Editable } from "../file-structure";
 import AutoCompleteInput, { AutoCompleteOption } from "./auto-complete-input";
-import {FormInput} from "./form-input";
+import { FormInput } from "./form-input";
 import GenericForm from "./generic-form";
 import { getData, patchData, postData } from "../../utils/requestUtils";
 import { DataContext } from "../../context/dataContext";
@@ -27,7 +27,7 @@ export function EnumFolderForm({ data, setIsOpen, editState }: FormFacProps) {
         className="w-full mx-auto my-4 p-4 border rounded-lg shadow-blue-500"
       >
         <FormSelect name="ID" label="Type" options={[EnumFileId]} />
-        <FormInput name="name" label="Domain" strip={true} />
+        <FormInput name="name" label="Domain" strip={true} required />
       </GenericForm>
     </>
   );

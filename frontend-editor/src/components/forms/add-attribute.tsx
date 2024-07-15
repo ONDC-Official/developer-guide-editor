@@ -47,8 +47,9 @@ const AddInAttributes = ({
             label="Attribute Type"
             options={["ATTRIBUTE_FILE"]}
             labelInfo="Select the type of attribute you want to add"
+            required={true}
           />
-          <FormInput name="name" label="Domain" strip={true} />
+          <FormInput name="name" label="Domain" strip={true} required={true} />
         </GenericForm>
       </>
     );

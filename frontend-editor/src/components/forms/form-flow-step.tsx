@@ -104,13 +104,13 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
     let updatedPayload = [];
     const payload: any = {
       ...formData,
-      example: { value: { $ref: formData.dropDown } },
       details: [
         {
           description: formData.description,
           mermaid: formData.mermaid,
         },
       ],
+      example: { value: { $ref: selectedValue } },
     };
     delete payload?.description;
     delete payload?.mermaid;
@@ -190,7 +190,7 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
               options={exampleArray.map((element: any) => element.$ref)}
               errors={"Error"}
               setSelectedValue={setSelectedValue}
-              defaultValue={exampleDefultValue}
+              defaultValue={selectedValue}
             />
             <button
               type="button"
