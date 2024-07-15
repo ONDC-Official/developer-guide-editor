@@ -105,7 +105,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: component-modifier-binary-win/component-modifier-binary-win.exe
+          asset_path: ./component-modifier-binary-win.exe
           asset_name: component-modifier-binary-win
           asset_content_type: application/octet-stream
 
@@ -115,7 +115,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: component-modifier-binary-linux/component-modifier-binary-linux
+          asset_path: ./component-modifier-binary-linux
           asset_name: component-modifier-binary-linux
           asset_content_type: application/octet-stream
 
@@ -125,6 +125,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: component-modifier-binary-macos/component-modifier-binary-macos
+          asset_path: ./component-modifier-binary-macos
           asset_name: component-modifier-binary-macos
           asset_content_type: application/octet-stream
