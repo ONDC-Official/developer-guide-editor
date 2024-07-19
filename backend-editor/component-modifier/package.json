@@ -6,7 +6,8 @@
   "scripts": {
     "start": "nodemon --exec ts-node src/app.ts",
     "lint": "eslint .",
-    "binary": "npx tsc && pkg ."
+    "binary": "npx tsc && pkg . && npm run zip ",
+    "zip": "zip component-modifier-binary-macos.zip component-modifier-binary-macos && zip component-modifier-binary-win.zip component-modifier-binary-win.exe && zip component-modifier-binary-linux.zip component-modifier-binary-linux"
   },
   "dependencies": {
     "@octokit/rest": "^20.1.1",
