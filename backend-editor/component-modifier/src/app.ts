@@ -14,9 +14,6 @@ import fs from "fs";
 
 const app = express();
 app.use(cors());
-// view engine setup
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "jade");
 
 app.use(logger("dev"));
 app.use(express.json({ limit: "50mb" }));
@@ -38,7 +35,7 @@ if (isBinary) {
   app.use(express.static(path.join(__dirname, "../react-build")));
   app.get("*", (req, res) => {
     console.log("Serving React build");
-    res.sendFile(path.join(__dirname, "react-build", "index.html"));
+    res.sendFile(path.join(__dirname,"../", "react-build", "index.html"));
   });
 }
 
@@ -55,7 +52,7 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render("error");
+  res.json(err.message)
 });
 
 const port = process.env.PORT || 1000;
