@@ -43,6 +43,12 @@ export async function buildWrapper(domain = "fis") {
         `../../../BECKN_CORES/${domain}/beckn_yaml.yaml`
       )
     : path.resolve(__dirname, `../../../BECKN_CORES/${domain}/beckn_yaml.yaml`);
+  const final_base_yaml = isBinary
+    ? ""
+    : path.resolve(
+        __dirname,
+        "../../../../FORKED_REPO/api/components/beckn_yaml.yaml"
+      );
   try {
     await becknCore(domain); // extract beckn core
     fsExtra.copyFileSync(
@@ -55,7 +61,7 @@ export async function buildWrapper(domain = "fis") {
     fsExtra.ensureDirSync(docs);
     fs.mkdirSync(outputFolderPath, { recursive: true });
     const result = await ondc_build(
-      base_yaml,
+      final_base_yaml,
       example_yaml,
       outputPath,
       uiPath,
