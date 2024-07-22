@@ -174,7 +174,7 @@ async function createExamples(
           $ref: `../../examples/${domain}/${example}/${set.summary
             .trim()
             .split(" ")
-            .join("_")}.yaml`,
+            .join("_")}`,
           value: JSON.stringify(set.value),
         });
         await exampleDomain.add({
@@ -277,8 +277,11 @@ async function createFlows(
               ],
             },
           });
+
           step.example.value = {
-            $ref: `../../examples/EXTRA/${name}.yaml`,
+            $ref: `../../examples/EXTRA/${
+              step.api === "form" ? "forms" : step.api
+            }/${name}.${step.api === "form" ? "html" : "yaml"}`,
           };
         }
       }

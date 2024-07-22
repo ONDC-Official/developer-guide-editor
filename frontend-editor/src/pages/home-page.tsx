@@ -45,10 +45,10 @@ export function HomePage({ editMode }: { editMode: boolean }) {
   }, [pathState, refresh]);
 
   useEffect(() => {
-    const handleKeyDown = async (event: any) => {
-      if (event.ctrlKey && event.key === "z") {
+    const handleKeyDown = async (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === "z") {
         event.preventDefault(); // Prevent the browser's default undo behavior
-        console.log("Ctrl + Z pressed");
+        console.log("Ctrl/Cmd + Z pressed");
         try {
           setLoading(true);
           await UndoData(activePath.current);
@@ -61,6 +61,7 @@ export function HomePage({ editMode }: { editMode: boolean }) {
         }
       }
     };
+
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
