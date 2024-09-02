@@ -128,9 +128,24 @@ app.get("/download", async (req, res) => {
 });
 
 const predefinedPath = path.resolve(__dirname, forkedRepoFolderPath);
-
 app.get("/terminal", (req, res) => {
-  exec(`start cmd /K "cd ${predefinedPath}"`, (error, stdout, stderr) => {
+  const platform = process.platform;
+  let command = "";
+
+  if (platform === "win32") {
+    // Command for Windows
+    command = `start cmd /K "cd /d ${predefinedPath}"`;
+  } else if (platform === "darwin") {
+    // Command for macOS
+    command = `osascript -e 'tell application "Terminal" to do script "cd ${predefinedPath}"'`;
+  } else if (platform === "linux") {
+    // Command for Linux
+    command = `gnome-terminal -- bash -c "cd ${predefinedPath}; exec bash"`;
+  } else {
+    return res.status(500).send("Unsupported platform");
+  }
+
+  exec(command, (error, stdout, stderr) => {
     if (error) {
       console.error(`Error: ${error.message}`);
       return res.status(500).send(`Error: ${error.message}`);
@@ -140,6 +155,6 @@ app.get("/terminal", (req, res) => {
       return res.status(500).send(`Stderr: ${stderr}`);
     }
     console.log(`Stdout: ${stdout}`);
-    res.send("Terminal opened at FORKDED REPO");
+    res.send("Terminal opened at FORKED_REPO");
   });
 });
