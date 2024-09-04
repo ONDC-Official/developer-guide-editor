@@ -253,47 +253,53 @@ function TableRow({
   editable,
 }: {
   index: number;
-  row: any;
+  row: Record<string, any>;
   sheetName: string;
   editable: Editable;
 }) {
-  const tooltip = useEditorToolTip([true, false, true]);
-  tooltip.data.current = {
-    name: editable.name,
-    registerID: editable.registerID,
-    path: editable.path,
-    deletePath: editable.path,
-    query: {
-      Parent: editable.query.Parent,
-      getData: () => editable.query.getData(),
-      addParams: { type: "addRow", sheet: sheetName, rowData: row },
-      deleteParams: {},
-      copyData: async () => {
-        const copy: Record<string, any> = {};
-        copy[sheetName] = [row];
-        return JSON.stringify(copy, null, 2);
+  try {
+    console.log("row", row);
+    const tooltip = useEditorToolTip([true, false, true]);
+    tooltip.data.current = {
+      name: editable.name,
+      registerID: editable.registerID,
+      path: editable.path,
+      deletePath: editable.path,
+      query: {
+        Parent: editable.query.Parent,
+        getData: () => editable.query.getData(),
+        addParams: { type: "addRow", sheet: sheetName, rowData: row },
+        deleteParams: {},
+        copyData: async () => {
+          const copy: Record<string, any> = {};
+          copy[sheetName] = [row];
+          return JSON.stringify(copy, null, 2);
+        },
       },
-    },
-  };
-  if (tooltip.data.current.query.deleteParams)
-    tooltip.data.current.query.deleteParams[sheetName] = [row];
-  return (
-    <Tippy {...tooltip.tippyProps}>
-      <tr
-        key={index}
-        onContextMenu={tooltip.onContextMenu}
-        className=" hover:bg-blue-200"
-      >
-        {Object.values(row).map((value: any, idx) => (
-          <td
-            key={idx + value}
-            className="px-4 py-2 text-left border-b border-gray-200 align-top break-words"
-            style={{ maxWidth: "200px" }} // Prevents cell from expanding too much
-          >
-            {value}
-          </td>
-        ))}
-      </tr>
-    </Tippy>
-  );
+    };
+    if (tooltip.data.current.query.deleteParams)
+      tooltip.data.current.query.deleteParams[sheetName] = [row];
+    return (
+      <Tippy {...tooltip.tippyProps}>
+        <tr
+          key={index}
+          onContextMenu={tooltip.onContextMenu}
+          className=" hover:bg-blue-200"
+        >
+          {Object.values(row).map((value: any, idx: any) => (
+            <td
+              key={idx + value}
+              className="px-4 py-2 text-left border-b border-gray-200 align-top break-words"
+              style={{ maxWidth: "200px" }} // Prevents cell from expanding too much
+            >
+              {value.toString()}
+            </td>
+          ))}
+        </tr>
+      </Tippy>
+    );
+  } catch (e) {
+    console.error("Error in TableRow", e);
+    return <h1>Error in TableRow</h1>;
+  }
 }
