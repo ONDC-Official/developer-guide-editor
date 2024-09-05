@@ -29,7 +29,7 @@ export default function UserManagePage() {
   const [loading, setLoading] = useState(false);
   return (
     <>
-      <div className="bg-gray-200 p-4 h-screen ">
+      <div className="bg-gray-200 p-4">
         <div className="flex items-center">
           <div className="w-full flex justify-center">
             <UserSesssonList />
@@ -40,6 +40,19 @@ export default function UserManagePage() {
     </>
   );
 }
+function UserData() {
+  return (
+    <Card className="w-full bg-gray-200 p-6 rounded-lg shadow-lg relative">
+      <div className="mb-6">
+        <p className="text-lg font-semibold text-gray-700">Username: JohnDoe</p>
+        <p className=" text-base text-gray-500">User ID: 123456</p>
+      </div>
+      <button className="text-xs py-1 px-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-150 ease-in-out absolute bottom-4 right-4">
+        Delete Account
+      </button>
+    </Card>
+  );
+}
 
 function UserSesssonList() {
   return (
@@ -47,13 +60,11 @@ function UserSesssonList() {
       className="mx-auto w-full bg-white 
           bg-opacity-20  backdrop-blur-md p-6 rounded-lg shadow-lg mt-28"
     >
-      <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl md:text-2xl lg:text-2xl font-bold text-transparent bg-clip-text flex-grow bg-blue-500 mb-4">
-          Sessions
-        </CardTitle>
-        {/* <CardDescription>Manage your sessions here</CardDescription> */}
-      </CardHeader>
       <CardContent>
+        <UserData />
+        <CardTitle className="text-2xl md:text-2xl lg:text-2xl font-bold text-transparent bg-clip-text flex-grow bg-blue-500 mb-4 mt-4">
+          Sesssions
+        </CardTitle>
         <div className="space-y-2">
           {dummyData.map((sesData) => (
             <UserSessionCard sesData={sesData} />
