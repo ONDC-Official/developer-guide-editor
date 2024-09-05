@@ -9,13 +9,11 @@ import FullPageLoader from "../components/loader";
 
 import axios from "axios";
 import React, { useContext, useState } from "react";
-import { FaGithub } from "react-icons/fa";
-import { MdInfoOutline } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import FolderSelector from "../components/ui/folder-selector";
-import { random } from "mermaid/dist/utils.js";
-
+import { setEncryptedCookie } from "../utils/cookieUtils";
+const back_end = import.meta.env.VITE_BACKEND;
 function LoginCard(props: { handleInputChange: any; handleLogin: any }) {
   return (
     <Card className="mx-auto max-w-sm bg-white bg-opacity-20 backdrop-blur-md p-6 rounded-lg shadow-lg mt-28">
@@ -91,48 +89,58 @@ function LoginCard(props: { handleInputChange: any; handleLogin: any }) {
 
 function GitLogin() {
   const [username, setUsername] = useState("");
-  const [repoLink, setRepoLink] = useState("");
   const [token, setToken] = useState("");
+  const [reToken, setReToken] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
   const handleInputChange = (event: any) => {
     const { name, value } = event.target;
     if (name === "username") {
       setUsername(value);
-    } else if (name === "repoLink") {
-      setRepoLink(value);
     } else if (name === "token") {
       setToken(value);
+    } else if (name === "reToken") {
+      setReToken(value);
     }
   };
+
   console.log(loading);
   const handleLogin = async () => {
     setLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      const res = await axios.post("http://localhost:1000/git/init", {
+      const res = await axios.post(`${back_end}/auth/login`, {
         username: username,
-        repoUrl: repoLink,
-        token: token,
+        password: token,
       });
       if (res.status === 200) {
         localStorage.setItem("username", username);
-        localStorage.setItem("repoLink", res.data);
-        localStorage.setItem("orignalRepoLink", repoLink);
-        localStorage.setItem("secretKey", "Key" + token.slice(0, 5));
-        navigate("/home");
+        setEncryptedCookie(res.data.privateKey);
+        navigate("/user-page");
       }
-    } catch {
-      toast.error("Error initializing repository");
+    } catch (e: any) {
+      toast.error("Error logging in : " + e.message);
     }
     setLoading(false);
   };
-
-  const onSubmit = (data: any) => {
-    // dataContext.activePath.current = data.componentName;
-    // dataContext.setActivePath(data.componentName);
-    navigate("/home");
+  const handleSignUp = async () => {
+    try {
+      if (token !== reToken) {
+        toast.error("Passwords do not match");
+        return;
+      }
+      const res = await axios.post(`${back_end}/auth/createAccount`, {
+        username: username,
+        password: token,
+      });
+      if (res.status === 200) {
+        toast.success("Account created!, Please Login");
+      }
+    } catch (e: any) {
+      toast.error("Error signing up : " + e.message);
+    }
   };
+
   return (
     <div className="bg-gray-200 p-4 h-screen">
       <div className="flex items-center">
@@ -150,7 +158,7 @@ function GitLogin() {
         <div className="w-1/2 flex justify-center">
           <SignUpCard
             handleInputChange={handleInputChange}
-            handleLogin={handleLogin}
+            handleLogin={handleSignUp}
           />
         </div>
       </div>
@@ -225,8 +233,8 @@ function SignUpCard(props: { handleInputChange: any; handleLogin: any }) {
             </label>
             <input
               type="token"
-              id="token"
-              name="token"
+              id="reToken"
+              name="reToken"
               className="w-full items-center space-x-2 text-blue-900 font-semibold bg-blue-50 py-2 px-4 rounded border border-blue-200 transition duration-150 ease-in-out focus-within:ring-2 focus-within:ring-blue-700 focus-within:ring-opacity-50 shadow-sm"
               required
               onChange={props.handleInputChange}

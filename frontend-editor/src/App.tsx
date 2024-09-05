@@ -22,9 +22,7 @@ import UserManagePage from "./pages/user-page";
 
 function App() {
   const navigate = useNavigate();
-  // useEffect(() => {
-  //   navigate("/login");
-  // }, []);
+
   const [darkMode, setDarkMode] = useState(false);
   const [editState, setEditState] = useState(true);
 
@@ -71,11 +69,14 @@ function App() {
           </OndcTitle>
 
           <Routes>
-            <Route path="/login" element={<GitLogin />} />
+            {/* <Route path="/login" element={<GitLogin />} /> */}
             <Route path="/user-page" element={<UserManagePage />} />
-            <Route path="/home" element={<HomePage editMode={editState} />} />
+            <Route
+              path="/session/:id"
+              element={<HomePage editMode={editState} />}
+            />
             <Route path="/guide" element={<GuidePage />} />
-            <Route path="/*" element={<GitLogin />} />
+            <Route path="/*" element={<UserManagePage />} />
           </Routes>
           <ToastContainer
             position="bottom-right"

@@ -12,6 +12,8 @@ import {
 } from "./mini-ui/card";
 import { BiUpload } from "react-icons/bi";
 
+const back_end = import.meta.env.VITE_BACKEND;
+
 interface CustomInputAttributes
   extends React.InputHTMLAttributes<HTMLInputElement> {
   webkitdirectory?: string;
@@ -35,7 +37,7 @@ function FolderSelector({ afterUpload }: { afterUpload: any }) {
         setLoading(true);
         localStorage.setItem("repoLink", "-1");
         const response = await axios.post(
-          "http://localhost:1000/local/upload",
+          `${back_end}/local/upload`,
           formData,
           {
             headers: {

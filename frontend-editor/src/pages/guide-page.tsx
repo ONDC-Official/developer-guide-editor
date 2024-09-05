@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 // import "./markdown.css";
 import "github-markdown-css/github-markdown-light.css";
-
+const back_end = import.meta.env.VITE_BACKEND;
 const GuidePage: React.FC = () => {
   const [guide, setGuide] = useState<string>("");
   useEffect(() => {
-    fetch("http://localhost:1000/helper/userGuide")
+    fetch(`${back_end}/helper/userGuide`)
       .then((response) => {
         return response.text();
       })

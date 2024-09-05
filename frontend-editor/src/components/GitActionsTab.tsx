@@ -14,12 +14,13 @@ import { RiArrowUpDownFill } from "react-icons/ri";
 import { DataContext } from "../context/dataContext";
 import ReusableModal from "./ui/generic-modal";
 import JsonView from "@uiw/react-json-view";
-import { useForm } from "react-hook-form";
+import { get, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { AppContext } from "../context/AppContext";
 import ImportYamlButton from "./ui/import-yaml";
+import { getDecryptedCookie } from "../utils/cookieUtils";
 
-const baseUrl = "http://localhost:1000";
+const baseUrl = import.meta.env.VITE_BACKEND;
 
 export function GitActionsTab({}) {
   const appEditMode = useContext(AppContext).editMode;
@@ -173,7 +174,7 @@ export function GitActionsTab({}) {
           {!ActiveState && (
             <div className="flex items-start w-full">
               <h1 className="text-xl font-bold">
-                Editing Uploaded Component Folder
+                {`Session: ${getDecryptedCookie()}`}
               </h1>
             </div>
           )}

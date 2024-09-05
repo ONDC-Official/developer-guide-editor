@@ -2,6 +2,7 @@ import { ComponentsType } from "./ComponentType/ComponentsFolderTypeEditable";
 import { copyDir, deleteFolderSync } from "./fileUtils";
 import path from "path";
 import fs from "fs/promises";
+
 import { isBinary } from "./fileUtils";
 
 export class HistoryUtil {
@@ -12,8 +13,10 @@ export class HistoryUtil {
   constructor(maxHistory: number) {
     this.history = [];
     this.maxHistory = maxHistory;
-    const historyPath = isBinary? path.join(path.dirname(process.execPath), "./history") : path.resolve(__dirname, "../../history");
-    this.historyPath = historyPath
+    const historyPath = isBinary
+      ? path.join(path.dirname(process.execPath), "./history")
+      : path.resolve(__dirname, "../../history");
+    this.historyPath = historyPath;
 
     this.initializeHistoryFolder();
   }
@@ -28,6 +31,8 @@ export class HistoryUtil {
   }
 
   async addHistory(components: ComponentsType) {
+    console.log(components);
+
     if (this.history.length >= this.maxHistory) {
       // Optionally, remove the oldest directory
       await this.removeOldestHistory();
@@ -76,4 +81,24 @@ export async function CreateSave(components) {
   const histroyPath = path.resolve(__dirname, "../../history");
 
   //   await copyDir(components.folderPath);
+}
+
+export async function SessionLoadedLog(id: string) {
+  try {
+    const date = new Date().toISOString();
+    let sessionData = await fs.readFile(
+      path.resolve(__dirname, `../../data/session.json`),
+      "utf-8"
+    );
+
+    sessionData = sessionData || "{}";
+    const parsedData = JSON.parse(sessionData);
+    parsedData[id] = date;
+    await fs.writeFile(
+      path.resolve(__dirname, `../../data/session.json`),
+      JSON.stringify(parsedData, null, 2)
+    );
+  } catch (e) {
+    console.error("Error logging error", e);
+  }
 }

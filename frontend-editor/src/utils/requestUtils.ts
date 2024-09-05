@@ -1,12 +1,13 @@
 import axios from "axios";
+import { get } from "react-hook-form";
+import { getDecryptedCookie } from "./cookieUtils";
 
-const baseURL = "http://localhost:1000/tree/guide";
-
+const backURL = import.meta.env.VITE_BACKEND;
+const baseURL = `${backURL}/tree/guide`;
 export async function getData(path: string, query = {}, providedUrl?: string) {
-  // console.log("path", path);
   try {
     console.log("getting data from", path);
-    const token = localStorage.getItem("secretKey");
+    const token = getDecryptedCookie();
     const url = providedUrl ? providedUrl : `${baseURL}/${path}`;
     const response = await axios.get(url, {
       params: query,
@@ -28,10 +29,11 @@ export async function getData(path: string, query = {}, providedUrl?: string) {
 export async function postData(path: string, data: any, providedUrl?: string) {
   try {
     const url = providedUrl ? providedUrl : `${baseURL}/${path}`;
-    const token = localStorage.getItem("secretKey");
+    const userName = localStorage.getItem("username");
+    const token = getDecryptedCookie();
 
     const response = await axios.post(url, data, {
-      headers: { "x-api-key": token },
+      headers: { "x-api-key": token, "x-user": userName },
     });
     return response.data;
   } catch (error: any) {
@@ -49,9 +51,10 @@ export async function postData(path: string, data: any, providedUrl?: string) {
 export async function patchData(path: string, data: Record<string, any>) {
   try {
     const url = `${baseURL}/${path}`;
-    const token = localStorage.getItem("secretKey");
+    const userName = localStorage.getItem("username");
+    const token = getDecryptedCookie();
     const response = await axios.patch(url, data, {
-      headers: { "x-api-key": token },
+      headers: { "x-api-key": token, "x-user": userName },
     });
     return response.data;
   } catch (error: any) {
@@ -70,10 +73,11 @@ export async function deleteData(path: string, query = {}) {
   console.log("query", query);
   try {
     const url = `${baseURL}/${path}`;
-    const token = localStorage.getItem("secretKey");
+    const userName = localStorage.getItem("username");
+    const token = getDecryptedCookie();
     const response = await axios.delete(url, {
       params: query,
-      headers: { "x-api-key": token },
+      headers: { "x-api-key": token, "x-user": userName },
     });
     return response.data;
   } catch (error: any) {
@@ -91,14 +95,16 @@ export async function deleteData(path: string, query = {}) {
 export async function UndoData(path: string) {
   try {
     const url = `${baseURL}/${path}`;
+    const userName = localStorage.getItem("username");
+    const token = getDecryptedCookie();
     const response = await axios.put(
       url,
       {},
       {
-        // Empty object for the PATCH data
         params: {
           type: "undo",
         },
+        headers: { "x-api-key": token, "x-user": userName },
       }
     );
     return response.data;
@@ -117,7 +123,9 @@ export async function UndoData(path: string) {
 export async function sendBuildRequest() {
   try {
     console.log("sending build request");
-    const url = `http://localhost:1000/tree/build`;
+    const userName = localStorage.getItem("username");
+    const token = getDecryptedCookie();
+    const url = `${baseURL}/tree/build`;
     const response = await axios.post(url);
     return response.data;
   } catch (error: any) {

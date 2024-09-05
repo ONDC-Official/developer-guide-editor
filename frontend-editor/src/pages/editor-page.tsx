@@ -7,7 +7,8 @@ import { DataContext } from "../context/dataContext";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { GitActionsTab } from "../components/GitActionsTab";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { setEncryptedCookie } from "../utils/cookieUtils";
 
 interface FetchedComponents {
   name: string;
@@ -33,14 +34,21 @@ export function HomePage({ editMode }: { editMode: boolean }) {
   const [pathState, setPathState] = useState<string>("");
   const [activeEditable, setActiveEditable] = React.useState<Editable>();
   const [refresh, setRefresh] = useState(false);
+  const { id } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
     console.log("use effect");
+    if (!id) {
+      toast.error("Session Id not found");
+      navigate("/user-page");
+      return;
+    }
+    setEncryptedCookie(id);
     fetchData().catch((error) => {
       console.log("nvagating to login page");
-      toast.error("Session expired, please login again");
-      navigate("/login");
+      toast.error("Invalid Session ID");
+      navigate("/user-page");
     });
   }, [pathState, refresh]);
 

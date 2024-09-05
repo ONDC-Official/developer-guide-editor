@@ -1,13 +1,13 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../components/ui/mini-ui/card";
+import { Card, CardContent, CardTitle } from "../components/ui/mini-ui/card";
 import FullPageLoader from "../components/loader";
 import { useState } from "react";
 import { RiDeleteBin2Line } from "react-icons/ri";
+import { setEncryptedCookie } from "@/utils/cookieUtils";
+import { useNavigate } from "react-router-dom";
+import { v4 as uuid } from "uuid";
+import axios from "axios";
+import { toast } from "react-toastify";
+const back_end = import.meta.env.VITE_BACKEND;
 
 type SessionDataType = {
   sessionName: string;
@@ -29,7 +29,7 @@ export default function UserManagePage() {
   const [loading, setLoading] = useState(false);
   return (
     <>
-      <div className="bg-gray-200 p-4">
+      <div className="bg-gray-200 p-4 h-screen">
         <div className="flex items-center">
           <div className="w-full flex justify-center">
             <UserSesssonList />
@@ -61,15 +61,13 @@ function UserSesssonList() {
           bg-opacity-20  backdrop-blur-md p-6 rounded-lg shadow-lg mt-28"
     >
       <CardContent>
-        <UserData />
         <CardTitle className="text-2xl md:text-2xl lg:text-2xl font-bold text-transparent bg-clip-text flex-grow bg-blue-500 mb-4 mt-4">
           Sesssions
         </CardTitle>
         <div className="space-y-2">
-          {dummyData.map((sesData) => (
-            <UserSessionCard sesData={sesData} />
-          ))}
-          <button className="relative text-center w-full flex items-center justify-between font-semibold p-4 rounded-lg border transition duration-150 ease-in-out shadow-md hover:shadow-lg group bg-yellow-50 text-yellow-900 border-yellow-200">
+          <SessionInput />
+          <UserSessionCard sesData={null} />
+          <button className="relative text-center w-full flex items-center justify-between font-semibold p-4 rounded-lg border transition duration-150 ease-in-out shadow-md hover:shadow-lg hover:scale-105 group bg-yellow-50 text-yellow-900 border-yellow-200">
             <div className="flex flex-col space-y-1 items-center w-full">
               <h1 className="text-lg">Browse Public Sessions</h1>
               <p className="text-sm text-yellow-700">
@@ -83,9 +81,58 @@ function UserSesssonList() {
   );
 }
 
+function SessionInput() {
+  const navigate = useNavigate();
+  const [id, setId] = useState("");
+  async function loadSession(id: string) {
+    navigate(`/session/${id}`);
+  }
+  return (
+    <div className="w-full space-y-4">
+      {/* Input field to update session ID */}
+      <input
+        type="text"
+        placeholder="Load session with ID..."
+        value={id}
+        onChange={(e) => setId(e.target.value)} // Update state as user types
+        className="w-full text-blue-900 font-medium bg-gray-50 py-2 px-4 rounded-lg border border-gray-300 transition duration-150 ease-in-out focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 shadow-sm"
+      />
+
+      {/* Button to trigger navigation */}
+      <button
+        onClick={async () => await loadSession(id)}
+        className="relative w-5/12 flex items-center justify-center font-semibold py-2 px-4 rounded-lg border border-gray-300 transition duration-150 ease-in-out bg-blue-600 text-white hover:bg-blue-700 hover:shadow-lg focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 shadow-md"
+      >
+        <span className="text-sm">Load Session</span>
+      </button>
+    </div>
+  );
+}
+
 function UserSessionCard({ sesData }: { sesData: SessionDataType }) {
+  const navigate = useNavigate();
+  async function createSession() {
+    try {
+      const id = uuid();
+      await axios.post(
+        `${back_end}/tree/CREATE_SESSION`,
+        {},
+        {
+          headers: {
+            "x-api-key": id,
+          },
+        }
+      );
+      navigate(`/session/${id}`);
+    } catch (e) {
+      console.error(e);
+      toast.error("Error creating session");
+    }
+  }
+
   return (
     <button
+      onClick={createSession}
       className={`relative w-full flex justify-between text-left font-semibold p-4 rounded-lg border transition duration-150 ease-in-out shadow-md hover:shadow-lg group transform hover:scale-105 ${
         sesData === null
           ? "bg-gray-50 text-gray-900 border-gray-200"

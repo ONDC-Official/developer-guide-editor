@@ -18,6 +18,8 @@ import { set } from "react-hook-form";
 import ReusableModal from "./ui/generic-modal";
 import { AiOutlineLoading } from "react-icons/ai";
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND;
+
 export interface ExampleData {
   summary: string;
   description: string;
@@ -256,7 +258,7 @@ function ExampleList({
     postData(
       "",
       { exampleString: JSON.stringify(exampleData.exampleJson) },
-      `http://localhost:1000/helper/compareExample`
+      `${BACKEND_URL}/helper/compareExample`
     )
       .then((res) => {
         const error = res as {

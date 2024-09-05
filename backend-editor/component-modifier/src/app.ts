@@ -4,11 +4,12 @@ import path from "path";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
 import cors from "cors";
-// import { app as indexRouter } from "./routes/index";
+
 import { app as pathRouter } from "./routes/users";
 import { app as gitRouter } from "./routes/git";
 import { app as uploadRouter } from "./routes/upload";
 import { app as helperRouter } from "./routes/helpers";
+import { app as loginRouter } from "./routes/login";
 import { isBinary } from "./utils/fileUtils";
 import fs from "fs";
 

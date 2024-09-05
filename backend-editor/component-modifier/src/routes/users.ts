@@ -11,7 +11,7 @@ import {
   getTargetPath,
   overwriteFolder,
 } from "../utils/fileUtils";
-import { HistoryUtil } from "../utils/histroyUtils";
+import { HistoryUtil, SessionLoadedLog } from "../utils/histroyUtils";
 
 import { ComponentsType } from "../utils/ComponentType/ComponentsFolderTypeEditable";
 import { Request, Response, NextFunction } from "express";
@@ -37,7 +37,7 @@ app.use(express.json());
 
 app.use(
   session({
-    secret: "your_secret_key",
+    secret: "key",
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false },
@@ -46,6 +46,19 @@ app.use(
 
 app.all("/guide/*", async (req: any, res, next) => {
   const apiKey = req.headers["x-api-key"];
+  if (
+    !apiKey ||
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      apiKey
+    )
+  ) {
+    res.status(400).json({
+      error: "Invalid API Key",
+      errorMessage: "Invalid API Key",
+    });
+    return;
+  }
+  console.log("API KEY", apiKey);
   if (!apiKey) {
     res.status(401).json({
       error: "Unauthorized",
@@ -62,6 +75,28 @@ app.all("/guide/*", async (req: any, res, next) => {
   next();
 });
 
+app.post("/CREATE_SESSION", async (req, res, next) => {
+  try {
+    console.log("creating session");
+    const secretKey = req.headers["x-api-key"] as string;
+    if (sessionInstances[secretKey]) {
+      res.status(400).send("SESSION ALREADY EXISTS");
+      return;
+    }
+    sessionInstances[secretKey] = await EditableRegistry.loadComponent(
+      getTargetPath(secretKey),
+      "components"
+    );
+    res.status(201).send("SESSION CREATED");
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({
+      error: "Internal Server Error",
+      errorMessage: e.message,
+    });
+  }
+});
+
 app.all("/guide/*", async (req: any, res, next) => {
   const fullPath = req.params[0];
   const pathSegments = fullPath.split("/");
@@ -73,15 +108,22 @@ app.all("/guide/*", async (req: any, res, next) => {
     });
     return;
   }
-  currentSessionID = pathSegments[0];
   const secretKey = req.headers["x-api-key"] as string;
+  currentSessionID = secretKey;
+  if (!sessionInstances[currentSessionID]) {
+    res.status(404).json({
+      error: "session not found",
+      errorMessage: "session not found",
+    });
+    return;
+  }
   if (!sessionInstances[currentSessionID] && req.method !== "DELETE") {
-    // const oldPath = `../../../ONDC-NTS-Specifications/api/${currentSessionID}`;
     try {
       sessionInstances[currentSessionID] = await EditableRegistry.loadComponent(
         getTargetPath(secretKey),
         currentSessionID
       );
+      SessionLoadedLog(currentSessionID);
     } catch (e) {
       console.log(e);
       res.status(404).json({
@@ -100,7 +142,8 @@ let target: Editable = undefined;
 app.all("/guide/*", async (req: any, res, next) => {
   const fullPath = req.params[0];
   const pathSegments: string[] = fullPath.split("/");
-  target = sessionInstances[pathSegments[0]];
+  const secretKey = req.headers["x-api-key"] as string;
+  target = sessionInstances[secretKey];
   for (const item of pathSegments.slice(1)) {
     if (target instanceof folderTypeEditable) {
       // console.log("children", target.chilrenEditables);
@@ -132,8 +175,10 @@ app.get("/guide/*", async (req, res, next) => {
   try {
     let query = { ...req.query };
     query = query ? query : {};
+    console.log("query", query);
     res.status(200).send(await target.getData(query));
   } catch (e) {
+    console.error(e);
     res.status(500).json({
       error: "Internal Server Error",
       errorMessage: e.message,
