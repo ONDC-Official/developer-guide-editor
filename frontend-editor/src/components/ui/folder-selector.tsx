@@ -45,6 +45,10 @@ function FolderSelector({ afterUpload }: { afterUpload: any }) {
         );
         console.log(response.data);
         setLoading(false);
+        localStorage.setItem(
+          "secretKey",
+          Math.random().toString(10).substring(2)
+        );
         afterUpload({ componentName: "uploads" });
         toast.success("Upload successful!");
       } catch (error: any) {

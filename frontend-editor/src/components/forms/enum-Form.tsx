@@ -8,7 +8,7 @@ import { DataContext } from "../../context/dataContext";
 import { FormFacProps } from "./form-factory";
 import { FieldValues } from "react-hook-form";
 import FormSelect from "./form-select";
-import { EnumFileId } from "../../pages/home-page";
+import { EnumFileId } from "../../pages/editor-page";
 
 export function EnumFolderForm({ data, setIsOpen, editState }: FormFacProps) {
   const onPost = async (formData: FieldValues) => {

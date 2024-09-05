@@ -6,8 +6,12 @@ export async function getData(path: string, query = {}, providedUrl?: string) {
   // console.log("path", path);
   try {
     console.log("getting data from", path);
+    const token = localStorage.getItem("secretKey");
     const url = providedUrl ? providedUrl : `${baseURL}/${path}`;
-    const response = await axios.get(url, { params: query });
+    const response = await axios.get(url, {
+      params: query,
+      headers: { "x-api-key": token },
+    });
     return response.data;
   } catch (error: any) {
     console.log("error", error);
@@ -24,7 +28,11 @@ export async function getData(path: string, query = {}, providedUrl?: string) {
 export async function postData(path: string, data: any, providedUrl?: string) {
   try {
     const url = providedUrl ? providedUrl : `${baseURL}/${path}`;
-    const response = await axios.post(url, data);
+    const token = localStorage.getItem("secretKey");
+
+    const response = await axios.post(url, data, {
+      headers: { "x-api-key": token },
+    });
     return response.data;
   } catch (error: any) {
     console.log("error", error);
@@ -41,7 +49,10 @@ export async function postData(path: string, data: any, providedUrl?: string) {
 export async function patchData(path: string, data: Record<string, any>) {
   try {
     const url = `${baseURL}/${path}`;
-    const response = await axios.patch(url, data);
+    const token = localStorage.getItem("secretKey");
+    const response = await axios.patch(url, data, {
+      headers: { "x-api-key": token },
+    });
     return response.data;
   } catch (error: any) {
     console.log("error", error);
@@ -59,8 +70,10 @@ export async function deleteData(path: string, query = {}) {
   console.log("query", query);
   try {
     const url = `${baseURL}/${path}`;
+    const token = localStorage.getItem("secretKey");
     const response = await axios.delete(url, {
       params: query,
+      headers: { "x-api-key": token },
     });
     return response.data;
   } catch (error: any) {

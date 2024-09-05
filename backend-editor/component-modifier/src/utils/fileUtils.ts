@@ -144,26 +144,9 @@ export async function ValidateJsonSchema(jsonSchema: Record<string, any>) {
   }
 }
 
-// // Example usage:
-// const sourceFilePath = "../../ONDC-NTS-Specifications/api/cp0";
-// const destinationFilePath = "../history/copy";
-// copyDir(sourceFilePath, destinationFilePath);
-console.log(__dirname);
-
-// Example usage:
-// const sourceFilePath = "../../ONDC-NTS-Specifications/api/cp0/index.yaml";
-// const destinationFilePath = "../../ONDC-NTS-Specifications/api/cp1/index.yaml";
-// copyYamlFile(sourceFilePath, destinationFilePath);
-
-// (async () => {
-//   const p = "../../../ONDC-NTS-Specifications/examples/on-demand/index.yaml";
-//   const data = await loadYamlWithRefs(path.resolve(__dirname, p));
-//   console.log(JSON.stringify(data, null, 2));
-//   // try {
-//   //   const relativeFolderPath = "../../ONDC-NTS-Specifications/api/cp0";
-//   //   const structure = await getFileStructureRelative(relativeFolderPath);
-//   //   console.log("File structure:", structure);
-//   // } catch (err) {
-//   //   console.error("Error testing getFileStructureRelative:", err);
-//   // }
-// })();
+export function getTargetPath(secretKey: string) {
+  const basePath = `../../../user_data/${secretKey}`;
+  const targetPath = path.resolve(__dirname, basePath);
+  fse.ensureDirSync(targetPath);
+  return basePath;
+}

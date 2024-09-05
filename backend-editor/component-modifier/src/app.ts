@@ -4,7 +4,7 @@ import path from "path";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
 import cors from "cors";
-import { app as indexRouter } from "./routes/index";
+// import { app as indexRouter } from "./routes/index";
 import { app as pathRouter } from "./routes/users";
 import { app as gitRouter } from "./routes/git";
 import { app as uploadRouter } from "./routes/upload";
@@ -35,7 +35,7 @@ if (isBinary) {
   app.use(express.static(path.join(__dirname, "../react-build")));
   app.get("*", (req, res) => {
     console.log("Serving React build");
-    res.sendFile(path.join(__dirname,"../", "react-build", "index.html"));
+    res.sendFile(path.join(__dirname, "../", "react-build", "index.html"));
   });
 }
 
@@ -52,7 +52,7 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.json(err.message)
+  res.json(err.message);
 });
 
 const port = process.env.PORT || 1000;

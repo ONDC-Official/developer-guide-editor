@@ -8,7 +8,7 @@ import { IoIosArrowDropdown, IoIosArrowDropright } from "react-icons/io";
 import { DropTransition } from "./helper-components";
 import { VscJson } from "react-icons/vsc";
 import JsonView from "@uiw/react-json-view";
-import { ExampleDomainFolderID } from "../pages/home-page";
+import { ExampleDomainFolderID } from "../pages/editor-page";
 import useEditorToolTip from "../hooks/useEditorToolTip";
 import Tippy from "@tippyjs/react";
 import "./jsonViewer.css";

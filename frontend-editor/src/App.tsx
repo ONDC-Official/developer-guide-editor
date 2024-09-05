@@ -2,22 +2,23 @@ import "./App.css";
 import React, { useEffect, useState } from "react";
 import { OndcTitle } from "./components/title";
 import GitLogin from "./pages/login-page";
-import { HomePage } from "./pages/home-page";
+import { HomePage } from "./pages/editor-page";
+
 import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Link,
   useNavigate,
 } from "react-router-dom";
+
 import { ToastContainer } from "react-toastify";
-import { BiPlayCircle } from "react-icons/bi";
 import LoadingButton from "./components/ui/loadingButton";
 import { sendBuildRequest } from "./utils/requestUtils";
 import { MdEdit, MdEditOff } from "react-icons/md";
 import { GlobalEditMode } from "./utils/config";
 import { AppContext } from "./context/AppContext";
 import GuidePage from "./pages/guide-page";
+import UserManagePage from "./pages/user-page";
 
 function App() {
   const navigate = useNavigate();
@@ -47,7 +48,7 @@ function App() {
       >
         <div className={darkMode ? "dark" : ""}>
           <OndcTitle>
-            <LoadingButton onClick={buildGuide} buttonText="BUILD" />
+            {/* <LoadingButton onClick={buildGuide} buttonText="BUILD" /> */}
 
             <span style={{ marginRight: "10px" }}></span>
             {GlobalEditMode && (
@@ -71,6 +72,7 @@ function App() {
 
           <Routes>
             <Route path="/login" element={<GitLogin />} />
+            <Route path="/user-page" element={<UserManagePage />} />
             <Route path="/home" element={<HomePage editMode={editState} />} />
             <Route path="/guide" element={<GuidePage />} />
             <Route path="/*" element={<GitLogin />} />

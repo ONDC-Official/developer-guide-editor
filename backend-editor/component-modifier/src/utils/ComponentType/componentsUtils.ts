@@ -305,10 +305,3 @@ function makeValidFolderName(input: string): string {
 
   return output;
 }
-// (async () => {
-//   initRegistry();
-//   const data: RAW_DATA = JSON.parse(
-//     fs.readFileSync(path.resolve(__dirname, "./build.json"), "utf-8")
-//   );
-//   await BuildCompenetsWithRawBuild(data);
-// })();

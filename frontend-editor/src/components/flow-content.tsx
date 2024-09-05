@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Editable } from "./file-structure";
 import { getData } from "../utils/requestUtils";
 import React from "react";
-import { FlowFileID, flowFolderID } from "../pages/home-page";
+import { FlowFileID, flowFolderID } from "../pages/editor-page";
 import { Disclosure } from "@headlessui/react";
 import useEditorToolTip from "../hooks/useEditorToolTip";
 import Tippy from "@tippyjs/react";

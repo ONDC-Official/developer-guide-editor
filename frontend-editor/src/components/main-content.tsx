@@ -7,7 +7,7 @@ import {
   ExampleFolderID,
   TagFolderID,
   flowFolderID,
-} from "../pages/home-page";
+} from "../pages/editor-page";
 
 import { EnumContent, EnumFolderContent } from "./EnumContent";
 import { TagsFolderContent } from "./tag-content";

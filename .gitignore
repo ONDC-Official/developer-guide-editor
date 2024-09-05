@@ -133,6 +133,7 @@ react-build/
 #history
 history/
 FORKED_REPO/
+user_data/
 
 #binaries
 backend-editor/component-modifier/component-modifier-binary-*

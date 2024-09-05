@@ -14,6 +14,7 @@ import { MdInfoOutline } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import FolderSelector from "../components/ui/folder-selector";
+import { random } from "mermaid/dist/utils.js";
 
 function LoginCard(props: { handleInputChange: any; handleLogin: any }) {
   return (
@@ -23,7 +24,7 @@ function LoginCard(props: { handleInputChange: any; handleLogin: any }) {
           Login
         </CardTitle>
         <CardDescription>
-          Enter git details below to login to your account
+          Enter details below to login to your account
         </CardDescription>
       </CardHeader>
 
@@ -34,7 +35,7 @@ function LoginCard(props: { handleInputChange: any; handleLogin: any }) {
               htmlFor="username"
               className=" text-lg md:text-m lg:text-m font-bold text-transparent bg-clip-text flex-grow bg-blue-500"
             >
-              GIT USERNAME
+              USERNAME
             </label>
             <input
               type="text"
@@ -51,8 +52,8 @@ function LoginCard(props: { handleInputChange: any; handleLogin: any }) {
               htmlFor="token"
               className="text-lg  md:text-m lg:text-m font-bold text-transparent bg-clip-text flex-grow bg-blue-500"
             >
-              GIT PAT TOKEN:
-              <button
+              PASSWORD
+              {/* <button
                 className=" hover:bg-grey-700 text-black font-bold p-1"
                 onClick={() =>
                   window.open(
@@ -64,7 +65,7 @@ function LoginCard(props: { handleInputChange: any; handleLogin: any }) {
                   className="inline-block text-sm text-blue-500"
                   size={20}
                 />
-              </button>
+              </button> */}
             </label>
             <input
               type="token"
@@ -75,28 +76,11 @@ function LoginCard(props: { handleInputChange: any; handleLogin: any }) {
               onChange={props.handleInputChange}
             />
           </div>
-
-          <div className="space-y-2">
-            <label
-              htmlFor="token"
-              className="text-lg  md:text-m lg:text-m font-bold text-transparent bg-clip-text flex-grow bg-blue-500"
-            >
-              REPO LINK (WITHOUT .GIT):
-            </label>
-            <input
-              type="url"
-              id="repoLink"
-              name="repoLink"
-              className="w-full items-center space-x-2 text-blue-900 font-semibold bg-blue-50 py-2 px-4 rounded border border-blue-200 transition duration-150 ease-in-out focus-within:ring-2 focus-within:ring-blue-700 focus-within:ring-opacity-50 shadow-sm"
-              required
-              onChange={props.handleInputChange}
-            />
-          </div>
           <button
             className="flex-auto w-full bg-blue-500 hover:bg-blue-400 text-white font-semibold py-2 px-4 rounded transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-opacity-50 shadow-md flex items-center justify-center"
             onClick={props.handleLogin}
           >
-            <FaGithub className="mr-2" size={20} />
+            {/* <FaGithub className="mr-2" size={20} /> */}
             Submit
           </button>
         </div>
@@ -135,6 +119,7 @@ function GitLogin() {
         localStorage.setItem("username", username);
         localStorage.setItem("repoLink", res.data);
         localStorage.setItem("orignalRepoLink", repoLink);
+        localStorage.setItem("secretKey", "Key" + token.slice(0, 5));
         navigate("/home");
       }
     } catch {
@@ -163,7 +148,10 @@ function GitLogin() {
           <div className="border-l border-blue-600 h-40"></div>
         </div>
         <div className="w-1/2 flex justify-center">
-          <LocalSelector onSubmit={onSubmit} />
+          <SignUpCard
+            handleInputChange={handleInputChange}
+            handleLogin={handleLogin}
+          />
         </div>
       </div>
       {loading && <FullPageLoader />}
@@ -178,5 +166,81 @@ function LocalSelector({ onSubmit }: { onSubmit: any }) {
     <div className="flex flex-col items-center space-y-2 ">
       <FolderSelector afterUpload={onSubmit} />
     </div>
+  );
+}
+
+function SignUpCard(props: { handleInputChange: any; handleLogin: any }) {
+  return (
+    <Card className="mx-auto max-w-sm bg-white bg-opacity-20 backdrop-blur-md p-6 rounded-lg shadow-lg mt-28">
+      <CardHeader className="space-y-1">
+        <CardTitle className="text-2xl md:text-2xl lg:text-2xl font-bold text-transparent bg-clip-text flex-grow bg-blue-500 mb-4">
+          Sign-Up
+        </CardTitle>
+        <CardDescription>
+          Enter details below to create a new account
+        </CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <label
+              htmlFor="username"
+              className=" text-lg md:text-m lg:text-m font-bold text-transparent bg-clip-text flex-grow bg-blue-500"
+            >
+              USERNAME
+            </label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              className="w-full items-center space-x-2 text-blue-900 font-semibold bg-blue-50 py-2 px-4 rounded border border-blue-200 transition duration-150 ease-in-out focus-within:ring-2 focus-within:ring-blue-700 focus-within:ring-opacity-50 shadow-sm"
+              required
+              onChange={props.handleInputChange}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label
+              htmlFor="token"
+              className="text-lg  md:text-m lg:text-m font-bold text-transparent bg-clip-text flex-grow bg-blue-500"
+            >
+              PASSWORD
+            </label>
+            <input
+              type="token"
+              id="token"
+              name="token"
+              className="w-full items-center space-x-2 text-blue-900 font-semibold bg-blue-50 py-2 px-4 rounded border border-blue-200 transition duration-150 ease-in-out focus-within:ring-2 focus-within:ring-blue-700 focus-within:ring-opacity-50 shadow-sm"
+              required
+              onChange={props.handleInputChange}
+            />
+          </div>
+          <div className="space-y-2">
+            <label
+              htmlFor="token"
+              className="text-lg  md:text-m lg:text-m font-bold text-transparent bg-clip-text flex-grow bg-blue-500"
+            >
+              RE-PASSWORD
+            </label>
+            <input
+              type="token"
+              id="token"
+              name="token"
+              className="w-full items-center space-x-2 text-blue-900 font-semibold bg-blue-50 py-2 px-4 rounded border border-blue-200 transition duration-150 ease-in-out focus-within:ring-2 focus-within:ring-blue-700 focus-within:ring-opacity-50 shadow-sm"
+              required
+              onChange={props.handleInputChange}
+            />
+          </div>
+          <button
+            className="flex-auto w-full bg-blue-500 hover:bg-blue-400 text-white font-semibold py-2 px-4 rounded transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-opacity-50 shadow-md flex items-center justify-center"
+            onClick={props.handleLogin}
+          >
+            {/* <FaGithub className="mr-2" size={20} /> */}
+            Submit
+          </button>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

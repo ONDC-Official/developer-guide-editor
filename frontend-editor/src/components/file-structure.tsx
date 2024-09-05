@@ -1,7 +1,7 @@
 import Tippy from "@tippyjs/react";
 import useEditorToolTip from "../hooks/useEditorToolTip";
 import React, { useContext, useState } from "react";
-import { CompFolderID } from "../pages/home-page";
+import { CompFolderID } from "../pages/editor-page";
 import { DataContext } from "../context/dataContext";
 import { BsWindowDock } from "react-icons/bs";
 const d = [""]; // Sample data

@@ -6,7 +6,11 @@ import { Editable } from "../utils/Editable";
 import { folderTypeEditable } from "../utils/folderTypeEditable";
 import { FileTypeEditable } from "../utils/FileTypeEditable";
 
-import { deleteFolderSync, overwriteFolder } from "../utils/fileUtils";
+import {
+  deleteFolderSync,
+  getTargetPath,
+  overwriteFolder,
+} from "../utils/fileUtils";
 import { HistoryUtil } from "../utils/histroyUtils";
 
 import { ComponentsType } from "../utils/ComponentType/ComponentsFolderTypeEditable";
@@ -22,9 +26,9 @@ const sessionInstances: EditableMap<ComponentsType> = {};
 let currentSessionID: string = "";
 const history = new HistoryUtil(5);
 
-const forkedCompPath = isBinary
-  ? path.join(path.dirname(process.execPath), "./FORKED_REPO/api/components")
-  : `../../../FORKED_REPO/api/components`;
+// const forkedCompPath = isBinary
+//   ? path.join(path.dirname(process.execPath), "./FORKED_REPO/api/components")
+//   : `../../../FORKED_REPO/api/components`;
 
 initRegistry();
 
@@ -36,9 +40,27 @@ app.use(
     secret: "your_secret_key",
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false }, // set to true if you're using HTTPS
+    cookie: { secure: false },
   })
 );
+
+app.all("/guide/*", async (req: any, res, next) => {
+  const apiKey = req.headers["x-api-key"];
+  if (!apiKey) {
+    res.status(401).json({
+      error: "Unauthorized",
+      errorMessage: "Unauthorized",
+    });
+    return;
+  }
+  if (typeof apiKey !== "string") {
+    res.status(400).json({
+      error: "Invalid API Key",
+      errorMessage: "Invalid API Key",
+    });
+  }
+  next();
+});
 
 app.all("/guide/*", async (req: any, res, next) => {
   const fullPath = req.params[0];
@@ -52,11 +74,12 @@ app.all("/guide/*", async (req: any, res, next) => {
     return;
   }
   currentSessionID = pathSegments[0];
+  const secretKey = req.headers["x-api-key"] as string;
   if (!sessionInstances[currentSessionID] && req.method !== "DELETE") {
     // const oldPath = `../../../ONDC-NTS-Specifications/api/${currentSessionID}`;
     try {
       sessionInstances[currentSessionID] = await EditableRegistry.loadComponent(
-        forkedCompPath,
+        getTargetPath(secretKey),
         currentSessionID
       );
     } catch (e) {
@@ -120,16 +143,11 @@ app.get("/guide/*", async (req, res, next) => {
 
 app.post("/reload", async (req, res, next) => {
   try {
-    // delete sessionInstances[currentSessionID];
-    // const oldPath = `../../../ONDC-NTS-Specifications/api/${currentSessionID}`;
-    // sessionInstances[currentSessionID] = await EditableRegistry.loadComponent(
-    //   oldPath,
-    //   currentSessionID
-    // );
     console.log(sessionInstances);
+    const secretKey = req.headers["x-api-key"] as string;
     for (const key in sessionInstances) {
       sessionInstances[key] = await EditableRegistry.loadComponent(
-        forkedCompPath,
+        getTargetPath(secretKey),
         "components"
       );
     }
@@ -171,8 +189,10 @@ app.put("/guide/*", async (req, res, next) => {
     await deleteFolderSync(source);
     console.log("COPY DONE");
     //`../../../FORKED_REPO/api/${targetName}`
+    const secretKey = req.headers["x-api-key"] as string;
+
     sessionInstances["components"] = await EditableRegistry.loadComponent(
-      forkedCompPath,
+      getTargetPath(secretKey),
       "components"
     );
     res.status(200).send("DATA UNDONE");

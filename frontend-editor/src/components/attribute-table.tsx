@@ -1,7 +1,7 @@
 // import { useEffect, useState } from "react";
 import React, { useEffect, useState } from "react";
 import HorizontalTabBar from "./horizontal-tab";
-import { AttributeFileID, AttributeFolderID } from "../pages/home-page";
+import { AttributeFileID, AttributeFolderID } from "../pages/editor-page";
 import { deleteData, getData } from "../utils/requestUtils";
 import { Editable } from "./file-structure";
 import useEditorToolTip from "../hooks/useEditorToolTip";

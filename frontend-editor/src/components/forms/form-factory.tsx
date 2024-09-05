@@ -14,9 +14,9 @@ import {
   ExampleFolderID,
   TagFileID,
   TagFolderID,
-} from "../../pages/home-page";
+} from "../../pages/editor-page";
 import { EnumApiForm, EnumFolderForm, EnumForm } from "./enum-Form";
-import { SummaryForm,FlowFolderForm } from "./flow-form";
+import { SummaryForm, FlowFolderForm } from "./flow-form";
 import JsonField from "./JsonField";
 import { postData } from "../../utils/requestUtils";
 import FormFlowDetail from "./form-flow-detail";
@@ -103,11 +103,11 @@ const FormFactory = ({
       case flowFolderID:
         return (
           <FlowFolderForm
-          data={data}
-          setIsOpen={setIsOpen}
-          editState={editState}
-        />
-      );
+            data={data}
+            setIsOpen={setIsOpen}
+            editState={editState}
+          />
+        );
       case TagFolderID:
         if (data.query.addParams?.formType === "addAPI") {
           return (
@@ -145,12 +145,12 @@ const FormFactory = ({
         } else if (data.name === "steps") {
           return (
             <FormFlowStep
-            data={data}
-            setIsOpen={setIsOpen}
-            editState={editState}
-          />
-        );
-      }
+              data={data}
+              setIsOpen={setIsOpen}
+              editState={editState}
+            />
+          );
+        }
       case TagFileID:
         if (data.query.addParams?.formType === "addTag") {
           return (

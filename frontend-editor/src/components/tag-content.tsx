@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { Editable } from "./file-structure";
 import { getData } from "../utils/requestUtils";
 import React from "react";
-import { TagFileID, TagFolderID } from "../pages/home-page";
+import { TagFileID, TagFolderID } from "../pages/editor-page";
 import Dropdown from "./horizontal-tab";
 import { Disclosure } from "@headlessui/react";
 import useEditorToolTip from "../hooks/useEditorToolTip";

@@ -6,7 +6,7 @@ import { FormInput } from "./form-input";
 import { getData, patchData, postData } from "../../utils/requestUtils";
 import { ExampleData } from "../example-content";
 import JsonField from "./JsonField";
-import { ExampleFolderID } from "../../pages/home-page";
+import { ExampleFolderID } from "../../pages/editor-page";
 
 interface NewExample {
   ID: string; // use ID to determine FORM or JSON
