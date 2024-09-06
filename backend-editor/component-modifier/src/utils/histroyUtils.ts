@@ -2,7 +2,7 @@ import { ComponentsType } from "./ComponentType/ComponentsFolderTypeEditable";
 import { copyDir, deleteFolderSync } from "./fileUtils";
 import path from "path";
 import fs from "fs/promises";
-
+import fse from "fs-extra";
 import { isBinary } from "./fileUtils";
 
 export class HistoryUtil {
@@ -101,4 +101,30 @@ export async function SessionLoadedLog(id: string) {
   } catch (e) {
     console.error("Error logging error", e);
   }
+}
+
+export async function PruneDeadSession() {
+  let sessionData = await fs.readFile(
+    path.resolve(__dirname, `../../data/session.json`),
+    "utf-8"
+  );
+  sessionData = sessionData || "{}";
+  const parsedData: Record<string, string> = JSON.parse(sessionData);
+  const deleteKeys: string[] = [];
+  for (const key in parsedData) {
+    const date = new Date(parsedData[key]);
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    if (diff > 1000 * 60 * 60 * 24) {
+      delete parsedData[key];
+      deleteKeys.push(key);
+    }
+    if (fse.existsSync(path.resolve(__dirname, `../../../user_data/${key}`))) {
+      fse.rm(path.resolve(__dirname, `../../../user_data/${key}`), {
+        recursive: true,
+      });
+    }
+  }
+
+  return deleteKeys;
 }

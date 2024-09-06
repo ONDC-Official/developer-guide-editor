@@ -11,7 +11,11 @@ import {
   getTargetPath,
   overwriteFolder,
 } from "../utils/fileUtils";
-import { HistoryUtil, SessionLoadedLog } from "../utils/histroyUtils";
+import {
+  HistoryUtil,
+  PruneDeadSession,
+  SessionLoadedLog,
+} from "../utils/histroyUtils";
 
 import { ComponentsType } from "../utils/ComponentType/ComponentsFolderTypeEditable";
 import { Request, Response, NextFunction } from "express";
@@ -107,6 +111,10 @@ app.all("/guide/*", async (req: any, res, next) => {
       errorMessage: "Invalid path",
     });
     return;
+  }
+  const deletedKeys = await PruneDeadSession();
+  for (const key of deletedKeys) {
+    delete sessionInstances[key];
   }
   const secretKey = req.headers["x-api-key"] as string;
   currentSessionID = secretKey;

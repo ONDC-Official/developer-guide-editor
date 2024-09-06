@@ -173,7 +173,7 @@ export function GitActionsTab({}) {
           )}
           {!ActiveState && (
             <div className="flex items-start w-full">
-              <h1 className="text-xl font-bold">
+              <h1 className="text-l font-bold">
                 {`Session: ${getDecryptedCookie()}`}
               </h1>
             </div>
