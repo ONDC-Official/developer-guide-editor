@@ -9,7 +9,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { GitActionsTab } from "../components/GitActionsTab";
 import { useNavigate, useParams } from "react-router-dom";
 import { setEncryptedCookie } from "../utils/cookieUtils";
-
+import build from "../files.json";
+import { BUILD_TYPE } from "../types/buildTypes";
 interface FetchedComponents {
   name: string;
   registerID: string;
@@ -36,7 +37,10 @@ export function HomePage({ editMode }: { editMode: boolean }) {
   const [refresh, setRefresh] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
-
+  // console.log(build);
+  const currentBuild = build as BUILD_TYPE;
+  const buildKeys = Object.keys(currentBuild).filter((k) => k.startsWith("x-"));
+  console.log(buildKeys);
   useEffect(() => {
     console.log("use effect");
     if (!id) {
@@ -131,6 +135,7 @@ export function HomePage({ editMode }: { editMode: boolean }) {
         components={components}
         activeEditable={activeEditable}
         parentComp={compEditable}
+        buildData={currentBuild}
       />
       ){loading && <FullPageLoader />}
     </DataContext.Provider>
@@ -141,12 +146,15 @@ function ComponentView({
   components,
   activeEditable: activeEditable,
   parentComp,
+  buildData,
 }: {
   components: Editable[];
   activeEditable: Editable | undefined;
   parentComp: Editable;
+  buildData: BUILD_TYPE;
 }) {
   const editState = useContext(DataContext).editMode;
+  console.log(buildData);
   return (
     <>
       <GitActionsTab />

@@ -20,8 +20,6 @@ import {
 import { ComponentsType } from "../utils/ComponentType/ComponentsFolderTypeEditable";
 import { Request, Response, NextFunction } from "express";
 import { buildWrapper } from "../utils/build/build";
-import { isBinary } from "../utils/fileUtils";
-import path from "path";
 
 interface EditableMap<T> {
   [key: string]: T;
