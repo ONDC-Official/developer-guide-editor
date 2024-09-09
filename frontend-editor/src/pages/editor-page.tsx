@@ -37,10 +37,11 @@ export function HomePage({ editMode }: { editMode: boolean }) {
   const [refresh, setRefresh] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
-  // console.log(build);
-  const currentBuild = build as BUILD_TYPE;
-  const buildKeys = Object.keys(currentBuild).filter((k) => k.startsWith("x-"));
-  console.log(buildKeys);
+
+  const [workingBuild, setWorkingBuild] = useState<BUILD_TYPE>(
+    build as BUILD_TYPE
+  );
+
   useEffect(() => {
     console.log("use effect");
     if (!id) {
@@ -56,29 +57,29 @@ export function HomePage({ editMode }: { editMode: boolean }) {
     });
   }, [pathState, refresh]);
 
-  useEffect(() => {
-    const handleKeyDown = async (event: KeyboardEvent) => {
-      if ((event.ctrlKey || event.metaKey) && event.key === "z") {
-        event.preventDefault(); // Prevent the browser's default undo behavior
-        console.log("Ctrl/Cmd + Z pressed");
-        try {
-          setLoading(true);
-          await UndoData(activePath.current);
-          toast.success("Undo successful!");
-          await fetchData();
-          setLoading(false);
-        } catch (error: any) {
-          toast.error("NO undo data available");
-          console.error("Error making PATCH request:", error);
-        }
-      }
-    };
+  // useEffect(() => {
+  //   const handleKeyDown = async (event: KeyboardEvent) => {
+  //     if ((event.ctrlKey || event.metaKey) && event.key === "z") {
+  //       event.preventDefault(); // Prevent the browser's default undo behavior
+  //       console.log("Ctrl/Cmd + Z pressed");
+  //       try {
+  //         setLoading(true);
+  //         await UndoData(activePath.current);
+  //         toast.success("Undo successful!");
+  //         await fetchData();
+  //         setLoading(false);
+  //       } catch (error: any) {
+  //         toast.error("NO undo data available");
+  //         console.error("Error making PATCH request:", error);
+  //       }
+  //     }
+  //   };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
+  //   window.addEventListener("keydown", handleKeyDown);
+  //   return () => {
+  //     window.removeEventListener("keydown", handleKeyDown);
+  //   };
+  // }, []);
 
   const compEditable: Editable = {
     name: activePath.current,
@@ -128,6 +129,8 @@ export function HomePage({ editMode }: { editMode: boolean }) {
         setReload: setRefresh,
         components: compEditable,
         editMode: editMode,
+        workingBuild: workingBuild,
+        setWorkingBuild: setWorkingBuild,
       }}
     >
       (
@@ -135,7 +138,6 @@ export function HomePage({ editMode }: { editMode: boolean }) {
         components={components}
         activeEditable={activeEditable}
         parentComp={compEditable}
-        buildData={currentBuild}
       />
       ){loading && <FullPageLoader />}
     </DataContext.Provider>
@@ -146,15 +148,11 @@ function ComponentView({
   components,
   activeEditable: activeEditable,
   parentComp,
-  buildData,
 }: {
   components: Editable[];
   activeEditable: Editable | undefined;
   parentComp: Editable;
-  buildData: BUILD_TYPE;
 }) {
-  const editState = useContext(DataContext).editMode;
-  console.log(buildData);
   return (
     <>
       <GitActionsTab />

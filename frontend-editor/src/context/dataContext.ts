@@ -1,3 +1,4 @@
+import { BUILD_TYPE } from "@/types/buildTypes";
 import { Editable } from "../components/file-structure";
 import { Context, createContext } from "react";
 
@@ -11,6 +12,8 @@ interface DataContextProps {
   setReload: React.Dispatch<React.SetStateAction<boolean>>;
   editMode: boolean;
   components: Editable;
+  workingBuild: BUILD_TYPE;
+  setWorkingBuild: React.Dispatch<React.SetStateAction<BUILD_TYPE>>;
 }
 
 export const DataContext = createContext({} as DataContextProps);

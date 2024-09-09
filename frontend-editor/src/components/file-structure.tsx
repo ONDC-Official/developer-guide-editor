@@ -1,10 +1,7 @@
 import Tippy from "@tippyjs/react";
 import useEditorToolTip from "../hooks/useEditorToolTip";
 import React, { useContext, useState } from "react";
-import { CompFolderID } from "../pages/editor-page";
 import { DataContext } from "../context/dataContext";
-import { BsWindowDock } from "react-icons/bs";
-const d = [""]; // Sample data
 
 export interface EditableQuery {
   getData: () => Promise<any>;
@@ -98,8 +95,8 @@ const tabClass = (isActive: boolean) => `
     transform transition duration-150 ease-in-out
     ${
       isActive
-        ? "bg-blue-500 text-white shadow-lg scale-110" // More contrast for active tab
-        : "text-black hover:bg-blue-100 dark:hover:bg-blue-500 scale-100 dark:text-white" // Improved hover state
+        ? "bg-blue-500 text-white shadow-lg scale-110"
+        : "text-black hover:bg-blue-100 dark:hover:bg-blue-500 scale-100 dark:text-white"
     }
     active:bg-blue-300 shadow-blue-400
   `;
