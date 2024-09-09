@@ -2,7 +2,6 @@ import { Card, CardContent, CardTitle } from "../components/ui/mini-ui/card";
 import FullPageLoader from "../components/loader";
 import { useState } from "react";
 import { RiDeleteBin2Line } from "react-icons/ri";
-import { setEncryptedCookie } from "@/utils/cookieUtils";
 import { useNavigate } from "react-router-dom";
 import { v4 as uuid } from "uuid";
 import axios from "axios";
