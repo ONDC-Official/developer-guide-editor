@@ -2,8 +2,7 @@ import path from "path";
 import { deleteFolderSync, loadYamlWithRefs } from "../fileUtils";
 import fs, { copyFileSync, mkdir } from "fs";
 import yaml from "js-yaml";
-import { overrideYaml } from "../yamlUtils";
-import { describe } from "node:test";
+
 type exampleSet = Record<
   string,
   {
@@ -25,7 +24,6 @@ type exampleData = Record<
 >;
 
 async function formatExampleSummary(yamlPath: string) {
-  console.log("hello");
   const yamlData: Record<
     string,
     {
@@ -189,23 +187,11 @@ async function formatExampleFolder(examplePath: string) {
   fs.writeFileSync(`${newPathFlow}/index.yaml`, yaml.dump(flowIndexData));
 }
 
-(async () => {
-  // await formatExampleSummary(
-  //   path.resolve(
-  //     __dirname,
-  //     "../../../../FORKED_REPO/api/components/examples/personal-loans/personal-loan.yaml"
-  //   )
-  // );
-  // await formatExampleSummary(
-  //   path.resolve(
-  //     __dirname,
-  //     "../../../../FORKED_REPO/api/components/examples/personal-loans/purchase-finance.yaml"
-  //   )
-  // );
-  // await formatExampleFolder(
-  //   path.resolve(__dirname, "../../../../FORKED_REPO/api/components/examples")
-  // );
-  // const str =
-  //   "../../examples/personal-loans/on_search/on_search-request-pf_1.yaml";
-  // console.log(str.split("../../"));
-})();
+// (async () => {
+//   await formatExampleFolder(
+//     path.resolve(__dirname, "../../../../FORKED_REPO/api/components/examples")
+//   );
+//   // const str =
+//   //   "../../examples/personal-loans/on_search/on_search-request-pf_1.yaml";
+//   // console.log(str.split("../../"));
+// })();
