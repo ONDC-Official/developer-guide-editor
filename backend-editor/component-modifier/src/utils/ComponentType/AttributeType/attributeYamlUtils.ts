@@ -3,6 +3,7 @@ import yaml from "js-yaml";
 import path from "path";
 import { readYamlFile } from "../../fileUtils";
 import { AttributeRow, AttributeType } from "./AttributeRow";
+import { convertToYamlWithRefs } from "../../extraUtils/yamlRefConvert";
 
 export function getSheets(yamlData: any) {
   const obj: any = yaml.load(yamlData);
@@ -114,7 +115,7 @@ export function sheetsToYAML(sheets) {
     obj[key] = convertDetailedPathsToNestedObjects(element);
   }
   // console.log("test ", obj);
-  return yaml.dump(obj);
+  return convertToYamlWithRefs(obj);
 }
 
 function listDetailedPaths(yamlString) {

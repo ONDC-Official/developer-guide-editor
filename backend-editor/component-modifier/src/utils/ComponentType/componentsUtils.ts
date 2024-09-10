@@ -255,7 +255,7 @@ async function createFlows(
           (ex) => ex.value === JSON.stringify(step.example.value)
         );
         if (example) {
-          step.example.value = { $ref: example.$ref };
+          step.example.value = { $ref: example.$ref + ".yaml" };
         } else {
           index++;
           const name = `${step.api}_${makeValidFolderName(
