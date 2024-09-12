@@ -1,10 +1,7 @@
-import { EditableRegistry } from "../EditableRegistry";
 import { AttributeFile } from "./AttributeType/AttributeRow";
 import { AttributesFolderTypeEditable } from "./AttributeType/AttributesFolderTypeEditable";
 import { getSheetsObj } from "./AttributeType/attributeYamlUtils";
 import { ComponentsType } from "./ComponentsFolderTypeEditable";
-import path from "path";
-import fs from "fs";
 import { initRegistry } from "../RegisterList";
 import { EnumFolderType } from "./enumType/enumFolderType";
 import { EnumFileType } from "./enumType/enumFileType";
@@ -16,7 +13,6 @@ import { ExampleDomainFolderType } from "./examplesType/ExampleDomainFolderType"
 import { ExampleFolderType } from "./examplesType/exampleFolderType";
 import { FlowFolderType } from "./flowType/flowFolderType";
 import { FlowFileType } from "./flowType/flowFileType";
-import yaml from "js-yaml";
 
 type X_ATTRIBUTES = Record<string, { attribute_set: Record<string, any> }>;
 type X_ENUM = Record<string, any>;
@@ -205,6 +201,8 @@ async function createFlows(
   if (!data["x-flows"]) return;
   let examplesFolder: undefined | ExampleFolderType = undefined;
   let extraExamples: undefined | ExampleDomainFolderType = null;
+  let metroExamples: undefined | ExampleDomainFolderType = null;
+  let intracityExamples: undefined | ExampleDomainFolderType = null;
   try {
     console.log(comp.childrenEditables);
     examplesFolder = comp.getTarget(
@@ -212,6 +210,16 @@ async function createFlows(
       "examples",
       comp
     ) as ExampleFolderType;
+    // metroExamples = examplesFolder.getTarget(
+    //   ExampleDomainFolderType.REGISTER_ID,
+    //   "metro",
+    //   examplesFolder
+    // ) as ExampleDomainFolderType;
+    // intracityExamples = examplesFolder.getTarget(
+    //   ExampleDomainFolderType.REGISTER_ID,
+    //   "intracity-bus",
+    //   examplesFolder
+    // ) as ExampleDomainFolderType;
     await examplesFolder.add({
       ID: ExampleDomainFolderType.REGISTER_ID,
       name: "EXTRA",
@@ -234,6 +242,7 @@ async function createFlows(
     "flows",
     comp
   ) as FlowFolderType;
+  // await copyToClipboard(JSON.stringify(data["x-flows"]));
 
   for (const flow of data["x-flows"]) {
     const flowName = makeValidFolderName(flow.summary);
@@ -249,7 +258,8 @@ async function createFlows(
 
     const ExtraFolderName = "EXTRA";
     let index = 0;
-    for (const step of flow.steps) {
+    for (let i = 0; i < flow.steps.length; i++) {
+      const step = flow.steps[i];
       if (step.example) {
         const example = example_cache.find(
           (ex) => ex.value === JSON.stringify(step.example.value)
@@ -259,7 +269,7 @@ async function createFlows(
         } else {
           index++;
           const name = `${step.api}_${makeValidFolderName(
-            step.summary
+            step.details[0].description ?? step.summary
           )}_${index}`;
           await extraExamples.add({
             ID: "JSON",
@@ -305,6 +315,7 @@ function makeValidFolderName(input: string): string {
 
   return output;
 }
+
 // (async () => {
 //   initRegistry();
 //   const data: RAW_DATA = JSON.parse(
