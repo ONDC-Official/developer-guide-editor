@@ -47,17 +47,17 @@ function App() {
       >
         <div className={darkMode ? "dark" : ""}>
           <OndcTitle>
-            <LoadingButton onClick={buildGuide} buttonText="BUILD" />
+            {/* <LoadingButton onClick={buildGuide} buttonText="BUILD" /> */}
 
             <span style={{ marginRight: "10px" }}></span>
             {GlobalEditMode && (
               <>
-                <button
+                {/* <button
                   onClick={async () => navigate("/guide")}
                   className="text-white bg-gray-800 hover:bg-gray-900 font-semibold p-2"
                 >
                   GUIDE
-                </button>
+                </button> */}
                 <button
                   onClick={() => setEditState((s) => !s)}
                   className="bg-blue-500 hover:bg-blue-700 text-white font-semibold p-2 ml-2"

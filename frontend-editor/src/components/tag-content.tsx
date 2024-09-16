@@ -13,6 +13,7 @@ import { DropTransition } from "./helper-components";
 import { IoLayersOutline } from "react-icons/io5";
 import { VscJson } from "react-icons/vsc";
 import path from "path";
+import { toast } from "react-toastify";
 export interface Tag {
   code: string;
   description: string;
@@ -129,6 +130,14 @@ export function TagContent({
       <div className="mt-2 max-w-full">
         <div className="flex w-full">
           <div className="flex-1">
+            <button
+              className="text-white bg-blue-500 p-2 rounded-md shadow-md hover:bg-blue-600"
+              onClick={() => {
+                TagsToAttributes(tagData);
+              }}
+            >
+              CONVERT TO ATTRIBUTES
+            </button>
             {tagData &&
               Object.keys(tagData).map((apiName, index) => (
                 <TagDisclose
@@ -374,3 +383,41 @@ function TagGroupInfo({ tag, editable }: { tag: Tag; editable: Editable }) {
     </Disclosure>
   );
 }
+
+const TagsToAttributes = (tags: TagResponse | undefined) => {
+  if (!tags) {
+    toast.error("No Tags to Convert");
+    return;
+  }
+  const atrributes: Record<string, any> = {};
+  for (const api in tags) {
+    const tagData = tags[api];
+    atrributes[api] = [];
+    for (const tagGroup of tagData) {
+      for (const tag of tagGroup.tag) {
+        const path = tagGroup.path + "." + tag.code;
+        atrributes[api].push({
+          path: path,
+          required: "MANDATORY",
+          type: "OBJECT",
+          owner: "BAP/BPP",
+          usage: "--",
+          description: `${tag.description}`,
+        });
+        for (const list of tag.list) {
+          atrributes[api].push({
+            path: path + ".list." + list.code,
+            required: "MANDATORY",
+            type: "TEXT",
+            owner: "BAP/BPP",
+            usage: "--",
+            description: `${list.description}`,
+          });
+        }
+      }
+    }
+  }
+  console.log(atrributes);
+  toast.success("Converted to Attributes, Check Console for Output");
+  // return atrributes;
+};
