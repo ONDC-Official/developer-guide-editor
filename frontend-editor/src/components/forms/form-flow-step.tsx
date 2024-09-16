@@ -8,10 +8,16 @@ import FormSelect from "./form-select";
 import FlowPreview from "./flow-preview";
 import { MermaidDiagram } from "../ui/mermaid";
 import { Transition } from "@headlessui/react";
-const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
+
+interface singleExample {
+  value: any;
+  $ref: string;
+}
+
+const FormFlowStep = ({ data, setIsOpen, editState }: FormFacProps) => {
   let defaultValue: any = {};
   const [showJsonField, setShowJsonField] = useState(false);
-  const [exampleArray, setexampleArray] = useState<any>([]);
+  const [exampleArray, setexampleArray] = useState<singleExample[]>([]);
   const [selectedValue, setSelectedValue] = useState("");
   const [jsonData, setJsonData] = useState("");
   const [exampleDefultValue, setExampleDefaultValue] = useState("");
@@ -34,7 +40,9 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
       const singleExample = exampleArray.find(
         (element: any) => element.$ref === selectedValue
       );
-      setJsonData(singleExample.value);
+      if (singleExample) {
+        setJsonData(singleExample.value);
+      }
     }
     setShowJsonField(!showJsonField);
   };
@@ -63,16 +71,31 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
     path.pop();
     let newPath = path.join("/");
     const examples = await getData(newPath, { type: "reference" });
-    let exampleField =
-      data.query.updateParams?.data[data.query.updateParams?.index].example;
+    let exampleField: any = "";
+    if (examples.length === 0) {
+      toast.error("No examples found! First Add Some Examples!");
+      return;
+    }
+    try {
+      exampleField =
+        data.query.updateParams?.data[data.query.updateParams?.index].example;
+    } catch (e) {
+      console.log(e);
+    }
+
     setexampleArray(examples.refs);
 
-    //Find example default value from example api and set it
-    let exampleDefault = examples?.refs.find(
-      (element: any) => element.$ref === exampleField.value.$ref
-    );
-    setExampleDefaultValue(exampleDefault?.$ref);
-    setSelectedValue(exampleDefault?.$ref);
+    if (editState) {
+      //Find example default value from example api and set it
+      let exampleDefault = examples?.refs.find(
+        (element: any) => element.$ref === exampleField.value.$ref
+      );
+      setExampleDefaultValue(exampleDefault?.$ref);
+      setSelectedValue(exampleDefault?.$ref);
+    } else {
+      setSelectedValue(examples.refs[0].$ref);
+      setExampleDefaultValue(examples.refs[0].$ref);
+    }
   }
 
   const onSubmit = async (formData: Record<string, string>) => {
@@ -102,6 +125,12 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
     }
 
     let updatedPayload = [];
+    if (exampleArray.length === 0) {
+      toast.error("No examples found! First Add Some Examples!");
+      return;
+    }
+    const ref = selectedValue ?? exampleArray[0].$ref;
+
     const payload: any = {
       ...formData,
       details: [
@@ -110,7 +139,7 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
           mermaid: formData.mermaid,
         },
       ],
-      example: { value: { $ref: selectedValue } },
+      example: { value: { $ref: ref } },
     };
     delete payload?.description;
     delete payload?.mermaid;
@@ -130,7 +159,8 @@ const FormFlowStep = ({ data, setIsOpen }: FormFacProps) => {
       updatedPayload = data.query.updateParams?.data;
       updatedPayload.push(payload);
     }
-
+    console.log({ updatedPayload }, "updatedPayload");
+    console.log(payload, "payload");
     try {
       await patchData(data.path, {
         steps: updatedPayload,
