@@ -389,6 +389,7 @@ const TagsToAttributes = (tags: TagResponse | undefined) => {
     toast.error("No Tags to Convert");
     return;
   }
+  const ownerCache: { [key: string]: string } = {};
   const atrributes: Record<string, any> = {};
   for (const api in tags) {
     const tagData = tags[api];
@@ -396,20 +397,34 @@ const TagsToAttributes = (tags: TagResponse | undefined) => {
     for (const tagGroup of tagData) {
       for (const tag of tagGroup.tag) {
         const path = tagGroup.path + "." + tag.code;
+        let owner = api.startsWith("on_") ? "BPP" : "BAP";
+        if (ownerCache[path]) {
+          owner = ownerCache[path];
+        } else {
+          ownerCache[path] = owner;
+        }
+
         atrributes[api].push({
           path: path,
           required: "MANDATORY",
           type: "OBJECT",
-          owner: "BAP/BPP",
+          owner: owner,
           usage: "--",
           description: `${tag.description}`,
         });
         for (const list of tag.list) {
+          let owner = api.startsWith("on_") ? "BPP" : "BAP";
+          if (ownerCache[path]) {
+            owner = ownerCache[path];
+          } else {
+            ownerCache[path] = owner;
+          }
+
           atrributes[api].push({
             path: path + ".list." + list.code,
             required: "MANDATORY",
             type: "TEXT",
-            owner: "BAP/BPP",
+            owner: owner,
             usage: "--",
             description: `${list.description}`,
           });

@@ -149,6 +149,7 @@ async function createExamples(
     "examples",
     comp
   ) as ExampleFolderType;
+  let taken_summary: string[] = [];
   for (const domain in data["x-examples"]) {
     const yamlData = data["x-examples"][domain];
     await examples.add({
@@ -162,10 +163,18 @@ async function createExamples(
       domain,
       examples
     ) as ExampleDomainFolderType;
+
     for (const example in yamlData.example_set) {
       if (example.includes("form")) continue;
+      let index = 0;
       for (const set of yamlData.example_set[example].examples) {
-        set.summary = set.summary ? set.summary : example + set.description;
+        index++;
+        let summ = set.summary ? set.summary : example + set.description;
+        if (taken_summary.includes(summ)) {
+          summ += `_${index}`;
+        }
+        set.summary = summ;
+        taken_summary.push(summ);
         example_cache.push({
           $ref: `../../examples/${domain}/${example}/${set.summary
             .trim()
@@ -201,8 +210,7 @@ async function createFlows(
   if (!data["x-flows"]) return;
   let examplesFolder: undefined | ExampleFolderType = undefined;
   let extraExamples: undefined | ExampleDomainFolderType = null;
-  let metroExamples: undefined | ExampleDomainFolderType = null;
-  let intracityExamples: undefined | ExampleDomainFolderType = null;
+
   try {
     console.log(comp.childrenEditables);
     examplesFolder = comp.getTarget(
@@ -210,16 +218,7 @@ async function createFlows(
       "examples",
       comp
     ) as ExampleFolderType;
-    // metroExamples = examplesFolder.getTarget(
-    //   ExampleDomainFolderType.REGISTER_ID,
-    //   "metro",
-    //   examplesFolder
-    // ) as ExampleDomainFolderType;
-    // intracityExamples = examplesFolder.getTarget(
-    //   ExampleDomainFolderType.REGISTER_ID,
-    //   "intracity-bus",
-    //   examplesFolder
-    // ) as ExampleDomainFolderType;
+
     await examplesFolder.add({
       ID: ExampleDomainFolderType.REGISTER_ID,
       name: "EXTRA",
