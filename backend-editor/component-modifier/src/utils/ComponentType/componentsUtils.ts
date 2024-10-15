@@ -2,7 +2,6 @@ import { AttributeFile } from "./AttributeType/AttributeRow";
 import { AttributesFolderTypeEditable } from "./AttributeType/AttributesFolderTypeEditable";
 import { getSheetsObj } from "./AttributeType/attributeYamlUtils";
 import { ComponentsType } from "./ComponentsFolderTypeEditable";
-import { initRegistry } from "../RegisterList";
 import { EnumFolderType } from "./enumType/enumFolderType";
 import { EnumFileType } from "./enumType/enumFileType";
 import { enumsFromObj } from "./enumType/enumUtils";
