@@ -2,6 +2,17 @@ import fs from "fs";
 import yaml from "js-yaml";
 import fs_p from "fs/promises";
 
+export type ExampleDomainIndexYml = Record<
+  string,
+  {
+    examples: {
+      summary: string;
+      description: string;
+      value: { $ref: string };
+    }[];
+  }
+>;
+
 interface AddExample {
   folderApi: string;
   exampleName: string;

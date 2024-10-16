@@ -132,13 +132,3 @@ export class ExampleFolderType extends folderTypeEditable {
   }
 }
 
-export type ExampleDomainIndexYml = Record<
-  string,
-  {
-    examples: {
-      summary: string;
-      description: string;
-      value: { $ref: string };
-    }[];
-  }
->;

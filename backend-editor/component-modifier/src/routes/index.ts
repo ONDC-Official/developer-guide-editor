@@ -1,7 +1,7 @@
 import express from "express";
 import session from "express-session";
 import { initRegistry } from "../utils/RegisterList";
-import { EditableRegistry } from "../utils/EditableRegistry";
+import { ComponentLoader } from "../utils/componentLoader";
 
 const sessionInstances = {};
 initRegistry();
@@ -42,7 +42,7 @@ app.use(checkQueryParams);
 
 app.use(async (req: any, res, next) => {
   if (!sessionInstances[req.sessionID]) {
-    sessionInstances[req.sessionID] = await EditableRegistry.loadComponent(
+    sessionInstances[req.sessionID] = await ComponentLoader.loadComponent(
       "../../ONDC-NTS-Specifications/api/cp0",
       "cp0"
     );

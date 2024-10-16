@@ -1,28 +1,23 @@
 import { copyDir } from "../fileUtils";
 import { folderTypeEditable } from "../folderTypeEditable";
 import { updateYamlRefComponents } from "../yamlUtils";
-import { AttributesFolderTypeEditable } from "./AttributeType/AttributesFolderTypeEditable";
-import { EnumFolderType } from "./enumType/enumFolderType";
-import { TagsFolderType } from "./tagType/tagsFolderType";
-import { FlowFolderType } from "./flowType/flowFolderType";
-import { ExampleFolderType } from "./examplesType/exampleFolderType";
 import { BuildCompenetsWithRawBuild } from "./componentsUtils";
-import { TlcFolder } from "./tlcType/tlcFolder";
+import { FolderTypes } from "./constants";
 
 export class ComponentsType extends folderTypeEditable {
   getRegisterID(): string {
     return ComponentsType.REGISTER_ID;
   }
   static REGISTER_ID = "COMPONENTS-FOLDER";
-  constructor(path, id) {
+  constructor(path: string, id: string) {
     super(path, id);
     this.allowedList = [
-      AttributesFolderTypeEditable.REGISTER_ID,
-      EnumFolderType.REGISTER_ID,
-      TagsFolderType.REGISTER_ID,
-      FlowFolderType.REGISTER_ID,
-      ExampleFolderType.REGISTER_ID,
-      TlcFolder.REGISTER_ID,
+      FolderTypes.ATTRIBUTE_FOLDER,
+      FolderTypes.ENUM_FOLDER,
+      FolderTypes.TAGS_FOLDER,
+      FolderTypes.FLOW_FOLDER,
+      FolderTypes.EXAMPLE_FOLDER,
+      FolderTypes.TLC_FOLDER,
     ];
   }
   async add(new_editable: { ID: string; build?: any }) {
@@ -66,28 +61,28 @@ export class ComponentsType extends folderTypeEditable {
       true
     );
   }
-  async saveData(path) {
+  async saveData(path: string) {
     await copyDir(this.longPath, path);
   }
   async loadData() {}
 
   GetForcedName(ID: string): string {
-    if (ID === AttributesFolderTypeEditable.REGISTER_ID) {
+    if (ID === FolderTypes.ATTRIBUTE_FOLDER) {
       return "attributes";
     }
-    if (ID === EnumFolderType.REGISTER_ID) {
+    if (ID === FolderTypes.ENUM_FOLDER) {
       return "enum";
     }
-    if (ID === TagsFolderType.REGISTER_ID) {
+    if (ID === FolderTypes.TAGS_FOLDER) {
       return "tags";
     }
-    if (ID === FlowFolderType.REGISTER_ID) {
+    if (ID === FolderTypes.FLOW_FOLDER) {
       return "flows";
     }
-    if (ID === ExampleFolderType.REGISTER_ID) {
+    if (ID === FolderTypes.EXAMPLE_FOLDER) {
       return "examples";
     }
-    if (ID === TlcFolder.REGISTER_ID) {
+    if (ID === FolderTypes.TLC_FOLDER) {
       return "tlc";
     }
     return "UNKNOWN";

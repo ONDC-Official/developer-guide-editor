@@ -1,7 +1,6 @@
 import { AttributeFile } from "./AttributeType/AttributeRow";
 import { AttributesFolderTypeEditable } from "./AttributeType/AttributesFolderTypeEditable";
 import { getSheetsObj } from "./AttributeType/attributeYamlUtils";
-import { ComponentsType } from "./ComponentsFolderTypeEditable";
 import { EnumFolderType } from "./enumType/enumFolderType";
 import { EnumFileType } from "./enumType/enumFileType";
 import { enumsFromObj } from "./enumType/enumUtils";
@@ -12,6 +11,7 @@ import { ExampleDomainFolderType } from "./examplesType/ExampleDomainFolderType"
 import { ExampleFolderType } from "./examplesType/exampleFolderType";
 import { FlowFolderType } from "./flowType/flowFolderType";
 import { FlowFileType } from "./flowType/flowFileType";
+import { ComponentsType } from "./ComponentsFolderTypeEditable";
 
 type X_ATTRIBUTES = Record<string, { attribute_set: Record<string, any> }>;
 type X_ENUM = Record<string, any>;

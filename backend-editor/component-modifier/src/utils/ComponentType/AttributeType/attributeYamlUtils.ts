@@ -1,6 +1,32 @@
 import yaml from "js-yaml";
-import { AttributeRow, AttributeType } from "./AttributeRow";
+
 import { convertToYamlWithRefs } from "../../extraUtils/yamlRefConvert";
+
+export interface AttributeRow {
+  path: string;
+  required?: string;
+  type?: string;
+  owner?: string;
+  usage?: string;
+  description: string;
+}
+
+export interface AttributeOperation {
+  sheetName: string;
+  attributes?: AttributeRow[];
+}
+
+export type AttributeType = Record<string, AttributeRow[]>;
+
+export interface PatchAttributes {
+  type: "sheetName" | "rowData";
+  operation: {
+    oldName: string;
+    newName?: string;
+    oldRows?: AttributeRow[];
+    newRows?: AttributeRow[];
+  };
+}
 
 export function getSheets(yamlData: any) {
   const obj: any = yaml.load(yamlData);

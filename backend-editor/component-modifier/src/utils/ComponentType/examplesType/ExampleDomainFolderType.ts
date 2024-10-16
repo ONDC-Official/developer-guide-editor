@@ -2,11 +2,12 @@ import { folderTypeEditable } from "../../folderTypeEditable";
 import { overrideYaml, updateYamlRefExampleDomain } from "../../yamlUtils";
 import { ValidateJsonSchema, deleteFile, readYamlFile } from "../../fileUtils";
 import yaml from "js-yaml";
-import { ExampleDomainIndexYml } from "./exampleFolderType";
+// import { ExampleDomainIndexYml } from "./exampleFolderType";
 import {
   AddExampleJson,
   AddForm,
   DeleteExampleFolder,
+  ExampleDomainIndexYml,
   GetFormData,
 } from "./exampleUtils";
 import path from "path";

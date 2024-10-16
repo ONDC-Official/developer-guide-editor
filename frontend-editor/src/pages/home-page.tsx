@@ -25,6 +25,7 @@ export const ExampleFolderID = "EXAMPLE_FOLDER";
 export const ExampleDomainFolderID = "EXAMPLE_DOMAIN_FOLDER";
 export const flowFolderID = "FLOW_FOLDER";
 export const FlowFileID = "FLOW_FILE";
+export const TLCFolderID = "TLC_FOLDER";
 
 export function HomePage({ editMode }: { editMode: boolean }) {
   const [loading, setLoading] = React.useState(false);

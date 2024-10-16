@@ -1,6 +1,6 @@
 import React from "react";
 import GenericForm from "./generic-form";
-import {FormInput} from "./form-input";
+import { FormInput } from "./form-input";
 import FormSelect from "./form-select";
 import { Editable } from "../file-structure";
 import { FieldValues } from "react-hook-form";
@@ -8,8 +8,9 @@ import {
   AttributeFolderID,
   EnumFolderID,
   ExampleFolderID,
+  TLCFolderID,
   TagFolderID,
-  flowFolderID
+  flowFolderID,
 } from "../../pages/home-page";
 import { postData } from "../../utils/requestUtils";
 
@@ -40,7 +41,8 @@ const AddInComponent = ({
           EnumFolderID,
           TagFolderID,
           ExampleFolderID,
-          flowFolderID
+          flowFolderID,
+          TLCFolderID,
         ]}
       />
     </GenericForm>

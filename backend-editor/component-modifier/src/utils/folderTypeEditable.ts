@@ -1,4 +1,3 @@
-import { close } from "fs";
 import { Editable } from "./Editable";
 import { EditableRegistry } from "./EditableRegistry";
 import { FileTypeEditable } from "./FileTypeEditable";
@@ -28,6 +27,7 @@ export abstract class folderTypeEditable extends Editable {
       )
     );
   }
+
   /**
    * Adds a new editable to the childrenEditables array.
    * @param {Object} deleteTarget - The new editable object to delete.

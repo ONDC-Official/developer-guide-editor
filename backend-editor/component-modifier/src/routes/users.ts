@@ -1,7 +1,6 @@
 import express from "express";
 import session from "express-session";
 import { initRegistry } from "../utils/RegisterList";
-import { EditableRegistry } from "../utils/EditableRegistry";
 import { Editable } from "../utils/Editable";
 import { folderTypeEditable } from "../utils/folderTypeEditable";
 import { FileTypeEditable } from "../utils/FileTypeEditable";
@@ -14,6 +13,7 @@ import { Request, Response, NextFunction } from "express";
 import { buildWrapper } from "../utils/build/build";
 import { isBinary } from "../utils/fileUtils";
 import path from "path";
+import { ComponentLoader } from "../utils/componentLoader";
 
 interface EditableMap<T> {
   [key: string]: T;
@@ -55,7 +55,7 @@ app.all("/guide/*", async (req: any, res, next) => {
   if (!sessionInstances[currentSessionID] && req.method !== "DELETE") {
     // const oldPath = `../../../ONDC-NTS-Specifications/api/${currentSessionID}`;
     try {
-      sessionInstances[currentSessionID] = await EditableRegistry.loadComponent(
+      sessionInstances[currentSessionID] = await ComponentLoader.loadComponent(
         forkedCompPath,
         currentSessionID
       );
@@ -122,13 +122,13 @@ app.post("/reload", async (req, res, next) => {
   try {
     // delete sessionInstances[currentSessionID];
     // const oldPath = `../../../ONDC-NTS-Specifications/api/${currentSessionID}`;
-    // sessionInstances[currentSessionID] = await EditableRegistry.loadComponent(
+    // sessionInstances[currentSessionID] = await ComponentLoader.loadComponent(
     //   oldPath,
     //   currentSessionID
     // );
     console.log(sessionInstances);
     for (const key in sessionInstances) {
-      sessionInstances[key] = await EditableRegistry.loadComponent(
+      sessionInstances[key] = await ComponentLoader.loadComponent(
         forkedCompPath,
         "components"
       );
@@ -171,7 +171,7 @@ app.put("/guide/*", async (req, res, next) => {
     await deleteFolderSync(source);
     console.log("COPY DONE");
     //`../../../FORKED_REPO/api/${targetName}`
-    sessionInstances["components"] = await EditableRegistry.loadComponent(
+    sessionInstances["components"] = await ComponentLoader.loadComponent(
       forkedCompPath,
       "components"
     );

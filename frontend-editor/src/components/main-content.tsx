@@ -5,6 +5,7 @@ import {
   AttributeFolderID,
   EnumFolderID,
   ExampleFolderID,
+  TLCFolderID,
   TagFolderID,
   flowFolderID,
 } from "../pages/home-page";
@@ -13,6 +14,7 @@ import { EnumContent, EnumFolderContent } from "./EnumContent";
 import { TagsFolderContent } from "./tag-content";
 import { FlowFolderContent } from "./flow-content";
 import { ExampleContent } from "./example-content";
+import { TlcContent } from "./tlc-content";
 
 export function MainContent({
   activeEditable,
@@ -40,6 +42,9 @@ export function MainContent({
       )}
       {activeEditable?.registerID === ExampleFolderID && (
         <ExampleContent exampleEditable={activeEditable} />
+      )}
+      {activeEditable?.registerID === TLCFolderID && (
+        <TlcContent tlcEditable={activeEditable} />
       )}
     </>
   );

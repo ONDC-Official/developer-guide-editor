@@ -4,36 +4,13 @@ import {
   addRows,
   deleteRows,
   updateRows,
+  AttributeType,
+  PatchAttributes,
+  AttributeOperation,
 } from "./attributeYamlUtils";
 import { readYamlFile } from "../../fileUtils";
 import { overrideYaml } from "../../yamlUtils";
 import { FileTypeEditable } from "../../FileTypeEditable";
-
-export interface AttributeRow {
-  path: string;
-  required?: string;
-  type?: string;
-  owner?: string;
-  usage?: string;
-  description: string;
-}
-
-export interface AttributeOperation {
-  sheetName: string;
-  attributes?: AttributeRow[];
-}
-
-export type AttributeType = Record<string, AttributeRow[]>;
-
-export interface PatchAttributes {
-  type: "sheetName" | "rowData";
-  operation: {
-    oldName: string;
-    newName?: string;
-    oldRows?: AttributeRow[];
-    newRows?: AttributeRow[];
-  };
-}
 
 export class AttributeFile extends FileTypeEditable {
   getRegisterID(): string {
