@@ -10,21 +10,21 @@ import { FlowFolderType } from "./ComponentType/flowType/flowFolderType";
 import { FlowFileType } from "./ComponentType/flowType/flowFileType";
 import { ExampleFolderType } from "./ComponentType/examplesType/exampleFolderType";
 import { ExampleDomainFolderType } from "./ComponentType/examplesType/ExampleDomainFolderType";
+import { TlcFolder } from "./ComponentType/tlcType/tlcFolder";
 
 export function initRegistry() {
   EditableRegistry.register(ComponentsType);
   EditableRegistry.register(AttributesFolderTypeEditable); // main folder structure
   EditableRegistry.register(AttributeFile); // files inside that folder
-  EditableRegistry.register(EnumFileType); 
-  EditableRegistry.register(EnumFolderType);  
+  EditableRegistry.register(EnumFileType);
+  EditableRegistry.register(EnumFolderType);
   EditableRegistry.register(TagsFolderType);
   EditableRegistry.register(TagFileType);
   EditableRegistry.register(FlowFolderType);
   EditableRegistry.register(FlowFileType);
-
-
   EditableRegistry.register(ExampleFolderType);
   EditableRegistry.register(ExampleDomainFolderType);
+  EditableRegistry.register(TlcFolder);
 }
 
 export const FixedNames = {

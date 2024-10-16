@@ -1,5 +1,4 @@
-import { EditableRegistry } from "../../EditableRegistry";
-import { UpdateObj, folderTypeEditable } from "../../folderTypeEditable";
+import { folderTypeEditable, UpdateObj } from "../../folderTypeEditable";
 import { updateYamlRefEnum } from "../../yamlUtils";
 import { EnumFileType } from "./enumFileType";
 

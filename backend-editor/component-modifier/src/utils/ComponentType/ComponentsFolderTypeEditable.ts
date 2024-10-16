@@ -7,6 +7,7 @@ import { TagsFolderType } from "./tagType/tagsFolderType";
 import { FlowFolderType } from "./flowType/flowFolderType";
 import { ExampleFolderType } from "./examplesType/exampleFolderType";
 import { BuildCompenetsWithRawBuild } from "./componentsUtils";
+import { TlcFolder } from "./tlcType/tlcFolder";
 
 export class ComponentsType extends folderTypeEditable {
   getRegisterID(): string {
@@ -21,6 +22,7 @@ export class ComponentsType extends folderTypeEditable {
       TagsFolderType.REGISTER_ID,
       FlowFolderType.REGISTER_ID,
       ExampleFolderType.REGISTER_ID,
+      TlcFolder.REGISTER_ID,
     ];
   }
   async add(new_editable: { ID: string; build?: any }) {
@@ -84,6 +86,9 @@ export class ComponentsType extends folderTypeEditable {
     }
     if (ID === ExampleFolderType.REGISTER_ID) {
       return "examples";
+    }
+    if (ID === TlcFolder.REGISTER_ID) {
+      return "tlc";
     }
     return "UNKNOWN";
   }

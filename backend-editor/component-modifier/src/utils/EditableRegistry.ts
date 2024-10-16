@@ -4,14 +4,10 @@ import path from "path";
 import yaml from "js-yaml";
 import { ComponentsType } from "./ComponentType/ComponentsFolderTypeEditable";
 import { overrideYaml } from "./yamlUtils";
-import { loadYamlWithRefs, readYamlFile, renameFolder } from "./fileUtils";
-import {
-  ExampleDomainIndexYml,
-  ExampleFolderType,
-} from "./ComponentType/examplesType/exampleFolderType";
+import { loadYamlWithRefs, readYamlFile } from "./fileUtils";
+import { ExampleFolderType } from "./ComponentType/examplesType/exampleFolderType";
 import { ExampleDomainFolderType } from "./ComponentType/examplesType/ExampleDomainFolderType";
-import { initRegistry } from "./RegisterList";
-import { AttributesFolderTypeEditable } from "./ComponentType/AttributeType/AttributesFolderTypeEditable";
+// import { TlcFolder } from "./ComponentType/tlcType/tlcFolder";
 
 type exampleYaml = Record<
   string,
@@ -30,23 +26,26 @@ export class EditableRegistry {
       throw new Error(`No registered class with ID ${type}`);
     }
     const object = new cls(path, name);
-    let removeContent = false;
-    if (object.getRegisterID().includes("FOLDER")) {
-      if (object.getRegisterID() === "COMPONENTS-FOLDER") {
-        removeContent = false;
-      } else {
-        removeContent = true;
-      }
-    }
+    let removeContent = this.getRemoveContent(type);
     await object.initIndexYaml(path, removeContent);
     return object;
   }
+
+  static getRemoveContent(type: string) {
+    if (type.includes("Folder")) {
+      if ([ComponentsType.REGISTER_ID].includes(type))
+        //TlcFolder.REGISTER_ID
+        return false;
+    }
+    return true;
+  }
+
   static async loadComponent(componentPath: string, name: string) {
-    const comp: ComponentsType = await EditableRegistry.create(
+    const comp: ComponentsType = (await EditableRegistry.create(
       "COMPONENTS-FOLDER",
       componentPath,
       name
-    );
+    )) as ComponentsType;
 
     // console.log("Loading Component:", comp.folderPath);
     let compFiles = await fs_p.readdir(comp.folderPath, {
@@ -74,6 +73,7 @@ export class EditableRegistry {
       await EditableRegistry.loadTags(file, comp);
       await EditableRegistry.loadFlows(file, comp);
       await EditableRegistry.loadExamplesNew(file, comp);
+      // await EditableRegistry.loadTlc(file, comp);
     }
 
     return comp;
@@ -187,114 +187,6 @@ export class EditableRegistry {
     }
   }
 
-  private static async loadExamples(file: fs.Dirent, comp: ComponentsType) {
-    if (file.name !== "examples") return;
-    let indexData: exampleYaml = {};
-    const indexPath = `${comp.folderPath}/examples/index.yaml`;
-    if (fs.existsSync(indexPath)) {
-      indexData = yaml.load(await readYamlFile(indexPath)) as exampleYaml;
-      indexData = indexData || {};
-    }
-    await comp.add({ ID: "EXAMPLE_FOLDER" });
-    const exampleFolder = comp.getTarget(
-      "EXAMPLE_FOLDER",
-      "examples",
-      comp
-    ) as ExampleFolderType;
-
-    for (const key in indexData) {
-      const ref = indexData[key].example_set.$ref;
-      const folderName = ref.split("/")[1];
-      const folderPath = `${exampleFolder.folderPath}/${folderName}`;
-      // console.log("folderName", folderName, key);
-      try {
-        if (fs.existsSync(folderPath)) {
-          await renameFolder(folderPath, key);
-          const ymlName = ref.split("/")[2];
-          indexData[key].example_set.$ref = `./${key}/${ymlName}`;
-        }
-      } catch (e) {
-        console.log("skipping rename", e);
-      }
-    }
-    const exampleFiles = await fs_p.readdir(exampleFolder.folderPath, {
-      withFileTypes: true,
-    });
-    for (const file of exampleFiles) {
-      if (!file.isDirectory()) continue;
-      const exampleDomainName = file.name;
-      const subIndexPath = `${exampleFolder.folderPath}/${exampleDomainName}/index.yaml`;
-
-      let secondaryPath = ``;
-
-      if (
-        indexData &&
-        indexData[exampleDomainName] &&
-        indexData[exampleDomainName].example_set.$ref
-      ) {
-        secondaryPath = path.resolve(
-          file.path || exampleFolder.folderPath, // handle undefined path as binary mode doesn't provide path variable
-          indexData[exampleDomainName].example_set.$ref
-        );
-        console.log("secondary path", secondaryPath);
-        if (fs.existsSync(secondaryPath)) {
-          await fs_p.rename(secondaryPath, subIndexPath);
-        }
-      }
-
-      let subYamlData: ExampleDomainIndexYml = {};
-      if (fs.existsSync(subIndexPath)) {
-        subYamlData = (await loadYamlWithRefs(
-          subIndexPath
-        )) as ExampleDomainIndexYml;
-
-        subYamlData = subYamlData || {};
-      }
-
-      await exampleFolder.add({
-        ID: "EXAMPLE_DOMAIN_FOLDER",
-        name: exampleDomainName,
-        description: indexData[exampleDomainName]?.description || "TBD",
-        summary: indexData[exampleDomainName]?.summary || exampleDomainName,
-      });
-
-      const addedExample = exampleFolder.getTarget(
-        "EXAMPLE_DOMAIN_FOLDER",
-        exampleDomainName,
-        exampleFolder
-      ) as ExampleDomainFolderType;
-
-      const subFiles = await fs_p.readdir(addedExample.folderPath, {
-        withFileTypes: true,
-      });
-      for (const subFile of subFiles) {
-        if (!subFile.isDirectory()) continue;
-        if (subYamlData.hasOwnProperty(subFile.name)) {
-          const data = subYamlData[subFile.name];
-          ForceUniqueSummary(data);
-          for (const example of data.examples) {
-            await addedExample.add({
-              name: subFile.name,
-              ID: "JSON",
-              examples: {
-                [subFile.name]: [
-                  {
-                    ID: "JSON",
-                    name: subFile.name,
-                    exampleName: " ",
-                    summary: example.summary,
-                    description: example.description,
-                    exampleValue: example.value,
-                  },
-                ],
-              },
-            });
-          }
-        }
-      }
-    }
-  }
-
   private static async loadExamplesNew(file: fs.Dirent, comp: ComponentsType) {
     if (file.name !== "examples") return;
     let existingIndexData = {};
@@ -399,6 +291,11 @@ export class EditableRegistry {
       }
     }
   }
+
+  // private static async loadTlc(file: fs.Dirent, comp: ComponentsType) {
+  //   if (file.name !== "tlc") return;
+  //   await comp.add({ ID: "TLC_FOLDER" });
+  // }
 
   private static async extractExampleDescripitons(comp: ComponentsType) {
     const examplePath = `${comp.folderPath}/examples`;

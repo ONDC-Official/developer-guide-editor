@@ -1,7 +1,4 @@
-import fs from "fs";
 import yaml from "js-yaml";
-import path from "path";
-import { readYamlFile } from "../../fileUtils";
 import { AttributeRow, AttributeType } from "./AttributeRow";
 import { convertToYamlWithRefs } from "../../extraUtils/yamlRefConvert";
 
