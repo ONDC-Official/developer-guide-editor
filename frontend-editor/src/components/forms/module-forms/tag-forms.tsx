@@ -1,14 +1,14 @@
 import { FieldValues } from "react-hook-form";
-import { FormFacProps } from "./form-factory";
-import { getData, postData } from "../../utils/requestUtils";
-import GenericForm from "./generic-form";
-import { TagFileID } from "../../pages/home-page";
-import FormSelect from "./form-select";
-import {FormInput} from "./form-input";
+import { FormFacProps } from "../form-factory";
+import { getData, postData } from "../../../utils/requestUtils";
+import GenericForm from "../generic-form";
+import { TagFileID } from "../../../pages/home-page";
+import FormSelect from "../form-select";
+import { FormInput } from "../form-input";
 import AutoCompleteInput, { AutoCompleteOption } from "./auto-complete-input";
 import { useContext, useEffect, useState } from "react";
-import { DataContext } from "../../context/dataContext";
-import { Tag, TagData } from "../tag-content";
+import { DataContext } from "../../../context/dataContext";
+import { Tag, TagData } from "../../tag-content";
 
 export function TagFolderForm({ data, setIsOpen, editState }: FormFacProps) {
   const onPost = async (formData: FieldValues) => {

@@ -1,7 +1,10 @@
 import React, { useContext, useState } from "react";
 import { Editable } from "../file-structure";
-import AddInComponent from "./add-component";
-import AddInAttributes, { AddRowForm, AddSheet } from "./add-attribute";
+import AddInComponent from "./module-forms/add-component";
+import AddInAttributes, {
+  AddRowForm,
+  AddSheet,
+} from "./module-forms/add-attribute";
 import {
   AttributeFileID,
   AttributeFolderID,
@@ -14,27 +17,33 @@ import {
   ExampleFolderID,
   TagFileID,
   TagFolderID,
+  TLCFolderID,
 } from "../../pages/home-page";
-import { EnumApiForm, EnumFolderForm, EnumForm } from "./enum-Form";
-import { SummaryForm,FlowFolderForm } from "./flow-form";
+import {
+  EnumApiForm,
+  EnumFolderForm,
+  EnumForm,
+} from "./module-forms/enum-Form";
+import { SummaryForm, FlowFolderForm } from "./module-forms/flow-form";
 import JsonField from "./JsonField";
 import { postData } from "../../utils/requestUtils";
-import FormFlowDetail from "./form-flow-detail";
-import FormFlowStep from "./form-flow-step";
+import FormFlowDetail from "./module-forms/form-flow-detail";
+import FormFlowStep from "./module-forms/form-flow-step";
 import {
   TagApiForm,
   TagCodesForm,
   TagFolderForm,
   TagGroupForm,
   TagPathForm,
-} from "./tag-forms";
+} from "./module-forms/tag-forms";
 import {
   AddExampleJsonForm,
   AddNewExampleForm,
   EditExampleCategoryForm,
   EditHtmlForm,
   ExampleDomainForm,
-} from "./example-form";
+} from "./module-forms/example-form";
+import { TlcForm } from "./module-forms/tlc-form";
 
 export interface FormFacProps {
   data: Editable;
@@ -103,11 +112,11 @@ const FormFactory = ({
       case flowFolderID:
         return (
           <FlowFolderForm
-          data={data}
-          setIsOpen={setIsOpen}
-          editState={editState}
-        />
-      );
+            data={data}
+            setIsOpen={setIsOpen}
+            editState={editState}
+          />
+        );
       case TagFolderID:
         if (data.query.addParams?.formType === "addAPI") {
           return (
@@ -145,12 +154,12 @@ const FormFactory = ({
         } else if (data.name === "steps") {
           return (
             <FormFlowStep
-            data={data}
-            setIsOpen={setIsOpen}
-            editState={editState}
-          />
-        );
-      }
+              data={data}
+              setIsOpen={setIsOpen}
+              editState={editState}
+            />
+          );
+        }
       case TagFileID:
         if (data.query.addParams?.formType === "addTag") {
           return (
@@ -219,6 +228,11 @@ const FormFactory = ({
             setIsOpen={setIsOpen}
             editState={editState}
           />
+        );
+
+      case TLCFolderID:
+        return (
+          <TlcForm data={data} setIsOpen={setIsOpen} editState={editState} />
         );
       default:
         return <div>No form available for this type.</div>;

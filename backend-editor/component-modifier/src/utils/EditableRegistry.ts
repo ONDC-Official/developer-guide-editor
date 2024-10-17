@@ -1,4 +1,5 @@
 import { FolderTypes } from "./ComponentType/constants";
+import { Editable } from "./Editable";
 
 type exampleYaml = Record<
   string,
@@ -16,7 +17,7 @@ export class EditableRegistry {
     if (!cls) {
       throw new Error(`No registered class with ID ${type}`);
     }
-    const object = new cls(path, name);
+    const object = new cls(path, name) as Editable;
     let removeContent = this.getRemoveContent(type);
     await object.initIndexYaml(path, removeContent);
     return object;
@@ -26,8 +27,9 @@ export class EditableRegistry {
     if (type.includes("Folder")) {
       if ([FolderTypes.COMPONENTS, FolderTypes.TLC_FOLDER].includes(type))
         return false;
+      else return true;
     }
-    return true;
+    return false;
   }
 }
 

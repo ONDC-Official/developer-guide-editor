@@ -101,7 +101,15 @@ export function HomePage({ editMode }: { editMode: boolean }) {
       compsList.push(editable);
     }
     setComponents(compsList);
-    setActiveEditable(undefined);
+    console.log("components", components);
+    console.log("activeEditable", activeEditable);
+    if (activeEditable) {
+      setActiveEditable(
+        components.includes(activeEditable) ? activeEditable : undefined
+      );
+    } else {
+      setActiveEditable(undefined);
+    }
     setLoading(false);
   }
 

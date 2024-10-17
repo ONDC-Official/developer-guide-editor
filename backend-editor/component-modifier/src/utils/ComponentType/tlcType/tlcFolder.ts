@@ -26,6 +26,14 @@ export class TlcFolder extends folderTypeEditable {
   }
   async getData(query: any) {
     const yml = await readYamlFile(this.yamlPathLong);
+    const data = yaml.load(yml);
+    if (!data) {
+      const emptyData: TLC_DATA = {
+        code: [],
+      };
+      await overrideYaml(this.yamlPathLong, yaml.dump(emptyData));
+      return emptyData;
+    }
     return yaml.load(yml) as TLC_DATA;
   }
   async remove(deleteTarget: { folderName: string; rows: TLC_ROW[] }) {

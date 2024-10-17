@@ -1,11 +1,11 @@
 // AddInAttributes.js
 import React, { useEffect, useState } from "react";
-import GenericForm from "./generic-form";
-import FormSelect from "./form-select";
-import { FormInput, FormTextInput } from "./form-input";
-import { Editable } from "../file-structure";
+import GenericForm from "../generic-form";
+import FormSelect from "../form-select";
+import { FormInput, FormTextInput } from "../form-input";
+import { Editable } from "../../file-structure";
 import { FieldValues } from "react-hook-form";
-import { getData, patchData, postData } from "../../utils/requestUtils";
+import { getData, patchData, postData } from "../../../utils/requestUtils";
 
 const AddInAttributes = ({
   data,

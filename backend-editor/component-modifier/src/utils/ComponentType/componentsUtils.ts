@@ -12,6 +12,8 @@ import { ExampleFolderType } from "./examplesType/exampleFolderType";
 import { FlowFolderType } from "./flowType/flowFolderType";
 import { FlowFileType } from "./flowType/flowFileType";
 import { ComponentsType } from "./ComponentsFolderTypeEditable";
+import { TLC_DATA } from "./tlcType/tlcUtils";
+import { TlcFolder } from "./tlcType/tlcFolder";
 
 type X_ATTRIBUTES = Record<string, { attribute_set: Record<string, any> }>;
 type X_ENUM = Record<string, any>;
@@ -52,6 +54,7 @@ interface RAW_DATA {
   "x-flows"?: X_FLOWS;
   "x-examples"?: X_EXAMPLES;
   "x-attributes"?: X_ATTRIBUTES;
+  "x-tlc"?: TLC_DATA;
 }
 
 export const BuildCompenetsWithRawBuild = async (
@@ -75,6 +78,7 @@ export const BuildCompenetsWithRawBuild = async (
   await createTags(data, comp);
   await createExamples(data, comp, example_cache);
   await createFlows(data, comp, example_cache);
+  await createTLC(data, comp);
 
   //   return comp;
 };
@@ -302,6 +306,15 @@ async function createFlows(
       steps: flow.steps as any,
     });
   }
+}
+
+async function createTLC(data: RAW_DATA, comp: ComponentsType) {
+  if (!data["x-tlc"]) return;
+  const tlc = data["x-tlc"];
+  console.log(tlc.code.splice(0, 1));
+  await comp.add({ ID: "TLC_FOLDER" });
+  const tlcFolder = comp.getTarget("TLC_FOLDER", "tlc", comp) as TlcFolder;
+  tlcFolder.add({ ID: "TLC_DATA", name: "tlc", rows: tlc.code });
 }
 function makeValidFolderName(input: string): string {
   // Replace invalid characters with underscores or hyphens

@@ -1,12 +1,12 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import { FormFacProps } from "./form-factory";
-import GenericForm from "./generic-form";
-import { patchData, getData } from "../../utils/requestUtils";
-import { FormInput, FormTextInput } from "./form-input";
+import { FormFacProps } from "../form-factory";
+import GenericForm from "../generic-form";
+import { patchData, getData } from "../../../utils/requestUtils";
+import { FormInput, FormTextInput } from "../form-input";
 import { toast } from "react-toastify";
-import FormSelect from "./form-select";
+import FormSelect from "../form-select";
 import FlowPreview from "./flow-preview";
-import { MermaidDiagram } from "../ui/mermaid";
+import { MermaidDiagram } from "../../ui/mermaid";
 import { Transition } from "@headlessui/react";
 
 interface singleExample {

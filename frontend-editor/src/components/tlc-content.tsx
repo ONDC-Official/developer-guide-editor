@@ -32,7 +32,7 @@ export function TlcContent({ tlcEditable }: { tlcEditable: Editable }) {
   const [timeout, setTimeout] = React.useState<boolean>(false);
   async function getTlcData() {
     const data = await getData(tlcEditable.path);
-    console.log(typeof data, "datatype");
+    console.log("getTlcData", data);
     setTlc(data?.code ?? []);
     console.log("tlc", data);
   }
@@ -74,8 +74,11 @@ function DataTable({
       getData: tlcEditable.query?.getData,
       Parent: tlcEditable.query.Parent,
       copyData: async () => {
-        const copy: Record<string, any> = {};
-        copy["code"] = tlcData;
+        const copy = {
+          ID: tlcEditable.registerID,
+          name: tlcEditable.name,
+          rows: tlcData,
+        };
         return JSON.stringify(copy, null, 2);
       },
     },
@@ -128,15 +131,47 @@ function TableRow({
   row: TLC_ROW;
   editable: Editable;
 }) {
+  const rowTooltip = useEditorToolTip([true, false, true]);
+  rowTooltip.data.current = {
+    name: editable.name,
+    registerID: editable.registerID,
+    path: editable.path,
+    deletePath: editable.path,
+    query: {
+      getData: editable.query?.getData,
+      Parent: editable,
+      updateParams: {
+        data: row,
+      },
+      deleteParams: {
+        folderName: "tlc",
+        rows: [row],
+      },
+      copyData: async () => {
+        const copy = {
+          ID: editable.registerID,
+          name: editable.name,
+          rows: [row],
+        };
+        return JSON.stringify(copy, null, 2);
+      },
+    },
+  };
   return (
-    <tr key={index} className=" hover:bg-blue-200">
-      <td className={tdStyle}>{row.Term}</td>
-      <td className={tdStyle}>{row.Api}</td>
-      <td className={tdStyle}>{row.Attribute}</td>
-      <td className={tdStyle}>{row.Owner}</td>
-      <td className={tdStyle}>{row.Value}</td>
-      <td className={tdStyle}>{row.Description}</td>
-    </tr>
+    <Tippy {...rowTooltip.tippyProps}>
+      <tr
+        key={index}
+        className=" hover:bg-blue-200"
+        onContextMenu={rowTooltip.onContextMenu}
+      >
+        <td className={tdStyle}>{row.Term}</td>
+        <td className={tdStyle}>{row.Api}</td>
+        <td className={tdStyle}>{row.Attribute}</td>
+        <td className={tdStyle}>{row.Owner}</td>
+        <td className={tdStyle}>{row.Value}</td>
+        <td className={tdStyle}>{row.Description}</td>
+      </tr>
+    </Tippy>
   );
 }
 const tdStyle = `px-6 py-3 text-left border-b border-r border-gray-300 text-sm font-medium text-gray-700`;

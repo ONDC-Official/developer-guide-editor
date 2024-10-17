@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { FormFacProps } from "./form-factory";
-import GenericForm from "./generic-form";
-import { FormInput, FormTextInput } from "./form-input";
-import { patchData } from "../../utils/requestUtils";
+import { FormFacProps } from "../form-factory";
+import GenericForm from "../generic-form";
+import { FormInput, FormTextInput } from "../form-input";
+import { patchData } from "../../../utils/requestUtils";
 import { toast } from "react-toastify";
-import { MermaidDiagram } from "../ui/mermaid";
+import { MermaidDiagram } from "../../ui/mermaid";
 import { Transition } from "@headlessui/react";
 
 const FormFlowDetail = ({ data, setIsOpen }: FormFacProps) => {
